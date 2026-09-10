@@ -1,0 +1,9 @@
+{
+  "name": "guanxiang-zhouyi",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node serve.mjs",
+    "validate": "node validate-content.mjs && node --check app.js"
+  }
+}
