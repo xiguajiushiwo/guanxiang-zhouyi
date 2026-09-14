@@ -1,0 +1,11 @@
+{
+  "name": "观象 · 周易研读",
+  "short_name": "观象",
+  "description": "六十四卦、十翼、易理与大衍筮法的本地研读工具",
+  "lang": "zh-CN",
+  "start_url": "./#home",
+  "display": "standalone",
+  "background_color": "#f4f0e6",
+  "theme_color": "#2e302c",
+  "icons": [{"src":"app-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}

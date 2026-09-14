@@ -383,7 +383,7 @@ Create CORS headers only for an exact allowed origin. Handle `OPTIONS` without c
 Call:
 
 ```js
-await env.AI.run(env.AI_MODEL || '@cf/meta/llama-3.1-8b-instruct-fast', {
+await env.AI.run(env.AI_MODEL || '@cf/meta/llama-3.1-8b-instruct', {
   messages,
   stream: true,
   max_tokens: boundedInteger(env.MAX_TOKENS, 900, 300, 1200)

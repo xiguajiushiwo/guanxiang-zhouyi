@@ -4,6 +4,10 @@
   "type": "module",
   "scripts": {
     "start": "node serve.mjs",
-    "validate": "node validate-content.mjs && node --check app.js"
+    "test": "npm run test:unit",
+    "test:unit": "node test-yarrow.mjs && node test-derived-hexagrams.mjs && node test-storage.mjs && node test-landing.mjs && node test-interpretation.mjs && node test-ai-reading.mjs && node worker/test-worker.mjs",
+    "test:browser": "node smoke-browser.mjs",
+    "build:relations": "node build-relations.mjs",
+    "validate": "node build-relations.mjs && node validate-content.mjs && node --check app.js && npm run test:unit"
   }
 }

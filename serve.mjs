@@ -5,11 +5,13 @@ import process from 'node:process';
 
 const root = resolve(process.cwd());
 const port = Number(process.env.ZHOUYI_PORT || 4175);
+const host = process.env.ZHOUYI_HOST || '127.0.0.1';
 const types = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.mjs': 'text/javascript; charset=utf-8',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
@@ -47,6 +49,7 @@ const server = createServer(async (request, response) => {
   }
 });
 
-server.listen(port, '127.0.0.1', () => {
-  console.log(`观象已启动：http://127.0.0.1:${port}/`);
+server.listen(port, host, () => {
+  console.log(`观象已启动：http://${host === '0.0.0.0' ? 'localhost' : host}:${port}/`);
 });
+

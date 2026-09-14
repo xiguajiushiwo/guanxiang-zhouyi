@@ -1,0 +1,2451 @@
+{
+  "version": 1,
+  "generatedFrom": "ten-wings.json",
+  "edition": "《十三经注疏·周易正义》通行本次序",
+  "hexagrams": {
+    "1": {
+      "name": "乾",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "direct",
+          "excerpt": "《彖》曰：大哉乾元，萬物資始，乃統天。云行雨施，品物流形。大明始終，六位時成，時乘六龍以御天。乾道變化，各正性命，保合大和，乃利貞。首出庶物，萬國咸寧。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "direct",
+          "excerpt": "《象》曰：天行健，君子以自強不息。 《象》曰：潛龍勿用，陽在下也。 《象》曰：見龍在田，德施普也。 《象》曰：終日乾乾，反復道也。 《象》曰：或躍在淵，進無咎也。 《象》曰：飛龍在天，"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "direct",
+          "excerpt": "《文言》曰：「元者，善之長也。亨者，嘉之會也。利者，義之和也。貞者，事之干也。君子體仁足以長人。嘉會足以合禮。利物足以和義。貞固足以干事。君子行此四者，故曰『乾，元亨利貞。』」"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "direct",
+          "excerpt": "初九曰「潛龍勿用」，何謂也？"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 2,
+          "sectionNumber": 3,
+          "kind": "direct",
+          "excerpt": "子曰：「龍德而隱者也。不易乎世，不成乎名，遯世而無悶，不見是而無悶。樂則行之，憂則違之，確乎其不可拔，乾龍也。」"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 3,
+          "sectionNumber": 4,
+          "kind": "direct",
+          "excerpt": "九二曰「見龍在田，利見大人」，何謂也？"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 4,
+          "sectionNumber": 5,
+          "kind": "direct",
+          "excerpt": "子曰：「龍德而正中者也。庸言之信，庸行之謹，閑邪存其誠，善世而不伐，德博而化。《易》曰『見龍在田，利見大人』，君德也。」"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 5,
+          "sectionNumber": 6,
+          "kind": "direct",
+          "excerpt": "九三曰「君子終日乾乾，夕惕若，厲無咎」，何謂也？"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 6,
+          "sectionNumber": 7,
+          "kind": "direct",
+          "excerpt": "子曰：「君子進德修業。忠信，所以進德也；修辭立其誠，所以居業也。知至至之，可與几也；知終終之，可與存義也。是故，居上位而不驕，在下位而不憂。故乾乾因其時而惕，雖危而無咎矣。」"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 7,
+          "sectionNumber": 8,
+          "kind": "direct",
+          "excerpt": "九四曰「或躍在淵，無咎」，何謂也？"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 8,
+          "sectionNumber": 9,
+          "kind": "direct",
+          "excerpt": "子曰：「上下無常，非為邪也。進退無恆，非離群也。君子進德修業，欲及時也，故無咎。」"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 9,
+          "sectionNumber": 10,
+          "kind": "direct",
+          "excerpt": "九五曰「飛龍在天，利見大人」，何謂也？"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 10,
+          "sectionNumber": 11,
+          "kind": "direct",
+          "excerpt": "子曰：「同聲相應，同氣相求。水流濕，火就燥，云從龍，風從虎，聖人作而萬物睹。本乎天者親上，本乎地者親下，則各從其類也。」"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 11,
+          "sectionNumber": 12,
+          "kind": "direct",
+          "excerpt": "上九曰「亢龍有悔」，何謂也？"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 12,
+          "sectionNumber": 13,
+          "kind": "direct",
+          "excerpt": "子曰：「貴而無位，高而無民，賢人在下而無輔，是以動而有悔也。」"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 13,
+          "sectionNumber": 14,
+          "kind": "direct",
+          "excerpt": "「乾龍勿用」，下也。「見龍在田」，時舍也。「終日乾乾」，行事也。「或躍在淵」，自試也。「飛龍在天」，上治也。「亢龍有悔」，窮之災也。乾元用九，天下治也。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 14,
+          "sectionNumber": 15,
+          "kind": "direct",
+          "excerpt": "「乾龍勿用」，陽氣潛藏。「見龍在田」，天下文明。「終日乾乾」，與時偕行。「或躍在淵」，乾道乃革。「飛龍在天」，乃位乎天德。「亢龍有悔」，與時偕極。乾元用九，乃見天則。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 15,
+          "sectionNumber": 16,
+          "kind": "direct",
+          "excerpt": "乾元者，始而亨者也。利貞者，性情也。乾始能以美利利天下，不言所利，大矣哉！大哉乾乎！剛健中正，純粹精也。六爻發揮，旁通情也。時乘六龍，以御天也。云行雨施，天下平也。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 16,
+          "sectionNumber": 17,
+          "kind": "direct",
+          "excerpt": "君子以成德為行，日可見之行也。潛之為言也，隱而未見，行而未成，是以君子弗用也。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 17,
+          "sectionNumber": 18,
+          "kind": "direct",
+          "excerpt": "君子學以聚之，問以辯之，寬以居之，仁以行之。《易》曰「見龍在田，利見大人」，君德也。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 18,
+          "sectionNumber": 19,
+          "kind": "direct",
+          "excerpt": "九三重剛而不中，上不在天，下不在田，故乾乾因其時而惕，雖危無咎矣。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 19,
+          "sectionNumber": 20,
+          "kind": "direct",
+          "excerpt": "九四重剛而不中，上不在天，下不在田，中不在人，故或之。或之者，疑之也，故無咎。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 20,
+          "sectionNumber": 21,
+          "kind": "direct",
+          "excerpt": "夫大人者，與天地合其德，與日月合其明，與四時合其序，與鬼神合其吉凶。先天而天弗違，后天而奉天時。天且弗違，而況於人乎？況於鬼神乎？"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 21,
+          "sectionNumber": 22,
+          "kind": "direct",
+          "excerpt": "亢之為言也，知進而不知退，知存而不知亡，知得而不知喪。其唯聖人乎！知進退存亡，而不失其正者，其唯聖人乎！"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "2": {
+      "name": "坤",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "direct",
+          "excerpt": "《彖》曰：至哉坤元！萬物資生，乃順承天。坤厚載物，德合無疆。含弘光大，品物咸亨。牝馬地類，行地無疆，柔順利貞。君子攸行，先迷失道，后順得常。西南得朋，乃與類行。東北喪朋，乃終有慶。安貞"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "direct",
+          "excerpt": "《象》曰：地勢坤，君子以厚德載物。 《象》曰：履霜堅冰，陰始凝也。馴致其道，至堅冰也。 《象》曰：六二之動，直以方也。不習無不利，地道光也。 《象》曰：「含章，可貞」，以時發也。「或從"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 22,
+          "sectionNumber": 1,
+          "kind": "direct",
+          "excerpt": "《文言》曰：坤至柔而動也剛，至靜而德方，后得主而有常，含萬物而化光。坤道其順乎？承天而時行。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 23,
+          "sectionNumber": 2,
+          "kind": "direct",
+          "excerpt": "積善之家，必有餘慶。積不善之家，必有餘殃。臣弒其君，子弒其父，非一朝一夕之故，其所由來者漸矣，由辯之不早辯也。《易》曰「履霜堅冰至」，蓋言順也。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 24,
+          "sectionNumber": 3,
+          "kind": "direct",
+          "excerpt": "直其正也，方其義也。君子敬以直內，義以方外，敬義立而德不孤。「直，方，大，不習無不利」，則不疑其所行也。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 25,
+          "sectionNumber": 4,
+          "kind": "direct",
+          "excerpt": "陰雖有美，含之以從王事，弗敢成也，地道也，妻道也，臣道也。地道無成而代有終也。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 26,
+          "sectionNumber": 5,
+          "kind": "direct",
+          "excerpt": "天地變化，草木蕃。天地閉，賢人隱。《易》曰「括囊，無咎，無譽」，蓋言謹也。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 27,
+          "sectionNumber": 6,
+          "kind": "direct",
+          "excerpt": "君子黃中通理，正位居體，美在其中，而暢於四支，發於事業，美之至也。"
+        },
+        {
+          "wingId": "wen-yan",
+          "wingTitle": "《文言传》",
+          "wingIndex": 6,
+          "sectionIndex": 28,
+          "sectionNumber": 7,
+          "kind": "direct",
+          "excerpt": "陰疑於陽必戰，為其嫌於無陽也，故稱龍焉，猶未離其類也，故稱血焉。夫玄黃者，天地之雜也。天玄而地黃。"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "3": {
+      "name": "屯",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 2,
+          "sectionNumber": 3,
+          "kind": "direct",
+          "excerpt": "《彖》曰：屯，剛柔始交而難生，動乎險中，大亨貞。雷雨之動滿盈，天造草昧，宜建侯而不寧。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 2,
+          "sectionNumber": 3,
+          "kind": "direct",
+          "excerpt": "《象》曰：云雷，屯。君子以經綸。 《象》曰：雖「磐桓」，志行正也。以貴下賤，大得民也。 《象》曰：六二之難，乘剛也。十年乃字，反常也。 《象》曰：「既鹿無虞」，以縱禽也。君子舍之，往吝"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "4": {
+      "name": "蒙",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 3,
+          "sectionNumber": 4,
+          "kind": "direct",
+          "excerpt": "《彖》曰：蒙，山下有險，險而止，蒙。蒙亨，以亨行，時中也。「匪我求童蒙，童蒙求我」，志應也。「初筮告」，以剛中也。「再三瀆，瀆則不告」，瀆蒙也。蒙以養正，聖功也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 3,
+          "sectionNumber": 4,
+          "kind": "direct",
+          "excerpt": "《象》曰：山下出泉，蒙。君子以果行育德。 《象》曰：「利用刑人」，以正法也。 《象》曰：「子克家」，剛柔接也。 《象》曰：「勿用娶女」，行不順也。 《象》曰：困蒙之吝，獨遠實也。 《象"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "5": {
+      "name": "需",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 4,
+          "sectionNumber": 5,
+          "kind": "direct",
+          "excerpt": "《彖》曰：需，須也。險在前也。剛健而不陷，其義不困窮矣。「需，有孚，光亨，貞吉」，位乎天位，以正中也。「利涉大川」，往有功也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 4,
+          "sectionNumber": 5,
+          "kind": "direct",
+          "excerpt": "《象》曰：云上於天，需。君子以飲食宴樂。 《象》曰：「需于郊」，不犯難行也。「利用恆，無咎」，未失常也。 《象》曰：「需于沙」，衍在中也。雖「小有言」，以終吉也。 《象》曰：「需于泥」"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "6": {
+      "name": "讼",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 5,
+          "sectionNumber": 6,
+          "kind": "direct",
+          "excerpt": "《彖》曰：訟，上剛下險，險而健，訟。「訟，有孚窒惕，中吉」，剛來而得中也。「終凶」，訟不可成也。「利見大人」，尚中正也。「不利涉大川」，入于淵也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 5,
+          "sectionNumber": 6,
+          "kind": "direct",
+          "excerpt": "《象》曰：天與水違行，訟。君子以作事謀始。 《象》曰：「不永所事」，訟不可長也。雖「有小言」，其辯明也。 《象》曰：「不克訟」，歸而逋也。自下訟上，患至掇也。 《象》曰：「食舊德」，從"
+        }
+      ]
+    },
+    "7": {
+      "name": "师",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 6,
+          "sectionNumber": 7,
+          "kind": "direct",
+          "excerpt": "《彖》曰：師，眾也。貞，正也。能以眾正，可以王矣。剛中而應，行險而順，以此毒天下，而民從之，吉又何咎矣。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 6,
+          "sectionNumber": 7,
+          "kind": "direct",
+          "excerpt": "《象》曰：地中有水，師。君子以容民畜眾。 《象》曰：「師出以律」，失律凶也。 《象》曰：「在師中，吉」，承天寵也。「王三錫命」，懷萬邦也。 《象》曰：「師或輿尸」，大無功也。 《象》曰"
+        }
+      ]
+    },
+    "8": {
+      "name": "比",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 7,
+          "sectionNumber": 8,
+          "kind": "direct",
+          "excerpt": "《彖》曰：比，吉也，比，輔也，下順從也。「原筮元永貞，無咎」，以剛中也。「不寧方來」，上下應也。「后夫凶」，其道窮也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 7,
+          "sectionNumber": 8,
+          "kind": "direct",
+          "excerpt": "《象》曰：地上有水，比。先王以建萬國，親諸侯。 《象》曰：比之初六，「有他吉」也。 《象》曰：「比之自內」，不自失也。 《象》曰：「比之匪人」，不亦傷乎！ 《象》曰：外比於賢，以從上也"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "9": {
+      "name": "小畜",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 8,
+          "sectionNumber": 9,
+          "kind": "direct",
+          "excerpt": "《彖》曰：小畜，柔得位而上下應之，曰小畜。健而巽，剛中而志行，乃亨。「密云不雨」，尚往也。「自我西郊」，施未行也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 8,
+          "sectionNumber": 9,
+          "kind": "direct",
+          "excerpt": "《象》曰：風行天上，小畜。君子以懿文德。 《象》曰：「復自道」，其義吉也。 《象》曰：「牽復」在中，亦不自失也。 《象》曰：「夫妻反目」，不能正室也。 《象》曰：「有孚」「惕出」，上合"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "10": {
+      "name": "履",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 9,
+          "sectionNumber": 10,
+          "kind": "direct",
+          "excerpt": "《彖》曰：履，柔履剛也。說而應乎乾，是以「履虎尾，不咥人，亨」。剛中正，履帝位而不疚，光明也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 9,
+          "sectionNumber": 10,
+          "kind": "direct",
+          "excerpt": "《象》曰：上天下澤，履。君子以辨上下、定民志。 《象》曰：素履之往，獨行愿也。 《象》曰：「幽人貞吉」，中不自亂也。 《象》曰：「眇能視」，不足以有明也。「跛能履」，不足以與行也。咥人"
+        },
+        {
+          "wingId": "xi-ci-xia",
+          "wingTitle": "《系辞传下》",
+          "wingIndex": 5,
+          "sectionIndex": 30,
+          "sectionNumber": 31,
+          "kind": "mention",
+          "excerpt": "《易》之興也，其於中古乎？作《易》者，其有憂患乎？是故，《履》，德之基也；《謙》，德之柄也；《復》，德之本也；《恒》，德之固也；《損》，德之修也；《益》，德之裕也；《困》，德之辨也；《"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "11": {
+      "name": "泰",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 10,
+          "sectionNumber": 11,
+          "kind": "direct",
+          "excerpt": "《彖》曰：「泰，小往大來，吉亨」，則是天地交而萬物通也，上下交而其志同也。內陽而外陰，內健而外順，內君子而外小人，君子道長，小人道消也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 10,
+          "sectionNumber": 11,
+          "kind": "direct",
+          "excerpt": "《象》曰：天地交，泰，后以財（裁）成天地之道，輔相天地之宜，以左右民。 《象》曰：「拔茅」「征吉」，志在外也。 《象》曰：「包荒」，「得尚于中行」，以光大也。 《象》曰：「無往不復」，"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "12": {
+      "name": "否",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 11,
+          "sectionNumber": 12,
+          "kind": "direct",
+          "excerpt": "《彖》曰：「否之匪人，不利君子貞，大往小來」，則是天地不交而萬物不通也，上下不交而天下無邦也。內陰而外陽，內柔而外剛，內小人而外君子，小人道長，君子道消也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 11,
+          "sectionNumber": 12,
+          "kind": "direct",
+          "excerpt": "《象》曰：天地不交，否。君子以儉德辟難，不可榮以祿。 《象》曰：「拔茅」貞吉，志在君也。 《象》曰：「大人否亨」，不亂群也。 《象》曰：「包羞」，位不當也。 《象》曰：「有命無咎」，志"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "13": {
+      "name": "同人",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 12,
+          "sectionNumber": 13,
+          "kind": "direct",
+          "excerpt": "《彖》曰：同人，柔得位得中而應乎乾曰同人。《同人》曰「同人于野，亨，利涉大川」，乾行也。文明以健，中正而應，君子正也。唯君子為能通天下之志。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 12,
+          "sectionNumber": 13,
+          "kind": "direct",
+          "excerpt": "《象》曰：天與火，同人。君子以類族辨物。 《象》曰：出門同人，又誰咎也？ 《象》曰：「同人于宗」，吝道也。 《象》曰：「伏戎于莽」，敵剛也。「三歲不興」，安行也。 《象》曰：「乘其墉」"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "14": {
+      "name": "大有",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 13,
+          "sectionNumber": 14,
+          "kind": "direct",
+          "excerpt": "《彖》曰：大有，柔得尊位大中而上下應之曰大有。其德剛健而文明，應乎天而時行，是以元亨。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 13,
+          "sectionNumber": 14,
+          "kind": "direct",
+          "excerpt": "《象》曰：火在天上，大有。君子以遏惡揚善，順天休命。 《象》曰：《大有》初九，「無交害」也。 《象》曰：「大車以載」，積中不敗也。 《象》曰：「公用亨于天子」，小人害也。 《象》曰：「"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "15": {
+      "name": "谦",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 14,
+          "sectionNumber": 15,
+          "kind": "direct",
+          "excerpt": "《彖》曰：謙，亨，天道下濟而光明，地道卑而上行。天道虧盈而益謙，地道變盈而流謙，鬼神害盈而福謙，人道惡盈而好謙。謙尊而光，卑而不可踰，君子之終也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 14,
+          "sectionNumber": 15,
+          "kind": "direct",
+          "excerpt": "《象》曰：地中有山，謙。君子以裒多益寡，稱物平施。 《象》曰：「謙謙君子」，卑以自牧也。 《象》曰：「鳴謙貞吉」，中心得也。 《象》曰：「勞謙君子」，萬民服也。 《象》曰：「無不利，撝"
+        }
+      ]
+    },
+    "16": {
+      "name": "豫",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 15,
+          "sectionNumber": 16,
+          "kind": "direct",
+          "excerpt": "《彖》曰：豫，剛應而志行，順以動，豫。豫，順以動，故天地如之，而況建侯行師乎？天地以順動，故日月不過而四時不忒。聖人以順動，則刑罰清而民服。豫之時義大矣哉！"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 15,
+          "sectionNumber": 16,
+          "kind": "direct",
+          "excerpt": "《象》曰：雷出地奮，豫。先王以作樂崇德，殷荐之上帝，以配祖考。 《象》曰：初六「鳴豫」，志窮凶也。 《象》曰：「不終日，貞吉」，以中正也。 《象》曰：「盱豫」「有悔」，位不當也。 《象"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "17": {
+      "name": "随",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 16,
+          "sectionNumber": 17,
+          "kind": "direct",
+          "excerpt": "《彖》曰：隨，剛來而下柔，動而說，隨。大亨貞，無咎，而天下隨時，隨之時義大矣哉！"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 16,
+          "sectionNumber": 17,
+          "kind": "direct",
+          "excerpt": "《象》曰：澤中有雷，隨。君子以向晦入宴息。 《象》曰：「官有渝」，從正吉也。「出門交有功」，不失也。 《象》曰：「系小子」，弗兼與也。 《象》曰：「系丈夫」，志舍下也。 《象》曰：「隨"
+        }
+      ]
+    },
+    "18": {
+      "name": "蛊",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 17,
+          "sectionNumber": 18,
+          "kind": "direct",
+          "excerpt": "《彖》曰：蠱，剛上而柔下，巽而止，蠱。「蠱，元亨」，而天下治也。「利涉大川」，往有事也。「先甲三日，后甲三日」，終則有始，天行也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 17,
+          "sectionNumber": 18,
+          "kind": "direct",
+          "excerpt": "《象》曰：山下有風，蠱。君子以振民育德。 《象》曰：「干父之蠱」，意承考也。 《象》曰：「干母之蠱」，得中道也。 《象》曰：「干父之蠱」，終無咎也。 《象》曰：「裕父之蠱」，往未得也。"
+        }
+      ]
+    },
+    "19": {
+      "name": "临",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 18,
+          "sectionNumber": 19,
+          "kind": "direct",
+          "excerpt": "《彖》曰：臨，剛浸而長。說而順，剛中而應，大亨以正，天之道也。「至于八月有凶」，消不久也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 18,
+          "sectionNumber": 19,
+          "kind": "direct",
+          "excerpt": "《象》曰：澤上有地，臨。君子以教思無窮、容保民無疆。 《象》曰：「咸臨，貞吉」，志行正也。 《象》曰：「咸臨，吉無不利」，未順命也。 《象》曰：「甘臨」，位不當也。「既憂之」，咎不長也"
+        }
+      ]
+    },
+    "20": {
+      "name": "观",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 19,
+          "sectionNumber": 20,
+          "kind": "direct",
+          "excerpt": "《彖》曰：大觀在上，順而巽，中正以觀天下。「觀，盥而不荐，有孚顒若」，下觀而化也。觀天之神道，而四時不忒，聖人以神道設教，而天下服矣。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 19,
+          "sectionNumber": 20,
+          "kind": "direct",
+          "excerpt": "《象》曰：風行地上，觀。先王以省方，觀民設教。 《象》曰：初六「童觀」，小人道也。 《象》曰：「窺觀」「女貞」，亦可丑也。 《象》曰：「觀我生，進退」，未失道也。 《象》曰：「觀國之光"
+        }
+      ]
+    },
+    "21": {
+      "name": "噬嗑",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 20,
+          "sectionNumber": 21,
+          "kind": "direct",
+          "excerpt": "《彖》曰：頤中有物，曰噬嗑。噬嗑而亨，剛柔分，動而明，雷電合而章。柔得中而上行，雖不當位，利用獄也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 20,
+          "sectionNumber": 21,
+          "kind": "direct",
+          "excerpt": "《象》曰：雷電噬嗑。先王以明罰敕法。 《象》曰：「履校滅趾」，不行也。 《象》曰：「噬膚滅鼻」，乘剛也。 《象》曰：「遇毒」，位不當也。 《象》曰：「利艱貞，吉」，未光也。 《象》曰："
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "22": {
+      "name": "贲",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 21,
+          "sectionNumber": 22,
+          "kind": "direct",
+          "excerpt": "《彖》曰：賁，亨。柔來而文剛，故亨。分剛上而文柔，故小利有攸往。天文也。文明以止，人文也。觀乎天文，以察時變。觀乎人文，以化成天下。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 21,
+          "sectionNumber": 22,
+          "kind": "direct",
+          "excerpt": "《象》曰：山下有火，賁。君子以明庶政，無敢折獄。 《象》曰：「舍車而徒」，義弗乘也。 《象》曰：「賁其須」，與上興也。 《象》曰：永貞之吉，終莫之陵也。 《象》曰：六四當位，疑也。「匪"
+        }
+      ]
+    },
+    "23": {
+      "name": "剥",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 22,
+          "sectionNumber": 23,
+          "kind": "direct",
+          "excerpt": "《彖》曰：剝，剝也，柔變剛也。「不利有攸往」，小人長也。順而止之，觀象也。君子尚消息盈虛，天行也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 22,
+          "sectionNumber": 23,
+          "kind": "direct",
+          "excerpt": "《象》曰：山附地上，剝。上以厚下安宅。 《象》曰：「剝床以足」，以滅下也。 《象》曰：「剝床以辨」，未有與也。 《象》曰：「剝之，無咎」，失上下也。 《象》曰：「剝床以膚」，切近災也。"
+        }
+      ]
+    },
+    "24": {
+      "name": "复",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 23,
+          "sectionNumber": 24,
+          "kind": "direct",
+          "excerpt": "《彖》曰：復，亨。剛反動而以順行，是以「出入無疾，朋來無咎」。「反復其道，七日來復」，天行也。「利有攸往」，剛長也。復其見天地之心乎？"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 23,
+          "sectionNumber": 24,
+          "kind": "direct",
+          "excerpt": "《象》曰：雷在地中，復。先王以至日閉關，商旅不行，后不省方。 《象》曰：不遠之復，以修身也。 《象》曰：休復之吉，以下仁也。 《象》曰：頻復之厲，義無咎也。 《象》曰：「中行獨復」，以"
+        }
+      ]
+    },
+    "25": {
+      "name": "无妄",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 24,
+          "sectionNumber": 25,
+          "kind": "direct",
+          "excerpt": "《彖》曰：無妄，剛自外來而為主於內。動而健，剛中而應，大亨以正，天之命也。「其匪正有眚，不利有攸往」，無妄之往，何之矣？天命不佑行矣哉？"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 24,
+          "sectionNumber": 25,
+          "kind": "direct",
+          "excerpt": "《象》曰：天下雷行，物與無妄。先王以茂對時，育萬物。 《象》曰：無妄之往，得志也。 《象》曰：「不耕獲」，未富也。 《象》曰：行人得牛，邑人災也。 《象》曰：「可貞，無咎」，固有之也。"
+        }
+      ]
+    },
+    "26": {
+      "name": "大畜",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 25,
+          "sectionNumber": 26,
+          "kind": "direct",
+          "excerpt": "《彖》曰：大畜，剛健篤實輝光，日新其德。剛上而尚賢，能止健，大正也。「不家食吉」，養賢也。「利涉大川」，應乎天也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 25,
+          "sectionNumber": 26,
+          "kind": "direct",
+          "excerpt": "《象》曰：天在山中，大畜。君子以多識前言往行，以畜其德。 《象》曰：「有厲，利已」，不犯災也。 《象》曰：「輿說輻」，中無尤也。 《象》曰：「利有攸往」，上合志也。 《象》曰：六四「元"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "27": {
+      "name": "颐",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 26,
+          "sectionNumber": 27,
+          "kind": "direct",
+          "excerpt": "《彖》曰：「頤，貞吉」，養正則吉也。「觀頤」，觀其所養也。「自求口實」，觀其自養也。天地養萬物，聖人養賢以及萬民。頤之時義大矣哉！"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 26,
+          "sectionNumber": 27,
+          "kind": "direct",
+          "excerpt": "《象》曰：山下有雷，頤。君子以慎言語，節飲食。 《象》曰：「觀我朵頤」，亦不足貴也。 《象》曰：六二「征凶」，行失類也。 《象》曰：「十年勿用」，道大悖也。 《象》曰：顛頤之吉，上施光"
+        }
+      ]
+    },
+    "28": {
+      "name": "大过",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 27,
+          "sectionNumber": 28,
+          "kind": "direct",
+          "excerpt": "《彖》曰：大過，大者過也。「棟橈」，本末弱也。剛過而中，巽而說行，「利有攸往」，乃亨。大過之時義大矣哉！"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 27,
+          "sectionNumber": 28,
+          "kind": "direct",
+          "excerpt": "《象》曰：澤滅木，大過。君子以獨立不懼，遯世無悶。 《象》曰：「藉用白茅」，柔在下也。 《象》曰：老夫女妻，過以相與也。 《象》曰：棟橈之凶，不可以有輔也。 《象》曰：棟隆之吉，不橈乎"
+        }
+      ]
+    },
+    "29": {
+      "name": "坎",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 28,
+          "sectionNumber": 29,
+          "kind": "direct",
+          "excerpt": "《彖》曰：「習坎」，重險也。水流而不盈，行險而不失其信。「維心亨」，乃以剛中也。「行有尚」，往有功也。天險不可升也，地險山川丘陵也。王公設險以守其國。坎之時用大矣哉！"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 28,
+          "sectionNumber": 29,
+          "kind": "direct",
+          "excerpt": "《象》曰：水洊至，習坎。君子以常德行，習教事。 《象》曰：習坎入坎，失道凶也。 《象》曰：「求小得」，未出中也。 《象》曰：「來之坎坎」，終無功也。 《象》曰：「樽酒簋貳」，剛柔際也。"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "有天地，然後萬物生焉。盈天地之間者唯萬物，故受之以《屯》。屯者，盈也。屯者，物之始生也。物生必蒙，故受之以《蒙》。蒙者，蒙也，物之稚也。物稚不可不養也，故受之以《需》。需者，飲食之道也"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "30": {
+      "name": "离",
+      "references": [
+        {
+          "wingId": "tuan-shang",
+          "wingTitle": "《彖传上》",
+          "wingIndex": 0,
+          "sectionIndex": 29,
+          "sectionNumber": 30,
+          "kind": "direct",
+          "excerpt": "《彖》曰：離，麗也。日月麗乎天，百谷草木麗乎土，重明以麗乎正，乃化成天下。柔麗乎中正，故亨。是以「畜牝牛吉」也。"
+        },
+        {
+          "wingId": "xiang-shang",
+          "wingTitle": "《象传上》",
+          "wingIndex": 2,
+          "sectionIndex": 29,
+          "sectionNumber": 30,
+          "kind": "direct",
+          "excerpt": "《象》曰：明兩作，離。大人以繼明照于四方。 《象》曰：履錯之敬，以辟咎也。 《象》曰：「黃離，元吉」，得中道也。 《象》曰：「日昃之離」，何可久也。 《象》曰：「突如其來如」，無所容也"
+        }
+      ]
+    },
+    "31": {
+      "name": "咸",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 0,
+          "sectionNumber": 31,
+          "kind": "direct",
+          "excerpt": "《彖》曰：咸，感也。柔上而剛下，二氣感應以相與，止而說，男下女，是以「亨，利貞，取女吉」也。天地感而萬物化生，聖人感人心而天下和平。觀其所感，而天地萬物之情可見矣！"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 0,
+          "sectionNumber": 31,
+          "kind": "direct",
+          "excerpt": "《象》曰：山上有澤，咸。君子以虛受人。 《象》曰：「咸其拇」，志在外也。 《象》曰：雖凶，居吉，順不害也。 《象》曰：「咸其股」，亦不處也。志在隨人，所執下也。 《象》曰：「貞吉悔亡」"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "32": {
+      "name": "恒",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 1,
+          "sectionNumber": 32,
+          "kind": "direct",
+          "excerpt": "《彖》曰：恆，久也。剛上而柔下，雷風相與，巽而動，剛柔皆應，恆。「恆，亨，無咎，利貞」，久於其道也，天地之道，恆久而不已也。「利有攸往」，終則有始也。日月得天而能久照，四時變化而能久成"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 1,
+          "sectionNumber": 32,
+          "kind": "direct",
+          "excerpt": "《象》曰：雷風，恆。君子以立不易方。 《象》曰：浚恆之凶，始求深也。 《象》曰：九二「悔亡」，能久中也。 《象》曰：「不恆其德」，無所容也。 《象》曰：久非其位，安得禽也？ 《象》曰："
+        },
+        {
+          "wingId": "xi-ci-xia",
+          "wingTitle": "《系辞传下》",
+          "wingIndex": 5,
+          "sectionIndex": 30,
+          "sectionNumber": 31,
+          "kind": "mention",
+          "excerpt": "《易》之興也，其於中古乎？作《易》者，其有憂患乎？是故，《履》，德之基也；《謙》，德之柄也；《復》，德之本也；《恒》，德之固也；《損》，德之修也；《益》，德之裕也；《困》，德之辨也；《"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "33": {
+      "name": "遯",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 2,
+          "sectionNumber": 33,
+          "kind": "direct",
+          "excerpt": "《彖》曰：「遯，亨」，遯而亨也。剛當位而應，與時行也。「小利貞」，浸而長也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 2,
+          "sectionNumber": 33,
+          "kind": "direct",
+          "excerpt": "《象》曰：天下有山，遯。君子以遠小人，不惡而嚴。 《象》曰：遯尾之厲，不往何災也？ 《象》曰：執用黃牛，固志也。 《象》曰：系遯之厲，有疾憊也。「畜臣妾吉」，不可大事也。 《象》曰：君"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "34": {
+      "name": "大壮",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 3,
+          "sectionNumber": 34,
+          "kind": "direct",
+          "excerpt": "《彖》曰：大壯，大者壯也。剛以動，故壯。「大壯，利貞」，大者正也。正大而天地之情可見矣！"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 3,
+          "sectionNumber": 34,
+          "kind": "direct",
+          "excerpt": "《象》曰：雷在天上，大壯。君子以非禮勿履。 《象》曰：「壯于趾」，其孚窮也。 《象》曰：九二「貞吉」，以中也。 《象》曰：「小人用壯」，君子罔也。 《象》曰：「藩決不羸」，尚往也。 《"
+        }
+      ]
+    },
+    "35": {
+      "name": "晋",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 4,
+          "sectionNumber": 35,
+          "kind": "direct",
+          "excerpt": "《彖》曰：晉，進也。明出地上，順而麗乎大明，柔進而上行，是以「康侯用錫馬蕃庶，晝日三接」也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 4,
+          "sectionNumber": 35,
+          "kind": "direct",
+          "excerpt": "《象》曰：明出地上，晉。君子以自昭明德。 《象》曰：「晉如，摧如」，獨行正也。「裕，無咎」，未受命也。 《象》曰：「受茲介福」，以中正也。 《象》曰：眾允之，志上行也。 《象》曰：「碩"
+        }
+      ]
+    },
+    "36": {
+      "name": "明夷",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 5,
+          "sectionNumber": 36,
+          "kind": "direct",
+          "excerpt": "《彖》曰：明入地中，明夷。內文明而外柔順，以蒙大難，文王以之。「利艱貞」，晦其明也。內難而能正其志，箕子以之。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 5,
+          "sectionNumber": 36,
+          "kind": "direct",
+          "excerpt": "《象》曰：明入地中，明夷。君子以蒞眾，用晦而明。 《象》曰：「君子于行」，義不食也。 《象》曰：六二之吉，順以則也。 《象》曰：南狩之，志乃大得也。 《象》曰：「入于左腹」，獲心意也。"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "37": {
+      "name": "家人",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 6,
+          "sectionNumber": 37,
+          "kind": "direct",
+          "excerpt": "《彖》曰：家人，女正位乎內，男正位乎外，男女正，天地之大義也。家人有嚴君焉，父母之謂也。父父，子子，兄兄，弟弟，夫夫，婦婦，而家道正。正家而天下定矣。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 6,
+          "sectionNumber": 37,
+          "kind": "direct",
+          "excerpt": "《象》曰：風自火出，家人。君子以言有物，而行有恆。 《象》曰：「閑有家」，志未變也。 《象》曰：六二之吉，順以巽也。 《象》曰：「家人嗃嗃」，未失也。「婦子嘻嘻」，失家節也。 《象》曰"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "38": {
+      "name": "睽",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 7,
+          "sectionNumber": 38,
+          "kind": "direct",
+          "excerpt": "《彖》曰：睽，火動而上，澤動而下。二女同居，其志不同行。說而麗乎明，柔進而上行，得中而應乎剛，是以「小事吉」。天地睽而其事同也，男女睽而其志通也，萬物睽而其事類也。睽之時用大矣哉！"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 7,
+          "sectionNumber": 38,
+          "kind": "direct",
+          "excerpt": "《象》曰：上火下澤，睽。君子以同而異。 《象》曰：「見惡人」，以辟咎也。 《象》曰：「遇主于巷」，未失道也。 《象》曰：「見輿曳」，位不當也。「無初有終」，遇剛也。 《象》曰：「交孚」"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "39": {
+      "name": "蹇",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 8,
+          "sectionNumber": 39,
+          "kind": "direct",
+          "excerpt": "《彖》曰：蹇，難也，險在前也。見險而能止，知矣哉！「蹇，利西南」，往得中也。「不利東北」，其道窮也。「利見大人」，往有功也。當位「貞吉」，以正邦也。蹇之時用大矣哉！"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 8,
+          "sectionNumber": 39,
+          "kind": "direct",
+          "excerpt": "《象》曰：山上有水，蹇。君子以反身修德。 《象》曰：「往蹇，來譽」，宜待也。 《象》曰：「王臣蹇蹇」，終無尤也。 《象》曰：「往蹇來反」，內喜之也。 《象》曰：「往蹇來連」，當位實也。"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "40": {
+      "name": "解",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 9,
+          "sectionNumber": 40,
+          "kind": "direct",
+          "excerpt": "《彖》曰：解，險以動，動而免乎險，解。「解，利西南」，往得眾也。「其來復吉」，乃得中也。「有攸往，夙吉」，往有功也。天地解而雷雨作，雷雨作而百果草木皆甲坼，解之時義大矣哉！"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 9,
+          "sectionNumber": 40,
+          "kind": "direct",
+          "excerpt": "《象》曰：雷雨作，解。君子以赦過宥罪。 《象》曰：剛柔之際，義無咎也。 《象》曰：九二「貞吉」，得中道也。 《象》曰：「負且乘」，亦可丑也。自我致戎，又誰咎也。 《象》曰：「解而拇」，"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "41": {
+      "name": "损",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 10,
+          "sectionNumber": 41,
+          "kind": "direct",
+          "excerpt": "《彖》曰：損，損下益上，其道上行。損而「有孚，元吉，無咎，可貞，利有攸往。曷之用？二簋，可用享」。二簋應有時。損剛益柔有時，損益盈虛，與時偕行。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 10,
+          "sectionNumber": 41,
+          "kind": "direct",
+          "excerpt": "《象》曰：山下有澤，損。君子以懲忿窒欲。 《象》曰：「已事遄往」，尚合志也。 《象》曰：九二「利貞」，中以為志也。 《象》曰：「一人行」，三則疑也。 《象》曰：「損其疾」，亦可喜也。 "
+        }
+      ]
+    },
+    "42": {
+      "name": "益",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 11,
+          "sectionNumber": 42,
+          "kind": "direct",
+          "excerpt": "《彖》曰：益，損上益下，民說無疆，自上下下，其道大光。「利有攸往」，中正有慶。「利涉大川」，木道乃行。益動而巽，日進無疆。天施地生，其益無方。凡益之道，與時偕行。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 11,
+          "sectionNumber": 42,
+          "kind": "direct",
+          "excerpt": "《象》曰：風雷，益。君子以見善則遷，有過則改。 《象》曰：「元吉，無咎」，下不厚事也。 《象》曰：「或益之」，自外來也。 《象》曰：益用凶事，固有之也。 《象》曰：「告公從」，以益志也"
+        },
+        {
+          "wingId": "xi-ci-xia",
+          "wingTitle": "《系辞传下》",
+          "wingIndex": 5,
+          "sectionIndex": 30,
+          "sectionNumber": 31,
+          "kind": "mention",
+          "excerpt": "《易》之興也，其於中古乎？作《易》者，其有憂患乎？是故，《履》，德之基也；《謙》，德之柄也；《復》，德之本也；《恒》，德之固也；《損》，德之修也；《益》，德之裕也；《困》，德之辨也；《"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "43": {
+      "name": "夬",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 12,
+          "sectionNumber": 43,
+          "kind": "direct",
+          "excerpt": "《彖》曰：夬，決也，剛決柔也。健而說，決而和，揚于王庭，柔乘五剛也。「孚號有厲」，其危乃光也。「告自邑，不利即戎」，所尚乃窮也。「利有攸往」，剛長乃終也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 12,
+          "sectionNumber": 43,
+          "kind": "direct",
+          "excerpt": "《象》曰：澤上于天，夬。君子以施祿及下，居德則忌。 《象》曰：不勝而往，咎也。 《象》曰：「莫夜有戎」，得中道也。 《象》曰：「君子夬夬」，終無咎也。 《象》曰：「其行次且」，位不當也"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "44": {
+      "name": "姤",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 13,
+          "sectionNumber": 44,
+          "kind": "direct",
+          "excerpt": "《彖》曰：姤，遇也，柔遇剛也。「勿用取女」，不可與長也。天地相遇，品物咸章也。剛遇中正，天下大行也。姤之時義大矣哉！"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 13,
+          "sectionNumber": 44,
+          "kind": "direct",
+          "excerpt": "《象》曰：天下有風，姤。后以施命誥四方。 《象》曰：「系于金柅」，柔道牽也。 《象》曰：「包有魚」，義不及賓也。 《象》曰：「其行次且」，行未牽也。 《象》曰：無魚之凶，遠民也。 《象"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "45": {
+      "name": "萃",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 14,
+          "sectionNumber": 45,
+          "kind": "direct",
+          "excerpt": "《彖》曰：萃，聚也。順以說，剛中而應，故聚也。「王假有廟」，致孝享也。「利見大人，亨」，聚以正也。「用大牲吉，利有攸往」，順天命也。觀其所聚，而天地萬物之情可見矣。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 14,
+          "sectionNumber": 45,
+          "kind": "direct",
+          "excerpt": "《象》曰：澤上於地，萃。君子以除戎器，戒不虞。 《象》曰：「乃亂乃萃」，其志亂也。 《象》曰：「引吉，無咎」，中未變也。 《象》曰：「往無咎」，上巽也。 《象》曰：「大吉，無咎」，位不"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "46": {
+      "name": "升",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 15,
+          "sectionNumber": 46,
+          "kind": "direct",
+          "excerpt": "《彖》曰：柔以時升，巽而順，剛中而應，是以大亨。「用見大人，勿恤」，有慶也。「南征吉」，志行也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 15,
+          "sectionNumber": 46,
+          "kind": "direct",
+          "excerpt": "《象》曰：地中生木，升。君子以順德，積小以高大。 《象》曰：「允升，大吉」，上合志也。 《象》曰：九二之孚，有喜也。 《象》曰：「升虛邑」，無所疑也。 《象》曰：「王用亨于岐山」，順事"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "47": {
+      "name": "困",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 16,
+          "sectionNumber": 47,
+          "kind": "direct",
+          "excerpt": "《彖》曰：困，剛掩也。險以說，困而不失其所，亨，其唯君子乎？「貞大人吉」，以剛中也。「有言不信」，尚口乃窮也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 16,
+          "sectionNumber": 47,
+          "kind": "direct",
+          "excerpt": "《象》曰：澤無水，困。君子以致命遂志。 《象》曰：「入于幽谷」，幽不明也。 《象》曰：「困于酒食」，中有慶也。 《象》曰：「據于蒺藜」，乘剛也。「入于其宮，不見其妻」，不祥也。 《象》"
+        },
+        {
+          "wingId": "xi-ci-xia",
+          "wingTitle": "《系辞传下》",
+          "wingIndex": 5,
+          "sectionIndex": 30,
+          "sectionNumber": 31,
+          "kind": "mention",
+          "excerpt": "《易》之興也，其於中古乎？作《易》者，其有憂患乎？是故，《履》，德之基也；《謙》，德之柄也；《復》，德之本也；《恒》，德之固也；《損》，德之修也；《益》，德之裕也；《困》，德之辨也；《"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "48": {
+      "name": "井",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 17,
+          "sectionNumber": 48,
+          "kind": "direct",
+          "excerpt": "《彖》曰：巽乎水而上水，井。井養而不窮也。「改邑不改井」，乃以剛中也。「汔至亦未繘井」，未有功也。「羸其瓶」，是以凶也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 17,
+          "sectionNumber": 48,
+          "kind": "direct",
+          "excerpt": "《象》曰：木上有水，井。君子以勞民勸相。 《象》曰：「井泥不食」，下也。「舊井無禽」，時舍也。 《象》曰：「井谷射鮒」，無與也。 《象》曰：「井渫不食」，行惻也。求王明，受福也。 《象"
+        },
+        {
+          "wingId": "xi-ci-xia",
+          "wingTitle": "《系辞传下》",
+          "wingIndex": 5,
+          "sectionIndex": 30,
+          "sectionNumber": 31,
+          "kind": "mention",
+          "excerpt": "《易》之興也，其於中古乎？作《易》者，其有憂患乎？是故，《履》，德之基也；《謙》，德之柄也；《復》，德之本也；《恒》，德之固也；《損》，德之修也；《益》，德之裕也；《困》，德之辨也；《"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "49": {
+      "name": "革",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 18,
+          "sectionNumber": 49,
+          "kind": "direct",
+          "excerpt": "《彖》曰：革，水火相息，二女同居，其志不相得，曰革。「己日乃孚」，革而信也。文明以說，大亨以正，革而當，其悔乃亡。天地革而四時成，湯武革命，順乎天而應乎人，革之時義大矣哉！"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 18,
+          "sectionNumber": 49,
+          "kind": "direct",
+          "excerpt": "《象》曰：澤中有火，革。君子以治歷明時。 《象》曰：「鞏用黃牛」，不可以有為也。 《象》曰：「己日革之」，行有嘉也。 《象》曰：「革言三就」，又何之矣。 《象》曰：改命之吉，信志也。 "
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "50": {
+      "name": "鼎",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 19,
+          "sectionNumber": 50,
+          "kind": "direct",
+          "excerpt": "《彖》曰：鼎，象也。以木巽火，亨飪也。聖人亨以享上帝，而大亨以養聖賢。巽而耳目聰明，柔進而上行，得中而應乎剛，是以元亨。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 19,
+          "sectionNumber": 50,
+          "kind": "direct",
+          "excerpt": "《象》曰：木上有火，鼎。君子以正位凝命。 《象》曰：「鼎顛趾」，未悖也。「利出否」，以從貴也。 《象》曰：「鼎有實」，慎所之也。「我仇有疾」，終無尤也。 《象》曰：「鼎耳革」，失其義也"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "51": {
+      "name": "震",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 20,
+          "sectionNumber": 51,
+          "kind": "direct",
+          "excerpt": "《彖》曰：「震，亨。震來虩虩」，恐致福也。「笑言啞啞」，后有則也。「震驚百里」，驚遠而懼邇也，出可以守宗廟社稷，以為祭主也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 20,
+          "sectionNumber": 51,
+          "kind": "direct",
+          "excerpt": "《象》曰：洊雷，震。君子以恐懼修省。 《象》曰：「震來虩虩」，恐致福也。笑言啞啞，后有則也。 《象》曰：「震來厲」，乘剛也。 《象》曰：「震蘇蘇」，位不當也。 《象》曰：「震遂泥」，未"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "52": {
+      "name": "艮",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 21,
+          "sectionNumber": 52,
+          "kind": "direct",
+          "excerpt": "《彖》曰：艮，止也。時止則止，時行則行，動靜不失其時，其道光明。艮其止，止其所也。上下敵應，不相與也。是以「不獲其身，行其庭不見其人，無咎」也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 21,
+          "sectionNumber": 52,
+          "kind": "direct",
+          "excerpt": "《象》曰：兼山，艮。君子以思不出其位。 《象》曰：艮其趾，未失正也。 《象》曰：「不拯其隨」，未退聽也。 《象》曰：「艮其限」，危薰心也。 《象》曰：「艮其身」，止諸躬也。 《象》曰："
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "53": {
+      "name": "渐",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 22,
+          "sectionNumber": 53,
+          "kind": "direct",
+          "excerpt": "《彖》曰：漸之進也，女歸吉也。進得位，往有功也。進以正，可以正邦也。其位剛，得中也。止而巽，動不窮也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 22,
+          "sectionNumber": 53,
+          "kind": "direct",
+          "excerpt": "《象》曰：山上有木，漸。君子以居賢德善俗。 《象》曰：小子之厲，義無咎也。 《象》曰：「飲食衎衎」，不素飽也。 《象》曰：「夫征不復」，離群丑也。「婦孕不育」，失其道也。「利用御寇」，"
+        }
+      ]
+    },
+    "54": {
+      "name": "归妹",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 23,
+          "sectionNumber": 54,
+          "kind": "direct",
+          "excerpt": "《彖》曰：歸妹，天地之大義也。天地不交而萬物不興。歸妹，人之終始也。說以動，所歸妹也。「征凶」，位不當也。「無攸利」，柔乘剛也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 23,
+          "sectionNumber": 54,
+          "kind": "direct",
+          "excerpt": "《象》曰：澤上有雷，歸妹。君子以永終知敝。 《象》曰：「歸妹以娣」，以恆也。「跛能履」，吉相承也。 《象》曰：「利幽人之貞」，未變常也。 《象》曰：「歸妹以須」，未當也。 《象》曰：愆"
+        }
+      ]
+    },
+    "55": {
+      "name": "丰",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 24,
+          "sectionNumber": 55,
+          "kind": "direct",
+          "excerpt": "《彖》曰：丰，大也。明以動，故丰。「王假之」，尚大也。「勿憂，宜日中」，宜照天下也。日中則昃，月盈則食，天地盈虛，與時消息，而況人於人乎？況於鬼神乎？"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 24,
+          "sectionNumber": 55,
+          "kind": "direct",
+          "excerpt": "《象》曰：雷電皆至，丰。君子以折獄致刑。 《象》曰：「雖旬無咎」，過旬災也。 《象》曰：「有孚發若」，信以發志也。 《象》曰：「丰其沛」，不可大事也。「折其右肱」，終不可用也。 《象》"
+        }
+      ]
+    },
+    "56": {
+      "name": "旅",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 25,
+          "sectionNumber": 56,
+          "kind": "direct",
+          "excerpt": "《彖》曰：「旅，小亨」，柔得中乎外，而順乎剛，止而麗乎明，是以「小亨，旅貞吉」也。旅之時義大矣哉！"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 25,
+          "sectionNumber": 56,
+          "kind": "direct",
+          "excerpt": "《象》曰：山上有火，旅。君子以明慎用刑而不留獄。 《象》曰：「旅瑣瑣」，志窮災也。 《象》曰：「得童仆貞」，終無尤也。 《象》曰：「旅焚其次」，亦以傷矣。以旅與下，其義喪也。 《象》曰"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "57": {
+      "name": "巽",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 26,
+          "sectionNumber": 57,
+          "kind": "direct",
+          "excerpt": "《彖》曰：重巽以申命，剛巽乎中正而志行，柔皆順乎剛，是以「小亨，利有攸往，利見大人」。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 26,
+          "sectionNumber": 57,
+          "kind": "direct",
+          "excerpt": "《象》曰：隨風，巽。君子以申命行事。 《象》曰：「進退」，志疑也。「利武人之貞」，志治也。 《象》曰：紛若之吉，得中也。 《象》曰：頻巽之吝，志窮也。 《象》曰：「田獲三品」，有功也。"
+        },
+        {
+          "wingId": "xi-ci-xia",
+          "wingTitle": "《系辞传下》",
+          "wingIndex": 5,
+          "sectionIndex": 30,
+          "sectionNumber": 31,
+          "kind": "mention",
+          "excerpt": "《易》之興也，其於中古乎？作《易》者，其有憂患乎？是故，《履》，德之基也；《謙》，德之柄也；《復》，德之本也；《恒》，德之固也；《損》，德之修也；《益》，德之裕也；《困》，德之辨也；《"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "58": {
+      "name": "兑",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 27,
+          "sectionNumber": 58,
+          "kind": "direct",
+          "excerpt": "《彖》曰：兌，說也。剛中而柔外，說以利貞，是以順乎天而應乎人。說以先民，民忘其勞。說以犯難，民忘其死。說之大，民勸矣哉！"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 27,
+          "sectionNumber": 58,
+          "kind": "direct",
+          "excerpt": "《象》曰：麗澤，兌。君子以朋友講習。 《象》曰：和兌之吉，行未疑也。 《象》曰：孚兌之吉，信志也。 《象》曰：來兌之凶，位不當也。 《象》曰：九四之喜，有慶也。 《象》曰：「孚于剝」，"
+        }
+      ]
+    },
+    "59": {
+      "name": "涣",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 28,
+          "sectionNumber": 59,
+          "kind": "direct",
+          "excerpt": "《彖》曰：「渙，亨」，剛來而不窮，柔得位乎外而上同。「王假有廟」，王乃在中也。「利涉大川」，乘木有功也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 28,
+          "sectionNumber": 59,
+          "kind": "direct",
+          "excerpt": "《象》曰：風行水上，渙。先王以享于帝立廟。 《象》曰：初六之吉，順也。 《象》曰：「渙奔其機」，得愿也。 《象》曰：「渙其躬」，志在外也。 《象》曰：「渙其群，元吉」，光大也。 《象》"
+        }
+      ]
+    },
+    "60": {
+      "name": "节",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 29,
+          "sectionNumber": 60,
+          "kind": "direct",
+          "excerpt": "《彖》曰：「節，亨」，剛柔分而剛得中。「苦節，不可貞」，其道窮也。說以行險，當位以節，中正以通。天地節而四時成，節以制度，不傷財，不害民。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 29,
+          "sectionNumber": 60,
+          "kind": "direct",
+          "excerpt": "《象》曰：澤上有水，節。君子以制數度、議德行。 《象》曰：「不出戶庭」，知通塞也。 《象》曰：「不出門庭」，失時極也。 《象》曰：不節之嗟，又誰咎也？ 《象》曰：安節之亨，承上道也。 "
+        }
+      ]
+    },
+    "61": {
+      "name": "中孚",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 30,
+          "sectionNumber": 61,
+          "kind": "direct",
+          "excerpt": "《彖》曰：中孚，柔在內而剛得中。說而巽，孚乃化邦也。「豚魚吉」，信及豚魚也。「利涉大川」，乘木舟虛也。中孚以利貞，乃應乎天也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 30,
+          "sectionNumber": 61,
+          "kind": "direct",
+          "excerpt": "《象》曰：澤上有風，中孚。君子以議獄緩死。 《象》曰：初九「虞吉」，志未變也。 《象》曰：「其子和之」，中心愿也。 《象》曰：「或鼓或罷」，位不當也。 《象》曰：馬匹亡，絕類上也。 《"
+        },
+        {
+          "wingId": "xu-gua",
+          "wingTitle": "《序卦传》",
+          "wingIndex": 8,
+          "sectionIndex": 1,
+          "sectionNumber": 2,
+          "kind": "mention",
+          "excerpt": "有天地然後有萬物，有萬物然後有男女，有男女然後有夫婦，有夫婦然後有父子，有父子然後有君臣，有君臣然後有上下，有上下然後禮義有所錯。夫婦之道不可以不久也，故受之以《恒》。恒者，久也。物不"
+        },
+        {
+          "wingId": "za-gua",
+          "wingTitle": "《杂卦传》",
+          "wingIndex": 9,
+          "sectionIndex": 0,
+          "sectionNumber": 1,
+          "kind": "mention",
+          "excerpt": "《乾》剛《坤》柔，《比》樂《師》憂；《臨》《觀》之義，或與或求。《屯》見而不失其居。《蒙》雜而著。《震》，起也。《艮》，止也。《損》、《益》，盛衰之始也。《大畜》，時也。《無妄》，災也"
+        }
+      ]
+    },
+    "62": {
+      "name": "小过",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 31,
+          "sectionNumber": 62,
+          "kind": "direct",
+          "excerpt": "《彖》曰：小過，小者過而亨也。過以利貞，與時行也。柔得中，是以小事吉也。剛失位而不中，是以不可大事也。有飛鳥之象焉。「飛鳥遺之音，不宜上宜下，大吉」，上逆而下順也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 31,
+          "sectionNumber": 62,
+          "kind": "direct",
+          "excerpt": "《象》曰：山上有雷，小過。君子以行過乎恭，喪過乎哀，用過乎儉。 《象》曰：「飛鳥以凶」，不可如何也。 《象》曰：「不及其君」，臣不可過也。 《象》曰：「從或戕之」，凶如何也。 《象》曰"
+        }
+      ]
+    },
+    "63": {
+      "name": "既济",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 32,
+          "sectionNumber": 63,
+          "kind": "direct",
+          "excerpt": "《彖》曰：「既濟，亨」，小者亨也。「利貞」，剛柔正而位當也。「初吉」，柔得中也。終止則亂，其道窮也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 32,
+          "sectionNumber": 63,
+          "kind": "direct",
+          "excerpt": "《象》曰：水在火上，既濟。君子以思患而預防之。 《象》曰：「曳其輪」，義無咎也。 《象》曰：「七日得」，以中道也。 《象》曰：「三年克之」，憊也。 《象》曰：「終日戒」，有所疑也。 《"
+        }
+      ]
+    },
+    "64": {
+      "name": "未济",
+      "references": [
+        {
+          "wingId": "tuan-xia",
+          "wingTitle": "《彖传下》",
+          "wingIndex": 1,
+          "sectionIndex": 33,
+          "sectionNumber": 64,
+          "kind": "direct",
+          "excerpt": "《彖》曰：「未濟，亨」，柔得中也。「小狐汔濟」，未出中也。「濡其尾，無攸利」，不續終也。雖不當位，剛柔應也。"
+        },
+        {
+          "wingId": "xiang-xia",
+          "wingTitle": "《象传下》",
+          "wingIndex": 3,
+          "sectionIndex": 33,
+          "sectionNumber": 64,
+          "kind": "direct",
+          "excerpt": "《象》曰：火在水上，未濟。君子以慎辨物居方。 《象》曰：「濡其尾」，亦不知極也。 《象》曰：九二「貞吉」，中以行正也。 《象》曰：「未濟，征凶」，位不當也。 《象》曰：「貞吉，悔亡」，"
+        }
+      ]
+    }
+  }
+}
