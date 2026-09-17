@@ -68,5 +68,17 @@ assert.match(script, /function renderHistoryDetail\(record\)/);
 assert.match(styles, /prefers-reduced-motion:\s*reduce/);
 assert.doesNotMatch(styles, /gradient\(/);
 assert.match(worker, /['"]\.\/landing-v2\.css['"]/);
+assert.match(worker, /CACHE_NAME='guanxiang-shell-v37'/);
+
+const endpointScript=html.match(/<script>window\.GUANXIANG_AI_ENDPOINT=.*?<\/script>/s)?.[0].replace(/^<script>|<\/script>$/g,'');
+assert.ok(endpointScript);
+const endpointFor=hostname=>{
+  const window={GUANXIANG_AI_ENDPOINT:''};
+  Function('window','location',endpointScript)(window,{hostname});
+  return window.GUANXIANG_AI_ENDPOINT;
+};
+assert.equal(endpointFor('guanxiang-zhouyi-evf.pages.dev'),'/api/reading');
+assert.equal(endpointFor('guanxiang-zhouyi-global.netlify.app'),'/api/reading');
+assert.equal(endpointFor('127.0.0.1'),'');
 
 console.log('首页封面结构校验通过。');
