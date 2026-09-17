@@ -30,11 +30,16 @@ function plainTextStream(body){
   });
 }
 
+export function trustedProxySecret(value,env){
+  if(!value)return false;
+  return [env.PROXY_SECRET,env.NETLIFY_PROXY_SECRET].some(secret=>secret&&value===secret);
+}
+
 export function clientIpForRequest(request,env){
   const direct=request.headers.get('cf-connecting-ip')||'unknown';
   const proxySecret=request.headers.get('x-guanxiang-proxy-secret')||'';
   const forwarded=request.headers.get('x-guanxiang-client-ip')||'';
-  return env.PROXY_SECRET&&proxySecret===env.PROXY_SECRET&&forwarded?forwarded:direct;
+  return trustedProxySecret(proxySecret,env)&&forwarded?forwarded:direct;
 }
 
 async function handle(request,env,origin){

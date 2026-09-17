@@ -21,6 +21,7 @@ Copy-Item wrangler.jsonc.example wrangler.jsonc
 
 ```text
 https://guanxiang-zhouyi-evf.pages.dev
+https://guanxiang-zhouyi-global.netlify.app
 ```
 
 多个 Origin 用英文逗号分隔。本地开发默认允许 `http://127.0.0.1:4175` 和 `http://localhost:4175`。
@@ -53,9 +54,9 @@ npx wrangler@latest dev
 npx wrangler@latest deploy
 ```
 
-部署完成后 Wrangler 会输出 `workers.dev` 地址。生产浏览器不直接调用该地址，而由 Pages 的同源 `/api/reading` 代理转发。
+部署完成后 Wrangler 会输出 `workers.dev` 地址。生产浏览器不直接调用该地址，而由 Pages 或 Netlify 的同源 `/api/reading` 代理转发。
 
-Pages Function 和 Worker 必须配置相同的 `PROXY_SECRET`。Worker 只有在该 secret 匹配时才信任代理传来的访客 IP；值必须通过 Wrangler secret 写入，不得放入 `wrangler.jsonc` 或前端代码。具体命令见根目录的 `DEPLOYMENT.md`。
+Pages Function 和 Worker 必须配置相同的 `PROXY_SECRET`。Netlify Function 使用另一随机值：在 Netlify 中命名为 `PROXY_SECRET`，在 Worker 中命名为 `NETLIFY_PROXY_SECRET`。Worker 只有在对应 secret 匹配时才信任代理传来的访客 IP；值必须通过服务商的 secret 配置写入，不得放入 `wrangler.jsonc` 或前端代码。具体命令见根目录的 `DEPLOYMENT.md`。
 
 ## 限额
 
