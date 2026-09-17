@@ -146,7 +146,7 @@ body.cover-active { overflow: hidden; }
 }
 
 .cover-hexagram::before {
-  content: "既济";
+  content: attr(data-name);
   position: absolute;
   top: 50%;
   left: -62px;
@@ -157,7 +157,7 @@ body.cover-active { overflow: hidden; }
 }
 
 .cover-hexagram::after {
-  content: "水火相济";
+  content: attr(data-summary);
   position: absolute;
   right: -47px;
   bottom: 35px;

@@ -185,11 +185,11 @@
     transform: translateX(-50%);
   }
   .cover-disc::before {
-    content: "坎  ☵";
+    content: attr(data-upper);
     top: -74px;
   }
   .cover-disc::after {
-    content: "离  ☲";
+    content: attr(data-lower);
     bottom: -74px;
     color: var(--cover-accent);
   }

@@ -12,6 +12,7 @@ const [html, script, styles, richStyles, detailsStyles, worker, appStyles] = awa
 ]);
 
 assert.match(html, /id="siteCover"/);
+assert.match(html, /id="dailyCoverHexagram"/);
 assert.match(html, /id="coverLanguageToggle"/);
 assert.match(html, /id="languageToggle"/);
 assert.match(html, /id="mobileMoreToggle"/);
@@ -25,6 +26,8 @@ assert.match(html, /id="enterSite"[^>]*>\s*进入观象\s*<\/button>/);
 assert.equal((html.match(/进入观象/g) || []).length, 1);
 assert.match(html, /landing-v2\.css/);
 assert.match(script, /function initLandingCover\(\)/);
+assert.match(script, /function updateDailyCoverHexagram\(/);
+assert.match(script, /function initDailyCoverHexagram\(/);
 assert.match(script, /removeAttribute\(['"]inert['"]\)/);
 assert.match(script, /setAttribute\(['"]aria-hidden['"],\s*['"]true['"]\)/);
 assert.match(styles, /\.site-cover\s*\{/);
@@ -46,6 +49,8 @@ assert.ok(script.indexOf("$('.main-content')?.focus") < script.indexOf("requestA
 assert.match(styles, /@media\s*\(max-width:\s*680px\)/);
 assert.match(appStyles, /\.sidebar>\.primary-nav\{position:fixed/);
 assert.match(appStyles, /#view-hexagrams\.mobile-detail-open/);
+assert.match(appStyles, /#view-home \.home-symbol-quote\{display:grid/);
+assert.doesNotMatch(appStyles, /#view-home \.home-symbol-quote\{display:none\}/);
 assert.match(html, /id="historyIndexPage"/);
 assert.match(html, /id="historyRecordPage"[^>]*hidden/);
 assert.match(html, /id="divinationConfirmDialog"/);

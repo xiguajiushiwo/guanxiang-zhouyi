@@ -2,6 +2,7 @@ import hexagrams from './hexagram-catalog.mjs';
 import { drawYarrowChange, randomSplitCount } from './yarrow-core.mjs';
 import { readingRule } from './reading-rules.mjs';
 import { catalogLines, hexagramRelations } from './derived-hexagrams.mjs';
+import { dailyHexagramIndex, millisecondsUntilNextLocalDay } from './daily-hexagram.mjs';
 import { loadAnnotations, loadStudyState, saveAnnotation, saveStudyState, deleteAnnotation } from './study-storage.mjs';
 import { backupStatus, mergeJournalRecords, migrateJournalPayload, normalizeHistoryRecords, readJson, writeJson } from './storage.mjs?v=20260916-history2';
 import { buildLocalInterpretation, buildEnglishInterpretation } from './interpretation.mjs';
@@ -9,7 +10,7 @@ import { AiReadingError, requestAiReading, splitAiReadingSections, splitAiReadin
 import { attributeHtml, textHtml } from './html-safety.mjs';
 import { createServiceWorkerActivator } from './service-worker-update.mjs';
 import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20260917-reviewfix1';
-import { displayHexagramName, TRIGRAM_EN } from './hexagram-i18n.mjs';
+import { displayHexagramName, HEXAGRAM_EN, TRIGRAM_EN } from './hexagram-i18n.mjs';
 import { selectTenWingSources } from './ai-sources.mjs';
 
 const yaoTexts=['初九：潜龙勿用。','九二：见龙在田，利见大人。','九三：君子终日乾乾，夕惕若厉，无咎。','九四：或跃在渊，无咎。','九五：飞龙在天，利见大人。','上九：亢龙有悔。'];
@@ -17,6 +18,36 @@ const canonicalClassicSummaries=['逐卦断义，说明卦名、卦辞与上下�
 const canonicalClassicQuotes=['彖者，言乎象者也；爻者，言乎变者也。','刚柔相推而生变化，吉凶者，失得之象也。','君子见善则迁，有过则改。','君子以思不出其位，居贤德而善俗。','易与天地准，故能弥纶天地之道。','易无思也，无为也，寂然不动，感而遂通天下之故。','夫大人者，与天地合其德，与日月合其明。','天地定位，山泽通气，雷风相薄，水火不相射。','物不可穷也，故受之以未济终焉。','乾刚坤柔，比乐师忧。'];
 let currentView='home', selectedHex=0, selectedWing=0, selectedPrinciple=0, selectedClassicSection=null, historySelectedId='', historyQuery='', filter='all', readingMode='ancient', pendingImport=null, currentReading=null, aiReadingAbort=null, castState={lines:[],working:false,runId:0,ritual:null,confirmed:false,prepared:false,question:'',sessionId:'',mode:'complete'}, tenWings=null, hexagramTexts=null, principleLibrary=null, principleLibraryEn=null, relationsLibrary=null;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const TRIGRAM_GLYPHS={'天':'☰','泽':'☱','火':'☲','雷':'☳','风':'☴','水':'☵','山':'☶','地':'☷'};
+let dailyCoverTimer=0;
+function updateDailyCoverHexagram(date=new Date()){
+  const cover=$('#dailyCoverHexagram');
+  if(!cover)return;
+  const index=dailyHexagramIndex(date),hexagram=hexagrams[index],lines=catalogLines(index);
+  if(!hexagram||!lines)return;
+  cover.dataset.name=hexagram[0];
+  cover.dataset.summary=hexagram[2];
+  const disc=cover.querySelector('.cover-disc');
+  if(disc){disc.dataset.upper=`${hexagram[6]}  ${TRIGRAM_GLYPHS[hexagram[6]]||''}`.trim();disc.dataset.lower=`${hexagram[7]}  ${TRIGRAM_GLYPHS[hexagram[7]]||''}`.trim()}
+  cover.querySelectorAll('.cover-line').forEach((line,lineIndex)=>{
+    const solid=lines[lineIndex]===1;
+    line.classList.toggle('broken',!solid);
+    line.replaceChildren(...Array.from({length:solid?1:2},()=>document.createElement('b')));
+  });
+  const label=getLanguage()==='en'
+    ?`Daily hexagram: ${HEXAGRAM_EN[index]||hexagram[2]}, ${TRIGRAM_EN[hexagram[6]]||hexagram[6]} over ${TRIGRAM_EN[hexagram[7]]||hexagram[7]}`
+    :`今日一卦：第${index+1}卦${hexagram[2]}`;
+  cover.setAttribute('aria-label',label);
+}
+function scheduleDailyCoverHexagram(){
+  clearTimeout(dailyCoverTimer);
+  dailyCoverTimer=setTimeout(()=>{updateDailyCoverHexagram();scheduleDailyCoverHexagram()},Math.max(1000,millisecondsUntilNextLocalDay()+50));
+}
+function initDailyCoverHexagram(){
+  updateDailyCoverHexagram();
+  scheduleDailyCoverHexagram();
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateDailyCoverHexagram()});
+}
 function initLandingCover(){
   const cover=$('#siteCover'),app=$('.app-shell'),enter=$('#enterSite');
   if(!cover||!app||!enter)return;
@@ -445,9 +476,11 @@ function toggleLanguageMenu(menu){
   updateCastButton()
   translateKnownText(document)
   updateLanguageMenus()
+  updateDailyCoverHexagram()
 }
 document.addEventListener('DOMContentLoaded',()=>{
   setLanguage(getLanguage());
+  initDailyCoverHexagram();
   initLandingCover();
   initTheme();
   registerServiceWorker();

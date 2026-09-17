@@ -241,9 +241,13 @@ assert.ok(historyMobile.width <= historyMobile.viewport, 'mobile history detail 
 assert.equal(historyMobile.indexHidden && historyMobile.detailVisible, true);
 await command('Page.navigate', { url: 'http://127.0.0.1:4175/#home' });
 await waitFor(`document.querySelector('#view-home').classList.contains('active')`);
-const homeMobile = await evaluate(`(()=>{const cta=document.querySelector('.home-primary-action').getBoundingClientRect();return {viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,ctaWidth:Math.round(cta.width),ctaVisible:cta.top<innerHeight&&cta.bottom>0}})()`);
+const homeMobile = await evaluate(`(()=>{const cta=document.querySelector('.home-primary-action').getBoundingClientRect(),ring=document.querySelector('#view-home .ring-two').getBoundingClientRect(),quote=document.querySelector('#view-home .home-symbol-quote'),daily=document.querySelector('#dailyCoverHexagram');return {viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,ctaWidth:Math.round(cta.width),ctaVisible:cta.top<innerHeight&&cta.bottom>0,ringWidth:Math.round(ring.width),quoteVisible:getComputedStyle(quote).display!=='none'&&quote.getBoundingClientRect().height>0,dailyLabel:daily.getAttribute('aria-label'),dailyLines:daily.querySelectorAll('.cover-line').length}})()`);
 assert.ok(homeMobile.scrollWidth <= homeMobile.viewport);
 assert.ok(homeMobile.ctaWidth <= homeMobile.viewport && homeMobile.ctaVisible);
+assert.ok(homeMobile.ringWidth >= 260, 'mobile home must retain the complete circular diagram');
+assert.equal(homeMobile.quoteVisible, true, 'mobile home must retain the classic quotation');
+assert.match(homeMobile.dailyLabel, /今日一卦/);
+assert.equal(homeMobile.dailyLines, 6);
 await command('Page.navigate', { url: 'http://127.0.0.1:4175/#classics/1/1' });
 await waitFor(`document.querySelector('#wing-0-section-0 .section-link')`);
 await sleep(500);
