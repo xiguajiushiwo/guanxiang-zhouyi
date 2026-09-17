@@ -1,4 +1,4 @@
-const CACHE_NAME='guanxiang-shell-v34';
+const CACHE_NAME='guanxiang-shell-v35';
 const SHELL=['./','./index.html','./styles.css','./landing-v2.css','./landing-rich.css','./landing-details.css','./app.js','./i18n.mjs','./hexagram-i18n.mjs','./hexagram-catalog.mjs','./daily-hexagram.mjs','./yarrow-core.mjs','./reading-rules.mjs','./interpretation.mjs','./ai-reading.mjs','./ai-sources.mjs','./derived-hexagrams.mjs','./study-storage.mjs','./storage.mjs','./ten-wings.json','./hexagram-texts.json','./principles.json','./principles-en.json','./relations.json','./manifest.webmanifest','./app-icon.svg','./html-safety.mjs','./service-worker-update.mjs'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(SHELL)))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()))});
