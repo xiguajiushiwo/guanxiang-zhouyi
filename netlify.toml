@@ -1,0 +1,19 @@
+[build]
+  command = "npm run build:pages"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/reading"
+  to = "/.netlify/functions/reading"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/api/reading"
+  [headers.values]
+    Cache-Control = "no-store"
+    X-Content-Type-Options = "nosniff"
