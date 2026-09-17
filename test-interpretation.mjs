@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readingRule } from './reading-rules.mjs';
-import { buildLocalInterpretation, classifyQuestion } from './interpretation.mjs';
+import { buildLocalInterpretation, buildEnglishInterpretation, classifyQuestion } from './interpretation.mjs';
 
 const original = ['屯','䷂','水雷屯','云雷屯，君子以经纶','元亨利贞，勿用有攸往','初生艰难，守正待时','水','雷'];
 const changed = ['需','䷄','水天需','云上于天，需；君子以饮食宴乐','有孚，光亨，贞吉','守正以待，蓄势而进','水','天'];
@@ -49,3 +49,8 @@ assert.ok(hostile.summary.includes('<img'));
 assert.equal(hostile.summary.includes('&lt;'),false);
 
 console.log('Local interpretation tests passed.');
+
+const english = buildEnglishInterpretation({...makeContext(1), question:'What should I watch in my job interview?'});
+assert.match(english.summary,/For/);
+assert.match(english.actions[0],/goal|milestone/i);
+assert.match(english.evidence.ruleText,/./);

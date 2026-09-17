@@ -36,3 +36,36 @@ export function buildLocalInterpretation(context){
   const trend=same?'本卦与之卦相同，提示主要结构暂未改变；可考虑先在现有条件中修正做法，再等待新的事实出现。':'若动爻所示条件继续发展，局面倾向由'+originalName+'转向'+changedName+'所强调的“'+(context.changed[5]||'因时调整')+'”。这一方向仍取决于现实中的选择与条件。';
   return {category,summary,situation,turningPoint:turningPointFor(context,primaryLines),trend,actions:[...lens.actions],cautions:[lens.caution,'解读用于经典研读与自我反思，不替代现实调查和专业判断。'],evidence:{primaryLabels:primaryLines.map(line=>line.label||'所取爻位'),originalName,changedName,ruleText:context.rule?.text||'',lineSource:context.rule?.fromChanged?'changed':'original'}};
 }
+
+const EN_STAGES=['The matter is at an early stage; clarify conditions before acting','The matter is entering internal coordination; check whether support is real','The matter is at a threshold between inner and outer; avoid overexertion','The matter is entering the wider environment; test and adjust promptly','The matter calls for responsibility and integration; balance principle and impact','The matter is nearing a limit; watch for a turn after fullness'];
+const EN_LENSES={
+ career:{focus:'goals, resources, and pace',actions:['Reduce the near-term goal to one verifiable milestone','Verify key resources and terms before increasing commitment','Leave room to adjust in the next phase'],caution:'Watch for focusing on outcomes while overlooking timing and responsibility.'},
+ relationship:{focus:'each person’s position, communication, and boundaries',actions:['Confirm what each person actually cares about','Have one concrete conversation that states facts and boundaries','Check whether later actions match what was said'],caution:'Do not treat the hexagram as certainty about another person’s inner state.'},
+ study:{focus:'foundations, method, and sustained effort',actions:['Break the current difficulty into one finishable exercise','Check that method, goal, and time still match','Use each stage result to adjust the plan'],caution:'Watch for seeking shortcuts that skip foundational checks.'},
+ finance:{focus:'cash flow, risk limits, and information quality',actions:['List tolerable losses and resources that cannot be touched','Independently verify key numbers and conditions','Keep room when information is incomplete'],caution:'A hexagram cannot replace financial facts, contract review, or professional advice.'},
+ health:{focus:'body signals, daily rhythm, and professional judgment',actions:['Record recent changes and possible triggers','Prefer low-risk, sustainable adjustments','Seek medical care for persistent or serious symptoms'],caution:'A hexagram is not a diagnosis and cannot replace medical advice.'},
+ general:{focus:'facts, timing, and controllable action',actions:['Separate confirmed facts from assumptions','Choose a small, low-risk step to test the judgment','Set a review date and adjust as conditions change'],caution:'Treat these as conditional prompts, not certain outcomes.'}
+};
+function englishCategory(question){
+ const text=String(question||'').toLowerCase();
+ if(/relationship|partner|marriage|family|friend|communication/.test(text))return 'relationship';
+ if(/work|career|job|interview|project|business/.test(text))return 'career';
+ if(/study|exam|school|course|research|thesis/.test(text))return 'study';
+ if(/finance|income|investment|budget|money/.test(text))return 'finance';
+ if(/health|body|treatment|recovery|sleep|doctor/.test(text))return 'health';
+ return 'general';
+}
+export function buildEnglishInterpretation(context){
+ if(!context||!Array.isArray(context.original)||!Array.isArray(context.changed)||!Array.isArray(context.moving))throw new TypeError('Invalid interpretation context');
+ const category=englishCategory(context.question),lens=EN_LENSES[category],primary=(context.rule?.primary||[]).map(index=>(context.rule?.fromChanged?context.changedLines:context.originalLines)?.[index]).filter(Boolean);
+ const q=String(context.question||'this question').trim().slice(0,100),on=context.original[2]||'Primary hexagram',cn=context.changed[2]||'Relating hexagram',same=on===cn;
+ const refs=primary.map((line,index)=>'Line '+(line.label||'')+': “'+String(line.text||'').trim()+'” — '+(EN_STAGES[index]||'Observe the conditions directly.'));
+ let turning;
+ if(!context.moving.length)turning='All six lines are still; the present structure appears stable. Focus on the whole primary hexagram and check what facts may change.';
+ else if(context.moving.length===1)turning='The change concentrates on '+refs[0]+'. Treat it as the turning point most worth verifying now.';
+ else turning='Read the changing lines together: '+refs.join('; ')+'. Several variables are active, so use the primary hexagram for the present situation and the relating hexagram for a possible new structure.';
+ const summary='For “'+q+'”, '+on+' suggests beginning with “'+(context.original[5]||'the present pattern')+'” and watching '+lens.focus+'.';
+ const situation='The image “'+(context.original[3]||context.original[5]||'observe the image and its timing')+'” is a lens for the present situation, not a certain prediction.';
+ const trend=same?'The primary and relating hexagrams are the same, so the main structure has not shifted; adjust within current conditions and wait for new facts.':'If the changing conditions continue, the situation tends from '+on+' toward '+cn+': “'+(context.changed[5]||'adjust with the time')+'”. The direction still depends on real choices and conditions.';
+ return {category,summary,situation,turningPoint:turning,trend,actions:[...lens.actions],cautions:[lens.caution,'Use this for study and reflection; it does not replace investigation or professional judgment.'],evidence:{primaryLabels:primary.map(line=>line.label||'selected line'),originalName:on,changedName:cn,ruleText:context.rule?.text||'',lineSource:context.rule?.fromChanged?'changed':'original'}};
+}

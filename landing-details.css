@@ -1,0 +1,247 @@
+/* Fine print and paper construction details; the line animation stays in landing-v2.css. */
+.site-cover {
+  isolation: isolate;
+  box-shadow: inset 0 0 0 16px rgba(216, 209, 194, .2), inset 0 0 90px rgba(62, 52, 40, .06);
+}
+
+.site-cover::before {
+  box-shadow: 0 0 0 22px var(--cover-paper), 0 0 0 23px rgba(216, 209, 194, .58);
+}
+
+.site-cover::after {
+  background: rgba(233, 227, 213, .26);
+}
+
+.cover-frame::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 16px 20px;
+  border: 1px solid rgba(216, 209, 194, .72);
+  pointer-events: none;
+}
+
+.cover-frame::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 16px;
+  right: 23.5%;
+  bottom: 16px;
+  width: 1px;
+  background: rgba(216, 209, 194, .72);
+  pointer-events: none;
+}
+
+.cover-title-wrap::before {
+  content: "觀";
+  position: absolute;
+  z-index: -1;
+  top: -112px;
+  left: -34px;
+  color: rgba(46, 48, 44, .055);
+  font: 800 240px/.8 var(--serif);
+  pointer-events: none;
+}
+
+.cover-center {
+  position: relative;
+}
+
+.cover-disc {
+  display: none;
+}
+
+.cover-center::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: -4vw;
+  bottom: 0;
+  width: 47%;
+  border-left: 1px solid rgba(216, 209, 194, .62);
+  background: rgba(233, 227, 213, .34);
+  pointer-events: none;
+}
+
+.cover-orbit {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: max(7vw, 72px);
+  width: min(36vw, 470px);
+  aspect-ratio: 1;
+  display: block;
+  transform: translateY(-48%);
+  color: rgba(125, 120, 108, .64);
+  font: 600 11px/1 var(--serif);
+  pointer-events: none;
+}
+
+.cover-orbit span {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.cover-orbit span::after {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: var(--cover-line-color);
+}
+
+.cover-orbit span:nth-child(1) { top: -3px; left: 50%; transform: translateX(-50%); flex-direction: column; gap: 6px; }
+.cover-orbit span:nth-child(1)::after { width: 1px; height: 20px; }
+.cover-orbit span:nth-child(2) { top: 18%; right: -2px; flex-direction: row-reverse; }
+.cover-orbit span:nth-child(3) { top: 50%; right: -9px; transform: translateY(-50%); flex-direction: row-reverse; }
+.cover-orbit span:nth-child(4) { bottom: 18%; right: -2px; flex-direction: row-reverse; }
+.cover-orbit span:nth-child(5) { bottom: -3px; left: 50%; transform: translateX(-50%); flex-direction: column-reverse; gap: 6px; }
+.cover-orbit span:nth-child(5)::after { width: 1px; height: 20px; }
+.cover-orbit span:nth-child(6) { bottom: 18%; left: -2px; }
+.cover-orbit span:nth-child(7) { top: 50%; left: -9px; transform: translateY(-50%); }
+.cover-orbit span:nth-child(8) { top: 18%; left: -2px; }
+
+.cover-enter {
+  box-shadow: 4px 4px 0 rgba(46, 48, 44, .1);
+}
+
+@media (max-width: 900px) {
+  .cover-orbit { right: 5vw; width: min(40vw, 410px); }
+}
+
+@media (max-width: 680px) {
+  .site-cover {
+    box-shadow: inset 0 0 0 10px rgba(216, 209, 194, .22), inset 0 0 72px rgba(62, 52, 40, .055);
+  }
+  .site-cover::before,
+  .site-cover::after { display: none; }
+  .cover-frame {
+    padding: 18px 18px 16px;
+  }
+  .cover-frame::before { inset: 10px; }
+  .cover-frame::after,
+  .cover-orbit { display: none; }
+  .cover-center::before { display: none; }
+  .cover-masthead {
+    padding-bottom: 12px;
+  }
+  .cover-center {
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 4px;
+    padding: 18px 0 8px;
+  }
+  .cover-title-wrap {
+    align-self: start;
+  }
+  .cover-title-wrap h1 {
+    margin: 8px 0 9px;
+    font-size: 58px;
+  }
+  :lang(en) .cover-title-wrap h1 {
+    font-size: 52px;
+  }
+  .cover-quote {
+    font-size: 13px;
+  }
+  .cover-hexagram {
+    isolation: isolate;
+    width: min(56vw, 228px);
+    height: min(34vh, 258px);
+    min-height: 218px;
+    align-self: center;
+    gap: 12px;
+  }
+  .cover-disc {
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: min(68vw, 266px);
+    aspect-ratio: 1;
+    border: 1px solid rgba(216, 209, 194, .78);
+    border-radius: 50%;
+    background: rgba(233, 227, 213, .4);
+    box-shadow:
+      0 0 0 24px var(--cover-paper),
+      0 0 0 25px rgba(216, 209, 194, .64),
+      0 0 0 51px var(--cover-paper),
+      0 0 0 52px rgba(216, 209, 194, .46);
+    transform: translate(-50%, -50%);
+  }
+  .cover-disc::before,
+  .cover-disc::after {
+    position: absolute;
+    left: 50%;
+    color: var(--cover-muted);
+    font: 500 10px/1 var(--serif);
+    letter-spacing: 0;
+    white-space: nowrap;
+    transform: translateX(-50%);
+  }
+  .cover-disc::before {
+    content: "坎  ☵";
+    top: -74px;
+  }
+  .cover-disc::after {
+    content: "离  ☲";
+    bottom: -74px;
+    color: var(--cover-accent);
+  }
+  .cover-line {
+    height: 11px;
+    gap: 25px;
+  }
+  .cover-hexagram::before {
+    top: 50%;
+    left: -33px;
+    font-size: 11px;
+  }
+  .cover-hexagram::after {
+    top: 50%;
+    right: -33px;
+    bottom: auto;
+    font-size: 9px;
+    transform: translateY(-50%);
+  }
+  .cover-footer {
+    min-height: 62px;
+    padding-top: 12px;
+  }
+  .cover-title-wrap::before { top: -70px; left: 50%; font-size: 170px; transform: translateX(-50%); }
+}
+
+@media (max-width: 370px) {
+  .cover-frame { padding-right: 16px; padding-left: 16px; }
+  .cover-title-wrap h1 { font-size: 54px; }
+  :lang(en) .cover-title-wrap h1 { font-size: 48px; }
+  .cover-hexagram { width: 56vw; }
+  .cover-disc {
+    width: 63vw;
+    box-shadow:
+      0 0 0 22px var(--cover-paper),
+      0 0 0 23px rgba(216, 209, 194, .64),
+      0 0 0 45px var(--cover-paper),
+      0 0 0 46px rgba(216, 209, 194, .46);
+  }
+}
+
+@media (max-width: 680px) and (max-height: 760px) {
+  .cover-center { padding-top: 14px; padding-bottom: 8px; }
+  .cover-title-wrap h1 { margin-top: 5px; margin-bottom: 6px; }
+  .cover-hexagram { min-height: 196px; height: 29vh; }
+  .cover-footer { min-height: 58px; padding-top: 9px; }
+}
+.site-cover::before,
+.site-cover::after,
+.cover-orbit { transform: translateY(-50%); }
+@media (min-width: 1361px) {
+  .site-cover::before,
+  .cover-orbit { right: calc((100vw - 1360px) / 2 + 105px + clamp(0px, calc(.75vw - 10.8px), 8px)); }
+  .site-cover::after { right: calc((100vw - 1360px) / 2 + 149px + clamp(0px, calc(.75vw - 10.8px), 8px)); }
+}

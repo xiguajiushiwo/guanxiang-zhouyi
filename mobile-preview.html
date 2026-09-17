@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>观象 · 手机预览</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #1f2321;
+        --muted: #68706c;
+        --line: #c8cfcc;
+        --surface: #f4f6f5;
+        --paper: #fffdf8;
+        --accent: #b94f35;
+        --device-width: 390px;
+        --device-height: 844px;
+        --device-scale: 1;
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body { height: 100%; }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+        color: var(--ink);
+        background: var(--surface);
+      }
+
+      button, a { font: inherit; }
+
+      .preview-app {
+        min-height: 100%;
+        height: 100%;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+      }
+
+      .preview-toolbar {
+        min-height: 64px;
+        padding: 10px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, .92);
+        position: relative;
+        z-index: 2;
+      }
+
+      .preview-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .brand-mark {
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border-radius: 50%;
+        color: #fff;
+        background: var(--ink);
+        font: 700 20px/1 Georgia, "Times New Roman", serif;
+      }
+
+      .preview-brand strong {
+        display: block;
+        font: 700 17px/1.1 Georgia, "Times New Roman", serif;
+      }
+
+      .preview-brand small {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .preview-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .device-switch {
+        display: grid;
+        grid-template-columns: repeat(3, 54px);
+        min-height: 38px;
+        padding: 3px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: #e7ebe9;
+      }
+
+      .device-switch button {
+        min-width: 0;
+        border: 0;
+        border-radius: 4px;
+        color: #4e5652;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .device-switch button[aria-pressed="true"] {
+        color: #fff;
+        background: var(--ink);
+      }
+
+      .icon-action {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        color: var(--ink);
+        background: #fff;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .device-switch button:hover,
+      .icon-action:hover { border-color: var(--accent); color: var(--accent); }
+
+      .device-switch button:focus-visible,
+      .icon-action:focus-visible {
+        outline: 3px solid rgba(185, 79, 53, .25);
+        outline-offset: 2px;
+      }
+
+      .preview-stage {
+        min-width: 0;
+        min-height: 0;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        padding: 16px;
+        background-color: #dfe4e2;
+        background-image:
+          linear-gradient(#cbd2cf 1px, transparent 1px),
+          linear-gradient(90deg, #cbd2cf 1px, transparent 1px);
+        background-size: 32px 32px;
+      }
+
+      .device-shell {
+        width: calc(var(--device-width) + 18px);
+        height: calc(var(--device-height) + 18px);
+        padding: 9px;
+        position: relative;
+        flex: 0 0 auto;
+        border-radius: 30px;
+        background: #1f2321;
+        box-shadow: 0 22px 55px rgba(31, 35, 33, .24), 0 2px 8px rgba(31, 35, 33, .18);
+        transform: scale(var(--device-scale));
+        transform-origin: center;
+      }
+
+      .device-shell::before {
+        content: "";
+        width: 42px;
+        height: 4px;
+        position: absolute;
+        top: 3px;
+        left: 50%;
+        z-index: 2;
+        border-radius: 3px;
+        background: #5e6562;
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+
+      #sitePreview {
+        width: var(--device-width);
+        height: var(--device-height);
+        display: block;
+        border: 0;
+        border-radius: 22px;
+        background: var(--paper);
+      }
+
+      @media (max-width: 680px) {
+        .preview-toolbar { padding-inline: 10px; gap: 8px; }
+        .preview-brand small { display: none; }
+        .device-switch { grid-template-columns: repeat(3, 46px); }
+      }
+
+      @media (max-width: 520px) {
+        .preview-brand strong { display: none; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="preview-app">
+      <header class="preview-toolbar">
+        <div class="preview-brand">
+          <span class="brand-mark" aria-hidden="true">观</span>
+          <span><strong>观象手机预览</strong><small id="viewportLabel">390 × 844</small></span>
+        </div>
+        <div class="preview-actions">
+          <div class="device-switch" role="group" aria-label="设备宽度">
+            <button type="button" data-device="compact" aria-pressed="false" title="360 × 800">360</button>
+            <button type="button" data-device="standard" aria-pressed="true" title="390 × 844">390</button>
+            <button type="button" data-device="large" aria-pressed="false" title="430 × 932">430</button>
+          </div>
+          <button class="icon-action" id="reloadPreview" type="button" title="刷新手机页面" aria-label="刷新手机页面">↻</button>
+          <a class="icon-action" href="./?v=20260916-mobile-disc2" target="_blank" rel="noreferrer" title="打开正式页面" aria-label="打开正式页面">↗</a>
+        </div>
+      </header>
+      <section class="preview-stage" id="previewStage" aria-label="手机页面预览">
+        <div class="device-shell" id="deviceShell">
+          <iframe id="sitePreview" src="./?v=20260916-mobile-disc2" title="观象手机页面"></iframe>
+        </div>
+      </section>
+    </main>
+    <script>
+      const devices = {
+        compact: { width: 360, height: 800 },
+        standard: { width: 390, height: 844 },
+        large: { width: 430, height: 932 },
+      };
+      const root = document.documentElement;
+      const stage = document.querySelector('#previewStage');
+      const frame = document.querySelector('#sitePreview');
+      const label = document.querySelector('#viewportLabel');
+      let current = devices.standard;
+
+      function fitDevice() {
+        const availableWidth = Math.max(1, stage.clientWidth - 32);
+        const availableHeight = Math.max(1, stage.clientHeight - 32);
+        const scale = Math.min(1, availableWidth / (current.width + 18), availableHeight / (current.height + 18));
+        root.style.setProperty('--device-scale', String(scale));
+      }
+
+      function selectDevice(name) {
+        current = devices[name] || devices.standard;
+        root.style.setProperty('--device-width', `${current.width}px`);
+        root.style.setProperty('--device-height', `${current.height}px`);
+        label.textContent = `${current.width} × ${current.height}`;
+        document.querySelectorAll('[data-device]').forEach(button => {
+          button.setAttribute('aria-pressed', String(button.dataset.device === name));
+        });
+        fitDevice();
+      }
+
+      document.querySelectorAll('[data-device]').forEach(button => {
+        button.addEventListener('click', () => selectDevice(button.dataset.device));
+      });
+      document.querySelector('#reloadPreview').addEventListener('click', () => frame.contentWindow.location.reload());
+      new ResizeObserver(fitDevice).observe(stage);
+      selectDevice('standard');
+    </script>
+  </body>
+</html>

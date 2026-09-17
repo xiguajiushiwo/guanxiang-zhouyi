@@ -1,0 +1,121 @@
+:root {
+  --cover-grid: rgba(216, 209, 194, .72);
+  --cover-watermark: rgba(46, 48, 44, .055);
+}
+
+/* A quiet manuscript field gives the animated hexagram a physical setting. */
+.site-cover {
+  box-shadow: inset 0 0 0 16px rgba(216, 209, 194, .2), inset 0 0 90px rgba(62, 52, 40, .06);
+}
+
+.site-cover::before {
+  box-shadow: 0 0 0 22px var(--cover-paper), 0 0 0 23px rgba(216, 209, 194, .58);
+}
+
+.site-cover::after {
+  background: rgba(233, 227, 213, .26);
+}
+
+.cover-frame {
+  isolation: isolate;
+}
+
+.cover-frame::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 16px 20px;
+  border: 1px solid var(--cover-grid);
+  pointer-events: none;
+}
+
+.cover-frame::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 16px;
+  right: 23.5%;
+  bottom: 16px;
+  width: 1px;
+  background: var(--cover-grid);
+  pointer-events: none;
+}
+
+.cover-title-wrap::before {
+  content: "觀";
+  position: absolute;
+  z-index: -1;
+  top: -112px;
+  left: -34px;
+  color: var(--cover-watermark);
+  font: 800 240px/.8 var(--serif);
+  pointer-events: none;
+}
+
+.cover-center {
+  position: relative;
+}
+
+.cover-center::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: -4vw;
+  bottom: 0;
+  width: 47%;
+  border-left: 1px solid rgba(216, 209, 194, .62);
+  background: rgba(233, 227, 213, .34);
+  pointer-events: none;
+}
+
+.cover-orbit {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: max(7vw, 72px);
+  width: min(36vw, 470px);
+  aspect-ratio: 1;
+  display: block;
+  transform: translateY(-48%);
+  color: rgba(125, 120, 108, .64);
+  font: 600 11px/1 var(--serif);
+  pointer-events: none;
+}
+
+.cover-orbit span {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.cover-orbit span::after {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: var(--cover-line-color);
+}
+
+.cover-orbit span:nth-child(1) { top: -3px; left: 50%; transform: translateX(-50%); flex-direction: column; gap: 6px; }
+.cover-orbit span:nth-child(1)::after { width: 1px; height: 20px; }
+.cover-orbit span:nth-child(2) { top: 18%; right: -2px; flex-direction: row-reverse; }
+.cover-orbit span:nth-child(3) { top: 50%; right: -9px; transform: translateY(-50%); flex-direction: row-reverse; }
+.cover-orbit span:nth-child(4) { bottom: 18%; right: -2px; flex-direction: row-reverse; }
+.cover-orbit span:nth-child(5) { bottom: -3px; left: 50%; transform: translateX(-50%); flex-direction: column-reverse; gap: 6px; }
+.cover-orbit span:nth-child(5)::after { width: 1px; height: 20px; }
+.cover-orbit span:nth-child(6) { bottom: 18%; left: -2px; }
+.cover-orbit span:nth-child(7) { top: 50%; left: -9px; transform: translateY(-50%); }
+.cover-orbit span:nth-child(8) { top: 18%; left: -2px; }
+
+@media (max-width: 900px) {
+  .cover-orbit { right: 5vw; width: min(40vw, 410px); }
+}
+
+@media (max-width: 680px) {
+  .cover-frame::before { inset: 10px; }
+  .cover-frame::after,
+  .cover-orbit { display: none; }
+}

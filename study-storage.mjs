@@ -5,8 +5,10 @@ function write(storage, key, value) { storage.setItem(key, JSON.stringify(value)
 export function validateAnnotation(annotation) {
   if (!annotation || !['hexagram', 'classic', 'principle'].includes(annotation.sourceType)) return false;
   if (typeof annotation.sourceId !== 'string' || !annotation.sourceId.trim() || annotation.sourceId.length > 120) return false;
+  if (annotation.id !== undefined && (typeof annotation.id !== 'string' || !annotation.id.trim() || annotation.id.length > 120)) return false;
   if (typeof annotation.note !== 'string' || !annotation.note.trim() || annotation.note.length > 2000) return false;
   if (annotation.tags !== undefined && (!Array.isArray(annotation.tags) || annotation.tags.length > 12 || annotation.tags.some(tag => typeof tag !== 'string' || tag.length > 30))) return false;
+  if (annotation.reviewState !== undefined && !['未开始', '研读中', '已复习'].includes(annotation.reviewState)) return false;
   return true;
 }
 export function loadAnnotations(storage = globalThis.localStorage) {

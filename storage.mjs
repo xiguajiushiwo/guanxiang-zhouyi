@@ -17,7 +17,7 @@ export function validStoredLine(line) {
 }
 
 export function validHistoryRecord(record) {
-  return Boolean(record && typeof record.id === 'string' && typeof record.question === 'string' &&
+  return Boolean(record && typeof record.id === 'string' && record.id.trim() && record.id.length <= 120 && typeof record.question === 'string' &&
     Array.isArray(record.lines) && record.lines.length === 6 && record.lines.every(validStoredLine) &&
     Number.isInteger(record.originalIndex) && record.originalIndex >= 0 && record.originalIndex < 64 &&
     Number.isInteger(record.changedIndex) && record.changedIndex >= 0 && record.changedIndex < 64 &&
@@ -43,7 +43,8 @@ export function normalizeAiReading(value, now = new Date()) {
   if (!value || typeof value !== 'object' || typeof value.text !== 'string') return null;
   const text=value.text.trim().slice(0,12000);
   if (!text) return null;
-  return {text,generatedAt:isoOrFallback(value.generatedAt,now.toISOString()),modelLabel:typeof value.modelLabel==='string'&&value.modelLabel.trim()?value.modelLabel.trim().slice(0,80):'Workers AI',version:1};
+  const language=value.language==='en'||value.language==='zh-CN'?value.language:null;
+  return {text,generatedAt:isoOrFallback(value.generatedAt,now.toISOString()),modelLabel:typeof value.modelLabel==='string'&&value.modelLabel.trim()?value.modelLabel.trim().slice(0,80):'Workers AI',version:1,...(language?{language}:{})};
 }
 export function normalizeJournalRecord(record, index = 0, now = new Date()) {
   if (!validHistoryRecord(record)) return null;

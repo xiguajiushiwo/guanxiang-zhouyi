@@ -1,0 +1,110 @@
+{
+  "edition": "Guanxiang Principles Outline, First Edition",
+  "description": "A structured guide to lines, images, numbers, principles, divination, and historical schools, grounded in the source texts.",
+  "sections": [
+    {
+      "id": "yin-yang",
+      "title": "Yin, Yang, and the Lines",
+      "subtitle": "From a single line to the 64 hexagrams",
+      "overview": "The Zhouyi takes yin and yang lines as its smallest units. Three lines form a trigram and six lines form a hexagram. A hexagram is not a static picture, but a whole made from the relationship of yin and yang across six positions.",
+      "quote": "一阴一阳之谓道。",
+      "source": "《系辞传上》",
+      "concepts": [
+        {"name": "The two kinds of line", "text": "An unbroken yang line suggests strength, visibility, and movement; a broken yin line suggests receptivity, concealment, and stillness. Yin and yang are not moral opposites. They depend on each other, take root in each other, and continually transform."},
+        {"name": "Trigrams and doubled trigrams", "text": "Three lines drawn from bottom to top form Qian, Dui, Li, Zhen, Xun, Kan, Gen, or Kun. Combining an upper and a lower trigram produces one of the sixty-four hexagrams."},
+        {"name": "Lines rise from below", "text": "Both reading and casting proceed from the first line at the bottom to the top line. The six positions describe spatial relationships as well as a sequence from emergence and growth to culmination and change."}
+      ]
+    },
+    {
+      "id": "trigrams",
+      "title": "Images of the Eight Trigrams",
+      "subtitle": "Near at hand in the body, far away in the world",
+      "overview": "The eight trigrams begin with natural images and extend to directions, family roles, the body, temperament, and the wider world. An image is not a fixed lookup table; it is an analogy based on shared qualities.",
+      "quote": "近取诸身，远取诸物。",
+      "source": "《系辞传下》",
+      "concepts": [
+        {"name": "Qian and Kun", "text": "Qian images Heaven and creative strength, and may suggest the head, father, ruler, or roundness. Kun images Earth and receptivity, and may suggest the belly, mother, multitude, or square form. Together they establish the basic relation of creation and support."},
+        {"name": "Zhen, Xun, Kan, and Li", "text": "Zhen initiates movement, Xun enters and penetrates, Kan marks danger and depth, and Li clings while bringing clarity. They show different conditions of activation, influence, descent, and illumination."},
+        {"name": "Gen and Dui", "text": "Gen images the mountain and governs stopping and boundaries. Dui images the lake and governs joy and exchange. Together they show that limits and communication must regulate one another."}
+      ]
+    },
+    {
+      "id": "positions",
+      "title": "Relationships Between Line Positions",
+      "subtitle": "Position, timing, centrality, correctness, and response",
+      "overview": "The meaning of a yin or yang line changes with its position. A reading considers its stage, whether it suits its place, and how it relates to the other lines.",
+      "quote": "列贵贱者存乎位。",
+      "source": "《系辞传上》",
+      "concepts": [
+        {"name": "Correct position and centrality", "text": "The first, third, and fifth are yang positions; the second, fourth, and top are yin positions. The second line is central in the lower trigram and the fifth is central in the upper. Centrality avoids excess and deficiency; correctness aligns character with responsibility."},
+        {"name": "Correspondence and proximity", "text": "The first and fourth, second and fifth, and third and top lines face each other across the trigrams. Opposite yin and yang lines may correspond. Adjacent lines are compared through proximity: correspondence looks to support at a distance, while proximity looks nearby."},
+        {"name": "Supporting and riding", "text": "A lower line supports the line above; an upper line rides the line below. A yielding line supporting a firm one is often smoother, while a yielding line riding a firm one may feel pressured. Timing, centrality, and the whole structure still govern the judgment."}
+      ]
+    },
+    {
+      "id": "transformations",
+      "title": "Hexagram Structure and Change",
+      "subtitle": "Relating, nuclear, opposite, and inverse hexagrams",
+      "overview": "A hexagram can be unfolded in several directions. Each transformation highlights a hidden structure, contrary condition, changed viewpoint, or developing tendency.",
+      "quote": "刚柔相推而生变化。",
+      "source": "《系辞传上》",
+      "concepts": [
+        {"name": "Relating hexagram", "text": "Changing lines reverse from yin to yang or yang to yin to form the relating hexagram. The primary hexagram presents the current structure, while the relating hexagram suggests where change tends. The actual changing lines connect the two."},
+        {"name": "Nuclear hexagram", "text": "Lines two, three, and four form its lower trigram; lines three, four, and five form its upper trigram. This reveals an inner structure already at work but not yet fully visible."},
+        {"name": "Opposite and inverse", "text": "The opposite hexagram reverses yin and yang in all six lines. The inverse turns the entire figure upside down. The first tests contrary conditions; the second changes the observer's position."}
+      ]
+    },
+    {
+      "id": "sequence",
+      "title": "Sequence and Waxing and Waning",
+      "subtitle": "Understanding the 64 hexagrams through succession",
+      "overview": "The sixty-four hexagrams may be studied one at a time, through neighboring pairs, through the Upper and Lower Canons, or through the twelve sovereign hexagrams. Every condition contains circumstances that lead toward another.",
+      "quote": "物不可穷也，故受之以未济终焉。",
+      "source": "《序卦传》",
+      "concepts": [
+        {"name": "Upper and Lower Canons", "text": "The Upper Canon contains thirty hexagrams from Qian and Kun through Kan and Li. The Lower Canon contains thirty-four from Xian and Heng through Jiji and Weiji. Traditional readings often associate the former more with Heaven and Earth and the latter more with human affairs."},
+        {"name": "Neighboring pairs", "text": "Most hexagrams are paired by inversion or opposition, such as Zhun and Meng, Xu and Song, or Tai and Pi. Reading a pair together reveals two directions within one theme."},
+        {"name": "The twelve sovereign hexagrams", "text": "Fu, Lin, Tai, Dazhuang, Guai, and Qian, together with Gou, Dun, Pi, Guan, Bo, and Kun, describe the waxing and waning of yin and yang. Their cycle emphasizes recurrence rather than a linear scale of good and bad fortune."}
+      ]
+    },
+    {
+      "id": "image-number-principle",
+      "title": "Image, Number, Principle, and Text",
+      "subtitle": "Four approaches that correct one another",
+      "overview": "The Yi can be approached through hexagram images, numerical order, philosophical principle, and the words of the Classic and commentaries. Each contributes something and each has limits; a mature judgment does not rely on only one.",
+      "quote": "君子居则观其象而玩其辞。",
+      "source": "《系辞传上》",
+      "concepts": [
+        {"name": "Observe images and examine numbers", "text": "Images offer structural analogies, while numbers make the process reviewable. Both must remain constrained by the source text and the facts of the situation rather than becoming free association."},
+        {"name": "Clarify principle", "text": "Principle attends to timing, centrality, correctness, sincerity, and adaptive change. It turns reflection back toward the reader, but without the images and source text it can collapse into a generic maxim."},
+        {"name": "Engage the words", "text": "Judgments, line texts, and the Ten Wings belong to different textual layers. A careful reader distinguishes the Classic from its commentaries, source wording from later interpretation, and one edition from another."}
+      ]
+    },
+    {
+      "id": "divination-reading",
+      "title": "Divination and Study",
+      "subtitle": "Question, cast, form the hexagram, observe change",
+      "overview": "Divination uses a strict procedure to translate a question into observable relationships among hexagrams and lines. The questioner remains responsible for interpretation and action; the process does not predict a fixed outcome on their behalf.",
+      "quote": "以卜筮者尚其占。",
+      "source": "《系辞传上》",
+      "concepts": [
+        {"name": "Ask clearly and follow the method", "text": "Focus on one matter and state its situation and time frame. Once a casting method is chosen, complete it consistently and preserve the record. Procedural integrity matters more than obtaining a preferred result."},
+        {"name": "Primary first, change second", "text": "Read the primary hexagram as a whole, then the changing lines, and finally the relating hexagram. Rules for selecting changing lines are later reading traditions and should be identified as such."},
+        {"name": "Turn reflection into action", "text": "Express the reading as an observation or action that can be reviewed. Medical, legal, and financial matters still require advice from the appropriate professionals."}
+      ]
+    },
+    {
+      "id": "schools",
+      "title": "Historical Traditions of Yi Study",
+      "subtitle": "Classic, commentaries, images and numbers, and principle",
+      "overview": "Different periods of Yi study developed different questions and methods. Recognizing these differences prevents any one later interpretation from being mistaken for the sole original meaning of the Classic.",
+      "quote": "仁者见之谓之仁，知者见之谓之知。",
+      "source": "《系辞传上》",
+      "concepts": [
+        {"name": "The Classic, commentaries, and Han learning", "text": "The ancient Classic contains the hexagram and line texts, while the Ten Wings interpret them from several angles. Han traditions further developed systems of seasonal qi, waxing and waning, Najia, images, and numbers; their lineages do not always agree."},
+        {"name": "Principle in the Wei and Jin", "text": "Wang Bi, Han Kangbo, and others emphasized language and meaning, timing, position, and principle. Their resistance to overly elaborate numerical correspondences deeply shaped later classical and philosophical reading."},
+        {"name": "Song approaches", "text": "Shao Yong, Cheng Yi, and Zhu Xi developed distinct approaches to Earlier Heaven images and numbers, moral principle, and divination practice. Diagram traditions and the Yixue Qimeng should be identified as later historical developments."}
+      ]
+    }
+  ]
+}

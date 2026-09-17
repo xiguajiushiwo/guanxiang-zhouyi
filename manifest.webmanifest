@@ -3,6 +3,7 @@
   "short_name": "观象",
   "description": "六十四卦、十翼、易理与大衍筮法的本地研读工具",
   "lang": "zh-CN",
+  "id": "./",
   "start_url": "./#home",
   "display": "standalone",
   "background_color": "#f4f0e6",

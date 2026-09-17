@@ -5,9 +5,11 @@
   "scripts": {
     "start": "node serve.mjs",
     "test": "npm run test:unit",
-    "test:unit": "node test-yarrow.mjs && node test-derived-hexagrams.mjs && node test-storage.mjs && node test-landing.mjs && node test-interpretation.mjs && node test-ai-reading.mjs && node worker/test-worker.mjs",
-    "test:browser": "node smoke-browser.mjs",
+    "test:unit": "node test-yarrow.mjs && node test-derived-hexagrams.mjs && node test-storage.mjs && node test-html-safety.mjs && node test-service-worker-update.mjs && node test-i18n.mjs && node test-landing.mjs && node test-interpretation.mjs && node test-ai-sources.mjs && node test-ai-reading.mjs && node worker/test-worker.mjs && node test-pages-proxy.mjs",
+    "test:browser": "node run-browser-test.mjs",
     "build:relations": "node build-relations.mjs",
-    "validate": "node build-relations.mjs && node validate-content.mjs && node --check app.js && npm run test:unit"
+    "build:pages": "node build-pages.mjs",
+    "deploy:pages": "npm run build:pages && wrangler pages deploy dist --project-name guanxiang-zhouyi --branch main --commit-dirty=true",
+    "validate": "node build-relations.mjs && node validate-content.mjs && node validate-i18n.mjs && node --check app.js && npm run test:unit"
   }
 }

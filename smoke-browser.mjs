@@ -52,22 +52,48 @@ await command('Runtime.enable');
 await command('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
 await command('Page.navigate', { url: 'http://127.0.0.1:4175/#divination/prepare' });
 await waitFor(`document.querySelector('[data-cast-mode="quick"]') && document.querySelector('#questionInput')`);
-await evaluate(`['guanxiang-onboarding-v1','guanxiang-cast-v3','guanxiang-cast-v2','guanxiang-cast','guanxiang-history-v1'].forEach(key=>localStorage.removeItem(key)); location.reload(); true`);
-await waitFor(`document.body.classList.contains('cover-active') && document.querySelector('#enterSite') && !document.querySelector('#siteCover').hidden`);
+await evaluate(`(async()=>{
+  ['guanxiang-onboarding-v1','guanxiang-cast-v3','guanxiang-cast-v2','guanxiang-cast','guanxiang-history-v1','guanxiang-language','guanxiang-study-v1'].forEach(key=>localStorage.removeItem(key));
+  if('serviceWorker' in navigator){const registrations=await navigator.serviceWorker.getRegistrations();await Promise.all(registrations.map(registration=>registration.unregister()))}
+  if('caches' in window){const keys=await caches.keys();await Promise.all(keys.map(key=>caches.delete(key)))}
+  location.reload();return true;
+})()`);
+await waitFor(`document.body?.classList.contains('cover-active') && document.querySelector('#enterSite') && document.querySelector('#siteCover') && !document.querySelector('#siteCover').hidden`);
 await evaluate(`const cover=document.querySelector('#siteCover');document.querySelector('#enterSite').click();if(!cover.hidden)cover.dispatchEvent(new Event('animationend',{bubbles:true}));true`);
 await waitFor(`document.querySelector('#siteCover').hidden`);
-await waitFor(`document.querySelector('#onboardingDialog')`);
+await waitFor(`document.querySelector('#onboardingDialog')?.open`);
 const onboarding = await evaluate(`({open:document.querySelector('#onboardingDialog').open,grid:document.querySelectorAll('#onboardingDialog .onboarding-grid section').length})`);
 assert.equal(onboarding.open, true);
 assert.equal(onboarding.grid, 4);
 await evaluate(`document.querySelector('#onboardingStart').click(); true`);
 await waitFor(`!document.querySelector('#onboardingDialog').open`);
+await command('Emulation.setDeviceMetricsOverride', { width: 1366, height: 768, deviceScaleFactor: 1, mobile: false });
+await evaluate(`document.querySelector('.nav-item[data-view="home"]').click(); true`);
+await waitFor(`document.querySelector('#view-home').classList.contains('active')`);
+await sleep(300);
+const homeLayout = await evaluate(`(()=>{
+  const home=document.querySelector('#view-home').getBoundingClientRect();
+  const paths=document.querySelector('.home-paths').getBoundingClientRect();
+  const cta=document.querySelector('.home-primary-action').getBoundingClientRect();
+  const ring=document.querySelector('#view-home .ring-two').getBoundingClientRect();
+  const quote=document.querySelector('#view-home .home-symbol-quote').getBoundingClientRect();
+  return {viewportHeight:innerHeight,scrollHeight:document.documentElement.scrollHeight,homeBottom:Math.round(home.bottom),pathsBottom:Math.round(paths.bottom),ctaWidth:Math.round(cta.width),ctaHeight:Math.round(cta.height),ringBottom:Math.round(ring.bottom),quoteTop:Math.round(quote.top),horizontalOverflow:document.documentElement.scrollWidth>innerWidth};
+})()`);
+assert.ok(homeLayout.pathsBottom <= homeLayout.viewportHeight, 'desktop home paths must fit in one viewport');
+assert.ok(homeLayout.scrollHeight <= homeLayout.viewportHeight + 1, 'desktop home must not require scrolling');
+assert.ok(homeLayout.ctaWidth >= 245 && homeLayout.ctaHeight >= 60, 'primary reading action must remain prominent');
+assert.ok(homeLayout.quoteTop >= homeLayout.ringBottom - 4, 'home quote must sit below the diagram');
+assert.equal(homeLayout.horizontalOverflow, false);
+await evaluate(`document.querySelector('.nav-item[data-view="divination"]').click(); true`);
+await waitFor(`document.querySelector('#view-divination').classList.contains('active')`);
 await sleep(1200);
 await evaluate(`document.querySelector('[data-cast-mode="quick"]').click();
   const input=document.querySelector('#questionInput');
   input.value='面对未来三个月的职业选择，我应当注意什么？';
   input.dispatchEvent(new Event('input',{bubbles:true}));
   document.querySelector('#confirmQuestion').click(); true`);
+await waitFor(`document.querySelector('#divinationConfirmDialog')?.open`);
+await evaluate(`document.querySelector('#confirmDivination').click(); true`);
 await waitFor(`document.querySelector('#view-divination').classList.contains('quick-mode') && !document.querySelector('#castButton').disabled`);
 await evaluate(`document.querySelector('#castButton').click(); true`);
 await waitFor(`document.querySelector('#castButton').textContent.includes('演蓍成第1爻')`);
@@ -103,7 +129,7 @@ await evaluate(`(() => {
   window.fetch=(url,options)=>{
     if(String(url)!==window.GUANXIANG_AI_ENDPOINT)return window.__guanxiangRealFetch(url,options);
     const encoder=new TextEncoder();
-    return Promise.resolve(new Response(new ReadableStream({start(controller){controller.enqueue(encoder.encode('【核心判断】\\n首段已经到达。'));setTimeout(()=>{controller.enqueue(encoder.encode('\\n【行动建议】\\n先核实条件。'));controller.close()},600)}}),{status:200,headers:{'content-type':'text/plain; charset=utf-8'}}));
+    return Promise.resolve(new Response(new ReadableStream({start(controller){controller.enqueue(encoder.encode('【核心判断】\\n首段已经到达。\\n【当前处境】\\n条件仍在形成。'));setTimeout(()=>{controller.enqueue(encoder.encode('\\n【关键变化】\\n先核实转折条件。\\n思考方向：先辨明事实。\\n思维调整：从确定答案转向逐步验证。\\n【后续趋势】\\n后续倾向逐步展开。\\n【行动建议】\\n1. 核实事实\\n2. 小步验证\\n3. 按期复盘'));controller.close()},600)}}),{status:200,headers:{'content-type':'text/plain; charset=utf-8'}}));
   };
   const button=document.querySelector('#generateAiReading');button.disabled=false;button.click();return true;
 })()`);
@@ -113,7 +139,7 @@ assert.equal(streaming.disabled, true);
 assert.equal(streaming.label, '正在解读');
 await waitFor(`document.querySelector('#generateAiReading').textContent==='重新生成'`);
 const cachedAi = await evaluate(`JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]')[0]?.aiReading?.text||''`);
-assert.ok(cachedAi.includes('先核实条件'));
+assert.ok(cachedAi.includes('先核实转折条件'));
 await evaluate(`(() => {
   const records=JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]');window.__cachedAiReading=records[0].aiReading;delete records[0].aiReading;localStorage.setItem('guanxiang-history-v1',JSON.stringify(records));
   window.fetch=(url,options)=>{if(String(url)!==window.GUANXIANG_AI_ENDPOINT)return window.__guanxiangRealFetch(url,options);const encoder=new TextEncoder();return Promise.resolve(new Response(new ReadableStream({start(controller){controller.enqueue(encoder.encode('【核心判断】\\n断流前内容。'));setTimeout(()=>controller.error(new Error('closed')),50)}}),{status:200}))};
@@ -124,8 +150,19 @@ const interruptedAi=await evaluate(`({partial:document.querySelector('#aiReading
 assert.ok(interruptedAi.partial.includes('断流前内容'));
 assert.ok(interruptedAi.error.includes('连接中断'));
 assert.equal(interruptedAi.cached,false);
-await evaluate(`const records=JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]');records[0].aiReading=window.__cachedAiReading;localStorage.setItem('guanxiang-history-v1',JSON.stringify(records));true`);
-await evaluate(`const note=document.querySelector('#readingNote');note.value='浏览器冒烟测试札记';document.querySelector('#saveReadingNote').click();true`);
+await evaluate(`(()=>{const records=JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]');records[0].aiReading=window.__cachedAiReading;localStorage.setItem('guanxiang-history-v1',JSON.stringify(records));return true})()`);
+await evaluate(`(() => {
+  const records=JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]');delete records[0].aiReading;localStorage.setItem('guanxiang-history-v1',JSON.stringify(records));
+  window.fetch=(url,options)=>{if(String(url)!==window.GUANXIANG_AI_ENDPOINT)return window.__guanxiangRealFetch(url,options);return Promise.resolve(new Response('【核心判断】\\n正常关闭但未完成。',{status:200,headers:{'content-type':'text/plain; charset=utf-8'}}))};
+  document.querySelector('#generateAiReading').click();return true;
+})()`);
+await waitFor(`document.querySelector('#aiReadingError').textContent.includes('未完整生成')`);
+const incompleteAi=await evaluate(`({partial:document.querySelector('#aiReadingContent').textContent,error:document.querySelector('#aiReadingError').textContent,cached:Boolean(JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]')[0]?.aiReading)})`);
+assert.ok(incompleteAi.partial.includes('正常关闭但未完成'));
+assert.ok(incompleteAi.error.includes('未完整生成'));
+assert.equal(incompleteAi.cached,false);
+await evaluate(`(()=>{const records=JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]');records[0].aiReading=window.__cachedAiReading;localStorage.setItem('guanxiang-history-v1',JSON.stringify(records));return true})()`);
+await evaluate(`(()=>{const note=document.querySelector('#readingNote');note.value='浏览器冒烟测试札记';document.querySelector('#saveReadingNote').click();return true})()`);
 const result = await evaluate(`(() => {
   const records=JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]');
   return {
@@ -143,25 +180,70 @@ assert.equal(result.history, 1);
 assert.equal(result.note, '浏览器冒烟测试札记');
 
 await evaluate(`location.hash='#history'; true`);
-await waitFor(`document.querySelector('#historyDetail #historyNote')`);
-await waitFor(`document.querySelector('#historyDetail .ai-interpretation')?.textContent.includes('先核实条件')`);
+await waitFor(`document.querySelectorAll('#historyList .history-item').length===1 && !document.querySelector('#historyIndexPage').hidden && document.querySelector('#historyRecordPage').hidden`);
+const journalIndex = await evaluate(`({
+  items:document.querySelectorAll('#historyList .history-item').length,
+  detailVisible:document.querySelector('#historyRecordPage').getBoundingClientRect().height>0,
+  indexVisible:document.querySelector('#historyIndexPage').getBoundingClientRect().height>0,
+  recordId:JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]')[0]?.id||''
+})`);
+assert.equal(journalIndex.items, 1);
+assert.equal(journalIndex.detailVisible, false);
+assert.equal(journalIndex.indexVisible, true);
+assert.ok(journalIndex.recordId);
 await evaluate(`const search=document.querySelector('#historySearch');search.value='浏览器冒烟';search.dispatchEvent(new Event('input',{bubbles:true}));true`);
-await waitFor(`document.querySelectorAll('.history-item').length===1`);
+await waitFor(`document.querySelectorAll('#historyList .history-item').length===1`);
+await evaluate(`document.querySelector('#historyList .history-item').click(); true`);
+await waitFor(`location.hash.startsWith('#history/') && document.querySelector('#historyDetail #historyNote') && document.querySelector('#historyIndexPage').hidden && !document.querySelector('#historyRecordPage').hidden`);
+await waitFor(`document.querySelector('#historyDetail .ai-interpretation')?.textContent.includes('先核实转折条件')`);
 const journal = await evaluate(`({
-  matched:document.querySelectorAll('.history-item').length,
+  route:location.hash,
   note:document.querySelector('#historyNote').value,
   exportButton:Boolean(document.querySelector('#exportHistory')),
   importButton:Boolean(document.querySelector('#importHistory')),
   deleteButton:Boolean(document.querySelector('#deleteHistory'))
-  ,aiReading:Boolean(document.querySelector('#historyDetail .ai-interpretation'))
+  ,aiReading:Boolean(document.querySelector('#historyDetail .ai-interpretation')),
+  detailWidth:Math.round(document.querySelector('#historyRecordPage').getBoundingClientRect().width)
 })`);
-assert.equal(journal.matched, 1);
+assert.ok(journal.route.includes(encodeURIComponent(journalIndex.recordId)));
 assert.equal(journal.note, '浏览器冒烟测试札记');
 assert.equal(journal.aiReading, true);
 assert.equal(journal.exportButton && journal.importButton && journal.deleteButton, true);
+assert.ok(journal.detailWidth >= 800, 'desktop history detail should use a full reading page');
+await evaluate(`document.querySelector('#saveHistoryNote').click();true`);
+await waitFor(`document.querySelector('#historyNoteStatus').textContent.includes('已保存')`);
+await evaluate(`history.back();true`);
+await waitFor(`location.hash==='#history' && !document.querySelector('#historyIndexPage').hidden && document.querySelector('#historyRecordPage').hidden`);
+await evaluate(`document.querySelector('#historyList .history-item').click();true`);
+await waitFor(`location.hash.startsWith('#history/') && !document.querySelector('#historyRecordPage').hidden`);
+await evaluate(`document.querySelector('[data-history-back]').click();true`);
+await waitFor(`location.hash==='#history' && !document.querySelector('#historyIndexPage').hidden`);
+await evaluate(`location.hash='#history/not-a-real-record';true`);
+await waitFor(`location.hash==='#history' && !document.querySelector('#historyIndexPage').hidden && document.querySelectorAll('#historyList .history-item').length===1`);
+await evaluate(`location.hash='#history/${encodeURIComponent(journalIndex.recordId)}';true`);
+await waitFor(`!document.querySelector('#historyRecordPage').hidden && document.querySelector('#historyDetail #historyNote')`);
+const originalQuestion = await evaluate(`document.querySelector('.history-detail blockquote').textContent`);
+await evaluate(`document.querySelector('#languageToggle [data-language-menu-trigger]').click();document.querySelector('#languageToggle [data-language="en"]').click();true`);
+await waitFor(`document.documentElement.lang==='en' && document.querySelector('[data-history-back]').textContent.includes('Back to journal')`);
+const journalEnglish = await evaluate(`({question:document.querySelector('.history-detail blockquote').textContent,aiVisible:Boolean(document.querySelector('#historyDetail .ai-interpretation')),lineLabel:document.querySelector('.history-lines b').textContent})`);
+assert.equal(journalEnglish.question, originalQuestion, 'saved questions must remain exactly as written');
+assert.equal(journalEnglish.aiVisible, false, 'AI readings in another language must not appear as translated results');
+assert.equal(journalEnglish.lineLabel, 'Line 6');
+await evaluate(`document.querySelector('#languageToggle [data-language-menu-trigger]').click();document.querySelector('#languageToggle [data-language="zh-CN"]').click();true`);
+await waitFor(`document.documentElement.lang==='zh-CN' && document.querySelector('#historyDetail .ai-interpretation')`);
 
 await command('Emulation.setDeviceMetricsOverride', { width: 320, height: 900, deviceScaleFactor: 1, mobile: true });
 await command('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+await command('Page.navigate', { url: `http://127.0.0.1:4175/#history/${encodeURIComponent(journalIndex.recordId)}` });
+await waitFor(`!document.querySelector('#historyRecordPage').hidden && document.querySelector('#historyDetail #historyNote')`);
+const historyMobile = await evaluate(`({width:document.documentElement.scrollWidth,viewport:innerWidth,indexHidden:document.querySelector('#historyIndexPage').hidden,detailVisible:document.querySelector('#historyRecordPage').getBoundingClientRect().height>0})`);
+assert.ok(historyMobile.width <= historyMobile.viewport, 'mobile history detail must not overflow horizontally');
+assert.equal(historyMobile.indexHidden && historyMobile.detailVisible, true);
+await command('Page.navigate', { url: 'http://127.0.0.1:4175/#home' });
+await waitFor(`document.querySelector('#view-home').classList.contains('active')`);
+const homeMobile = await evaluate(`(()=>{const cta=document.querySelector('.home-primary-action').getBoundingClientRect();return {viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,ctaWidth:Math.round(cta.width),ctaVisible:cta.top<innerHeight&&cta.bottom>0}})()`);
+assert.ok(homeMobile.scrollWidth <= homeMobile.viewport);
+assert.ok(homeMobile.ctaWidth <= homeMobile.viewport && homeMobile.ctaVisible);
 await command('Page.navigate', { url: 'http://127.0.0.1:4175/#classics/1/1' });
 await waitFor(`document.querySelector('#wing-0-section-0 .section-link')`);
 await sleep(500);
@@ -208,8 +290,11 @@ await sleep(1000);
 await evaluate(`const input=document.querySelector('#questionInput');
   input.value='面对下周的重要沟通，我应当注意什么？';
   input.dispatchEvent(new Event('input',{bubbles:true}));
-  document.querySelector('#confirmQuestion').click();
-  document.querySelector('#castButton').click(); true`);
+  document.querySelector('#confirmQuestion').click(); true`);
+await waitFor(`document.querySelector('#divinationConfirmDialog')?.open`);
+await evaluate(`document.querySelector('#confirmDivination').click(); true`);
+await waitFor(`!document.querySelector('#castButton').disabled`);
+await evaluate(`document.querySelector('#castButton').click(); true`);
 await waitFor(`document.querySelector('#castButton').textContent.includes('请先按住蓍束')`);
 const gateBefore = await evaluate(`document.querySelector('#castButton').disabled`);
 await evaluate(`const chooser=document.querySelector('#splitChooser');
@@ -230,4 +315,4 @@ assert.equal(complete.gateBefore, true);
 assert.equal(complete.splitReady, true);
 assert.equal(complete.left + complete.right, 49);
 socket.close();
-console.log(JSON.stringify({ result, localReading, streaming, interruptedAi, journal, responsive, complete }, null, 2));
+console.log(JSON.stringify({ homeLayout, homeMobile, result, localReading, streaming, interruptedAi, journal, responsive, complete }, null, 2));
