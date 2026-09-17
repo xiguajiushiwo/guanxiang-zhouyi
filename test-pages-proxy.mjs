@@ -29,6 +29,7 @@ try{
   assert.equal(await response.text(),'第一段第二段');
   assert.equal(response.headers.get('access-control-allow-origin'),null);
   assert.equal(response.headers.get('cache-control'),'no-store');
+  assert.equal(response.headers.get('x-content-type-options'),'nosniff');
 
   globalThis.fetch=async()=>{throw new Error('internal network detail')};
   const failed=await call(new Request('https://guanxiang-zhouyi.pages.dev/api/reading',{method:'POST',body:'{}'}));
