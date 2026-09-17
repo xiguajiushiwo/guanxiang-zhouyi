@@ -186,11 +186,11 @@
   }
   .cover-disc::before {
     content: attr(data-upper);
-    top: -74px;
+    top: -45px;
   }
   .cover-disc::after {
     content: attr(data-lower);
-    bottom: -74px;
+    bottom: -45px;
     color: var(--cover-accent);
   }
   .cover-line {

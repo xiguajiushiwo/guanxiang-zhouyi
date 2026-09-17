@@ -37,6 +37,8 @@ assert.match(detailsStyles, /\.cover-title-wrap::before\s*\{/);
 assert.match(detailsStyles, /\.cover-orbit\s*\{[^}]*display:\s*block/s);
 assert.doesNotMatch(detailsStyles, /gradient\(/);
 assert.match(detailsStyles, /\.cover-enter\s*\{[^}]*box-shadow/s);
+assert.match(detailsStyles, /\.cover-disc::before\s*\{[^}]*top:\s*-45px/s);
+assert.match(detailsStyles, /\.cover-disc::after\s*\{[^}]*bottom:\s*-45px/s);
 assert.match(detailsStyles, /\.site-cover::before,[\s\S]*\.site-cover::after,[\s\S]*\.cover-orbit\s*\{\s*transform:\s*translateY\(-50%\)/);
 assert.match(detailsStyles, /clamp\(0px, calc\(\.75vw - 10\.8px\), 8px\)/);
 assert.match(detailsStyles, /@media\s*\(min-width:\s*1361px\)/);
