@@ -32,7 +32,7 @@ function plainTextStream(body){
 
 export function trustedProxySecret(value,env){
   if(!value)return false;
-  return [env.PROXY_SECRET,env.NETLIFY_PROXY_SECRET].some(secret=>secret&&value===secret);
+  return [env.PROXY_SECRET,env.NETLIFY_PROXY_SECRET,env.LIARA_PROXY_SECRET].some(secret=>secret&&value===secret);
 }
 
 export function clientIpForRequest(request,env){

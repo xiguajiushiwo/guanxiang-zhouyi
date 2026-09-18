@@ -79,6 +79,7 @@ const endpointFor=hostname=>{
 };
 assert.equal(endpointFor('guanxiang-zhouyi-evf.pages.dev'),'/api/reading');
 assert.equal(endpointFor('guanxiang-zhouyi-global.netlify.app'),'/api/reading');
+assert.equal(endpointFor('guanxiang-zhouyi.liara.run'),'/api/reading');
 assert.equal(endpointFor('127.0.0.1'),'');
 
 console.log('首页封面结构校验通过。');

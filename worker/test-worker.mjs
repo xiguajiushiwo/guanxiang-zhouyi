@@ -56,6 +56,10 @@ assert.equal(trustedProxySecret('netlify-secret',{PROXY_SECRET:'shared-secret',N
 assert.equal(trustedProxySecret('wrong-secret',{PROXY_SECRET:'shared-secret',NETLIFY_PROXY_SECRET:'netlify-secret'}),false);
 assert.equal(clientIpForRequest(netlifyProxiedRequest,{NETLIFY_PROXY_SECRET:'netlify-secret'}),'203.0.113.88');
 assert.equal(clientIpForRequest(netlifyProxiedRequest,{NETLIFY_PROXY_SECRET:'wrong-secret'}),'192.0.2.10');
+const liaraProxiedRequest=new Request('https://worker.example/reading',{method:'POST',headers:{origin,'content-type':'application/json','cf-connecting-ip':'192.0.2.10','x-guanxiang-client-ip':'203.0.113.99','x-guanxiang-proxy-secret':'liara-secret'},body:JSON.stringify(validPayload())});
+assert.equal(trustedProxySecret('liara-secret',{PROXY_SECRET:'pages-secret',NETLIFY_PROXY_SECRET:'netlify-secret',LIARA_PROXY_SECRET:'liara-secret'}),true);
+assert.equal(clientIpForRequest(liaraProxiedRequest,{LIARA_PROXY_SECRET:'liara-secret'}),'203.0.113.99');
+assert.equal(clientIpForRequest(liaraProxiedRequest,{LIARA_PROXY_SECRET:'wrong-secret'}),'192.0.2.10');
 let aiArguments;
 const environment=()=>({ALLOWED_ORIGINS:origin,RATE_LIMITER:new MemoryNamespace(),RATE_LIMIT_SALT:'private-salt',PER_IP_HOURLY_LIMIT:'5',DAILY_LIMIT:'50',MAX_TOKENS:'900',AI_MODEL:'model-for-test',AI:{run:async(model,input)=>{aiArguments={model,input};return new Response('data: {"response":"【核心判断】\\n"}\n\ndata: {"response":"宜先观察。"}\n\ndata: [DONE]\n\n',{status:200,headers:{'content-type':'text/event-stream'}})}}});
 const providerStream=()=>new ReadableStream({start(controller){const encoder=new TextEncoder();controller.enqueue(encoder.encode('data: {"response":"【当前处境】\\n"}\n\ndata: {"response":"条件正在形成。"}\n\n'));controller.enqueue(encoder.encode('data: [DONE]\n\n'));controller.close()}});
