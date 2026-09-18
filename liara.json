@@ -1,0 +1,11 @@
+{
+  "platform": "node",
+  "app": "guanxiang-zhouyi",
+  "port": 4175,
+  "build": {
+    "location": "iran"
+  },
+  "node": {
+    "version": "22"
+  }
+}

@@ -22,6 +22,7 @@ Copy-Item wrangler.jsonc.example wrangler.jsonc
 ```text
 https://guanxiang-zhouyi-evf.pages.dev
 https://guanxiang-zhouyi-global.netlify.app
+https://guanxiang-zhouyi.liara.run
 ```
 
 多个 Origin 用英文逗号分隔。本地开发默认允许 `http://127.0.0.1:4175` 和 `http://localhost:4175`。
@@ -54,9 +55,15 @@ npx wrangler@latest dev
 npx wrangler@latest deploy
 ```
 
-部署完成后 Wrangler 会输出 `workers.dev` 地址。生产浏览器不直接调用该地址，而由 Pages 或 Netlify 的同源 `/api/reading` 代理转发。
+部署完成后 Wrangler 会输出 `workers.dev` 地址。生产浏览器不直接调用该地址，而由 Pages、Netlify 或 Liara 的同源 `/api/reading` 代理转发。
 
-Pages Function 和 Worker 必须配置相同的 `PROXY_SECRET`。Netlify Function 使用另一随机值：在 Netlify 中命名为 `PROXY_SECRET`，在 Worker 中命名为 `NETLIFY_PROXY_SECRET`。Worker 只有在对应 secret 匹配时才信任代理传来的访客 IP；值必须通过服务商的 secret 配置写入，不得放入 `wrangler.jsonc` 或前端代码。具体命令见根目录的 `DEPLOYMENT.md`。
+三条代理路径分别使用独立绑定：
+
+- Cloudflare Pages Function 与 Worker 共用 `PROXY_SECRET`；
+- Netlify Function 的 `PROXY_SECRET` 对应 Worker 的 `NETLIFY_PROXY_SECRET`；
+- Liara Node 服务的 `PROXY_SECRET` 对应 Worker 的 `LIARA_PROXY_SECRET`。
+
+三条路径共用同一个 Durable Object 限流器。Worker 只有在对应 secret 匹配时才信任代理传来的访客 IP；值必须通过服务商的 secret 配置写入，不得放入 `wrangler.jsonc` 或前端代码。具体命令见根目录的 `DEPLOYMENT.md`。
 
 ## 限额
 
