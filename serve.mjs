@@ -1,55 +1,13 @@
-import { createServer } from 'node:http';
-import { readFile, stat } from 'node:fs/promises';
-import { extname, resolve, sep } from 'node:path';
+import { resolve } from 'node:path';
 import process from 'node:process';
+import { createZhouyiServer } from './node-server.mjs';
 
-const root = resolve(process.cwd());
-const port = Number(process.env.ZHOUYI_PORT || 4175);
-const host = process.env.ZHOUYI_HOST || '127.0.0.1';
-const types = {
-  '.css': 'text/css; charset=utf-8',
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.webmanifest': 'application/manifest+json; charset=utf-8',
-  '.mjs': 'text/javascript; charset=utf-8',
-  '.png': 'image/png',
-  '.svg': 'image/svg+xml',
-  '.woff2': 'font/woff2',
-};
-
-const server = createServer(async (request, response) => {
-  try {
-    const url = new URL(request.url || '/', `http://${request.headers.host || 'localhost'}`);
-    let pathname = decodeURIComponent(url.pathname);
-    if (pathname === '/') pathname = '/index.html';
-    const target = resolve(root, `.${pathname}`);
-    if (target !== root && !target.startsWith(`${root}${sep}`)) {
-      response.writeHead(403).end('Forbidden');
-      return;
-    }
-
-    let file = target;
-    try {
-      if ((await stat(file)).isDirectory()) file = resolve(file, 'index.html');
-    } catch {
-      file = resolve(root, 'index.html');
-    }
-    const extension = extname(file).toLowerCase();
-    const content = await readFile(file);
-    response.writeHead(200, {
-      'Content-Type': types[extension] || 'application/octet-stream',
-      'Cache-Control': extension === '.html' ? 'no-store, max-age=0' : 'no-cache, must-revalidate',
-      'X-Content-Type-Options': 'nosniff',
-    });
-    response.end(content);
-  } catch (error) {
-    response.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' });
-    response.end(`Server error: ${error.message}`);
-  }
-});
+const production = process.argv.includes('--production');
+const root = resolve(process.cwd(), production ? 'dist' : '.');
+const port = Number(process.env.PORT || process.env.ZHOUYI_PORT || 4175);
+const host = process.env.ZHOUYI_HOST || (production ? '0.0.0.0' : '127.0.0.1');
+const server = createZhouyiServer({ root, proxySecret: process.env.PROXY_SECRET });
 
 server.listen(port, host, () => {
   console.log(`观象已启动：http://${host === '0.0.0.0' ? 'localhost' : host}:${port}/`);
 });
-
