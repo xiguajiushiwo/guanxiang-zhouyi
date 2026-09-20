@@ -17,7 +17,7 @@ export function splitAiReadingSections(text){
 }
 
 const REQUIRED_SECTIONS=['核心判断','当前处境','关键变化','后续趋势','行动建议'];
-export function isCompleteAiReading(text,language='zh-CN'){
+export function isCompleteAiReading(text,language='zh-CN',payload=null){
   const sections=language==='en'?splitAiReadingSectionsLocalized(text,'en'):splitAiReadingSections(text);
   const required=language==='en'?['Core judgment','Present situation','Key change','Developing trend','Suggested actions']:['核心判断','当前处境','关键变化','后续趋势','行动建议'];
   const titles=sections.map(section=>section.title);
@@ -27,7 +27,10 @@ export function isCompleteAiReading(text,language='zh-CN'){
   const hasThinkingFields=language==='en'
     ?/Thinking direction\s*:\s*\S/i.test(keyChange)&&/Mindset adjustment\s*:\s*\S/i.test(keyChange)
     :/思考方向\s*[：:]\s*\S/.test(keyChange)&&/思维调整\s*[：:]\s*\S/.test(keyChange);
-  return sections.every(section=>section.text.trim())&&actions.length>=3&&hasThinkingFields;
+  const movingCovered=!payload?.movingLines?.length||payload.movingLines.every(line=>keyChange.includes(line.label)&&keyChange.includes(line.text));
+  const trend=sections[3]?.text||'';
+  const yearsCovered=!payload?.analysisPlan?.years?.length||payload.analysisPlan.years.every(year=>new RegExp(`^\\s*${year}(?:年)?\\s*[：:]`,'m').test(trend));
+  return sections.every(section=>section.text.trim())&&actions.length>=3&&hasThinkingFields&&movingCovered&&yearsCovered;
 }
 
 async function httpError(response,language='zh-CN'){
@@ -49,7 +52,7 @@ export async function requestAiReading({endpoint,payload,onChunk=()=>{},fetchImp
     const tail=decoder.decode();if(tail){complete+=tail;onChunk(tail,complete)}
   }catch(error){if(error?.name==='AbortError'||signal?.aborted)throw new AiReadingError('ABORTED','',complete,language);throw new AiReadingError('STREAM_INTERRUPTED',error?.message,complete,language)}
   if(!complete.trim())throw new AiReadingError('MODEL_UNAVAILABLE');
-  if(!isCompleteAiReading(complete,payload?.language||'zh-CN'))throw new AiReadingError('INCOMPLETE_RESPONSE','',complete,payload?.language||'zh-CN');
+  if(!isCompleteAiReading(complete,payload?.language||'zh-CN',payload))throw new AiReadingError('INCOMPLETE_RESPONSE','',complete,payload?.language||'zh-CN');
   return complete;
 }
 

@@ -4,6 +4,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createZhouyiServer, clientIpForNodeRequest } from './node-server.mjs';
+import { MAX_BODY_BYTES } from './functions/_shared/reading-proxy.mjs';
 
 const root=await mkdtemp(join(tmpdir(),'zhouyi-liara-'));
 await writeFile(join(root,'index.html'),'<h1>INDEX</h1>');
@@ -58,7 +59,7 @@ try{
   assert.equal(forwarded.init.headers['x-guanxiang-client-ip'],'203.0.113.24');
   assert.equal(forwarded.init.headers['x-guanxiang-proxy-secret'],'liara-secret');
 
-  const oversized=await fetch(`${origin}/api/reading`,{method:'POST',body:'x'.repeat(12*1024+1)});
+  const oversized=await fetch(`${origin}/api/reading`,{method:'POST',body:'x'.repeat(MAX_BODY_BYTES+1)});
   assert.equal(oversized.status,413);
 }finally{
   await new Promise(resolve=>server.close(resolve));

@@ -1,5 +1,5 @@
 export const UPSTREAM_URL='https://guanxiang-ai-reading.1510351214.workers.dev';
-export const MAX_BODY_BYTES=12*1024;
+export const MAX_BODY_BYTES=32*1024;
 
 const jsonError=(code,status)=>new Response(JSON.stringify({error:{code,message:'AI reading service is temporarily unavailable.'}}),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'}});
 

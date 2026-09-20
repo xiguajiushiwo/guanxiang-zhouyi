@@ -327,9 +327,13 @@ function observeHistoryInterpretation(){
   new MutationObserver(enhance).observe(detail,{childList:true});enhance();
 }
 function aiPayload(context){
-  const details=(hexagram,source)=>({name:hexagram[2],upper:hexagram[6],lower:hexagram[7],theme:hexagram[5],imageText:hexagram[3],judgment:source?.text||hexagram[4]});
+  const details=(hexagram,source)=>({name:hexagram[2],upper:hexagram[6],lower:hexagram[7],theme:hexagram[5],imageText:hexagram[3],judgment:source?.text||hexagram[4],lines:(source?.lines||[]).map(line=>({label:line.label,text:line.text}))});
   const local=context.local,tenWings=selectTenWingSources({relations:relationsLibrary,originalIndex:context.originalIndex,changedIndex:context.changedIndex,fromChanged:Boolean(context.rule.fromChanged),primaryLines:context.primaryLines});
-  return {version:1,language:getLanguage(),question:context.question,originalIndex:context.originalIndex,changedIndex:context.changedIndex,original:details(context.original,hexagramTexts?.hexagrams?.[context.originalIndex]),changed:details(context.changed,hexagramTexts?.hexagrams?.[context.changedIndex]),moving:context.moving,rule:{text:context.rule.text,fromChanged:Boolean(context.rule.fromChanged),primary:context.rule.primary},primaryLines:context.primaryLines.map(line=>({label:line.label,text:line.text})),tenWings,localReading:{summary:local.summary,situation:local.situation,turningPoint:local.turningPoint,trend:local.trend,actions:local.actions,cautions:local.cautions}};
+  const lineSource=context.rule.fromChanged?context.changedLines:context.originalLines;
+  const movingLines=context.moving.map(index=>({position:index+1,label:lineSource[index]?.label||'',text:lineSource[index]?.text||''})).filter(line=>line.label&&line.text);
+  const original=details(context.original,hexagramTexts?.hexagrams?.[context.originalIndex]),changed=details(context.changed,hexagramTexts?.hexagrams?.[context.changedIndex]);
+  const years=[...new Set((String(context.question||'').match(/20\d{2}/g)||[]))];
+  return {version:1,language:getLanguage(),question:context.question,originalIndex:context.originalIndex,changedIndex:context.changedIndex,original,changed,moving:context.moving,movingLines,rule:{text:context.rule.text,fromChanged:Boolean(context.rule.fromChanged),primary:context.rule.primary},primaryLines:context.primaryLines.map(line=>({label:line.label,text:line.text})),tenWings,analysisPlan:{years,originalLineLabels:original.lines.map(line=>line.label),relatingLineLabels:changed.lines.map(line=>line.label),movingLineLabels:movingLines.map(line=>line.label),sequence:years.length?['核心主线','本卦当前基础','动爻转折','变卦后续背景','逐年条件性落地']:['核心主线','本卦当前基础','动爻转折','变卦后续背景']},localReading:{summary:local.summary,situation:local.situation,turningPoint:local.turningPoint,trend:local.trend,actions:local.actions,cautions:local.cautions}};
 }
 function updateHistoryAiReading(id,aiReading){
   const records=loadHistory(),record=records.find(item=>item.id===id);if(!record)return false;

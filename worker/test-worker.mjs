@@ -14,8 +14,8 @@ class MemoryNamespace {
   idFromName(name){return name}
   get(id){return id==='global'?{fetch:(input,init)=>this.object.fetch(new Request(input,init))}:null}
 }
-const hexagram={name:'水雷屯',upper:'水',lower:'雷',theme:'初生艰难，守正待时',imageText:'云雷屯，君子以经纶',judgment:'元亨利贞，勿用有攸往'};
-const validPayload=()=>({version:1,question:'未来三个月我该如何推进职业选择？',originalIndex:2,changedIndex:4,original:hexagram,changed:{...hexagram,name:'水天需'},moving:[0],rule:{text:'一爻变，以初爻为主。',fromChanged:false,primary:[0]},primaryLines:[{label:'初六',text:'磐桓；利居贞。'}],tenWings:[{title:'《象传上》',sectionNumber:3,hexagramRole:'primary',kind:'direct',excerpt:'云雷屯，君子以经纶。'}],localReading:{summary:'当前宜先辨明条件。',situation:'事情仍在形成。',turningPoint:'初爻提示先稳住基础。',trend:'之后倾向蓄势而进。',actions:['核实条件','小步验证'],cautions:['不要冒进']}});
+const hexagram={name:'水雷屯',upper:'水',lower:'雷',theme:'初生艰难，守正待时',imageText:'云雷屯，君子以经纶',judgment:'元亨利贞，勿用有攸往',lines:[{label:'初六',text:'磐桓，利居贞，利建侯。'},{label:'六二',text:'屯如邅如，乘马班如。'},{label:'六三',text:'即鹿无虞，惟入于林中。'},{label:'六四',text:'乘马班如，求婚媾。'},{label:'九五',text:'屯其膏，小贞吉，大贞凶。'},{label:'上六',text:'乘马班如，泣血涟如。'}]};
+const validPayload=()=>({version:1,question:'未来三个月我该如何推进职业选择？',originalIndex:2,changedIndex:4,original:hexagram,changed:{...hexagram,name:'水天需'},moving:[0],movingLines:[{position:1,label:'初六',text:'磐桓，利居贞，利建侯。'}],rule:{text:'一爻变，以初爻为主。',fromChanged:false,primary:[0]},primaryLines:[{label:'初六',text:'磐桓；利居贞。'}],tenWings:[{title:'《象传上》',sectionNumber:3,hexagramRole:'primary',kind:'direct',excerpt:'云雷屯，君子以经纶。'}],localReading:{summary:'当前宜先辨明条件。',situation:'事情仍在形成。',turningPoint:'初爻提示先稳住基础。',trend:'之后倾向蓄势而进。',actions:['核实条件','小步验证'],cautions:['不要冒进']}});
 
 assert.deepEqual([...parseAllowedOrigins(' https://a.example,https://b.example, https://a.example ')],['https://a.example','https://b.example']);
 assert.equal(validateReadingPayload(validPayload()).ok,true);
@@ -24,10 +24,14 @@ assert.equal(validateReadingPayload({...validPayload(),language:'fr'}).ok,false)
 assert.equal(validateReadingPayload({...validPayload(),question:'问'.repeat(101)}).ok,false);
 assert.equal(validateReadingPayload({...validPayload(),originalIndex:64}).ok,false);
 assert.equal(validateReadingPayload({...validPayload(),moving:[0,0]}).ok,false);
+assert.equal(validateReadingPayload({...validPayload(),movingLines:[{position:7,label:'上六',text:'文本'}]}).ok,false);
+assert.equal(validateReadingPayload({...validPayload(),original:{...hexagram,lines:Array.from({length:8},()=>hexagram.lines[0])}}).ok,false);
 assert.equal(validateReadingPayload({...validPayload(),tenWings:[{...validPayload().tenWings[0],kind:'invented'}]}).ok,false);
 assert.equal(validateReadingPayload({...validPayload(),tenWings:Array.from({length:9},()=>validPayload().tenWings[0])}).ok,false);
 assert.equal(validateReadingPayload({...validPayload(),extra:'not forwarded'}).value.extra,undefined);
 assert.equal(validateReadingPayload({...validPayload(),localReading:{...validPayload().localReading,summary:'长'.repeat(13000)}}).ok,false);
+assert.deepEqual(validateReadingPayload({...validPayload(),analysisPlan:{years:['2026','2030'],originalLineLabels:['初六'],relatingLineLabels:['初九'],movingLineLabels:['初六'],sequence:['核心主线']}}).value.analysisPlan.years,['2026','2030']);
+assert.equal(validateReadingPayload({...validPayload(),analysisPlan:{years:['bad']}}).ok,false);
 
 const firstHash=await hashedIpKey('203.0.113.8','private-salt','2026091108');
 const secondHash=await hashedIpKey('203.0.113.8','private-salt','2026091108');
@@ -61,7 +65,7 @@ assert.equal(trustedProxySecret('liara-secret',{PROXY_SECRET:'pages-secret',NETL
 assert.equal(clientIpForRequest(liaraProxiedRequest,{LIARA_PROXY_SECRET:'liara-secret'}),'203.0.113.99');
 assert.equal(clientIpForRequest(liaraProxiedRequest,{LIARA_PROXY_SECRET:'wrong-secret'}),'192.0.2.10');
 let aiArguments;
-const environment=()=>({ALLOWED_ORIGINS:origin,RATE_LIMITER:new MemoryNamespace(),RATE_LIMIT_SALT:'private-salt',PER_IP_HOURLY_LIMIT:'5',DAILY_LIMIT:'50',MAX_TOKENS:'900',AI_MODEL:'model-for-test',AI:{run:async(model,input)=>{aiArguments={model,input};return new Response('data: {"response":"【核心判断】\\n"}\n\ndata: {"response":"宜先观察。"}\n\ndata: [DONE]\n\n',{status:200,headers:{'content-type':'text/event-stream'}})}}});
+const environment=()=>({ALLOWED_ORIGINS:origin,RATE_LIMITER:new MemoryNamespace(),RATE_LIMIT_SALT:'private-salt',PER_IP_HOURLY_LIMIT:'5',DAILY_LIMIT:'50',MAX_TOKENS:'2400',AI_MODEL:'model-for-test',AI:{run:async(model,input)=>{aiArguments={model,input};return new Response('data: {"response":"【核心判断】\\n"}\n\ndata: {"response":"宜先观察。"}\n\ndata: [DONE]\n\n',{status:200,headers:{'content-type':'text/event-stream'}})}}});
 const providerStream=()=>new ReadableStream({start(controller){const encoder=new TextEncoder();controller.enqueue(encoder.encode('data: {"response":"【当前处境】\\n"}\n\ndata: {"response":"条件正在形成。"}\n\n'));controller.enqueue(encoder.encode('data: [DONE]\n\n'));controller.close()}});
 
 assert.equal((await worker.fetch(request('OPTIONS'),environment())).status,204);
@@ -74,16 +78,24 @@ assert.equal(response.headers.get('access-control-allow-origin'),origin);
 assert.equal(await response.text(),'【核心判断】\n宜先观察。');
 assert.equal(aiArguments.model,'model-for-test');
 assert.equal(aiArguments.input.stream,true);
-assert.equal(aiArguments.input.max_tokens,900);
+assert.equal(aiArguments.input.max_tokens,2400);
+assert.equal(aiArguments.input.temperature,0.35);
+assert.equal(aiArguments.input.top_p,0.85);
+assert.equal(aiArguments.input.repetition_penalty,1.08);
 assert.equal(JSON.stringify(aiArguments).includes('not forwarded'),false);
 assert.match(JSON.stringify(aiArguments.input.messages),/云雷屯/);
+assert.match(JSON.stringify(aiArguments.input.messages),/analysisPlan/);
 const chinesePrompt=promptFor(validPayload())[0].content;
+const chineseUserPrompt=promptFor(validPayload())[1].content;
 assert.match(chinesePrompt,/卦辞.*爻辞.*十翼/);
-assert.match(chinesePrompt,/不必.*原句|无需.*原句/);
+assert.match(chinesePrompt,/完整爻辞/);
+assert.match(chineseUserPrompt,/用户的问题（必须直接回答）/);
+assert.match(chineseUserPrompt,/未来三个月我该如何推进职业选择/);
+assert.match(chineseUserPrompt,/movingLines/);
 assert.match(chinesePrompt,/思考方向/);
 assert.match(chinesePrompt,/思维调整：/);
 assert.match(chinesePrompt,/第一个非空白字符必须是【/);
-assert.match(chinesePrompt,/禁止使用 Markdown 标记/);
+assert.match(chinesePrompt,/禁止使用 Markdown.*标记/);
 const englishPrompt=promptFor({...validPayload(),language:'en'})[0].content;
 assert.match(englishPrompt,/judgment.*line text.*Ten Wings/i);
 assert.match(englishPrompt,/Thinking direction:/);

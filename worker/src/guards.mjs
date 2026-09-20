@@ -8,7 +8,9 @@ export function parseAllowedOrigins(value){return new Set(String(value||'').spli
 
 function hexagram(value,label){
   if(!value||typeof value!=='object')throw new Error(label);
-  return {name:text(value.name,24,label),upper:text(value.upper,8,label),lower:text(value.lower,8,label),theme:text(value.theme,240,label),imageText:text(value.imageText,500,label),judgment:text(value.judgment,500,label)};
+  const lines=value.lines===undefined?[]:value.lines;
+  if(!Array.isArray(lines)||lines.length>7)throw new Error(`${label}.lines`);
+  return {name:text(value.name,24,label),upper:text(value.upper,8,label),lower:text(value.lower,8,label),theme:text(value.theme,240,label),imageText:text(value.imageText,500,label),judgment:text(value.judgment,500,label),lines:lines.map(line=>({label:text(line?.label,16,`${label}.line label`),text:text(line?.text,800,`${label}.line text`)}))};
 }
 function localReading(value){
   if(!value||typeof value!=='object')throw new Error('localReading');
@@ -23,16 +25,27 @@ function tenWingSources(value){
     return {title:text(source.title,40,'ten Wings title'),sectionNumber:index(source.sectionNumber,999,'ten Wings section'),hexagramRole:source.hexagramRole,kind:source.kind,excerpt:text(source.excerpt,600,'ten Wings excerpt')};
   });
 }
+function analysisPlan(value){
+  if(value===undefined)return {years:[],originalLineLabels:[],relatingLineLabels:[],movingLineLabels:[],sequence:[]};
+  if(!value||typeof value!=='object')throw new Error('analysisPlan');
+  const labels=(items,label,max=7)=>{if(!Array.isArray(items)||items.length>max)throw new Error(label);return items.map(item=>text(item,16,label))};
+  const years=labels(value.years,'analysis years',12);
+  if(years.some(year=>!/^(?:19|20)\d{2}$/.test(year)))throw new Error('analysis years');
+  return {years,originalLineLabels:labels(value.originalLineLabels,'analysis original lines'),relatingLineLabels:labels(value.relatingLineLabels,'analysis relating lines'),movingLineLabels:labels(value.movingLineLabels,'analysis moving lines'),sequence:labels(value.sequence,'analysis sequence',8)};
+}
 
 export function validateReadingPayload(value){
   try{
-    if(!value||typeof value!=='object'||JSON.stringify(value).length>12*1024)return invalid('请求内容过大或格式不正确。');
+    const serialized=JSON.stringify(value);
+    if(!value||typeof value!=='object'||typeof serialized!=='string'||encoder.encode(serialized).byteLength>32*1024)return invalid('请求内容过大或格式不正确。');
     if(value.version!==1)return invalid('不支持的请求版本。');
     if(value.language!==undefined&&value.language!=='en'&&value.language!=='zh-CN')return invalid('不支持的语言。');
     const moving=uniqueIndexes(value.moving,6,'moving'),primary=uniqueIndexes(value.rule?.primary,6,'primary');
     if(typeof value.rule?.fromChanged!=='boolean')throw new Error('rule');
     if(!Array.isArray(value.primaryLines)||value.primaryLines.length>6)throw new Error('primaryLines');
-    const copy={version:1,language:value.language==='en'?'en':'zh-CN',question:text(value.question,100,'question'),originalIndex:index(value.originalIndex,63,'originalIndex'),changedIndex:index(value.changedIndex,63,'changedIndex'),original:hexagram(value.original,'original'),changed:hexagram(value.changed,'changed'),moving,rule:{text:text(value.rule.text,400,'rule'),fromChanged:value.rule.fromChanged,primary},primaryLines:value.primaryLines.map(line=>({label:text(line?.label,16,'line label'),text:text(line?.text,800,'line text')})),tenWings:tenWingSources(value.tenWings),localReading:localReading(value.localReading)};
+    const movingLines=value.movingLines===undefined?[]:value.movingLines;
+    if(!Array.isArray(movingLines)||movingLines.length>6)throw new Error('movingLines');
+    const copy={version:1,language:value.language==='en'?'en':'zh-CN',question:text(value.question,100,'question'),originalIndex:index(value.originalIndex,63,'originalIndex'),changedIndex:index(value.changedIndex,63,'changedIndex'),original:hexagram(value.original,'original'),changed:hexagram(value.changed,'changed'),moving,movingLines:movingLines.map(line=>({position:index(line?.position-1,5,'moving line position')+1,label:text(line?.label,16,'moving line label'),text:text(line?.text,800,'moving line text')})),rule:{text:text(value.rule.text,400,'rule'),fromChanged:value.rule.fromChanged,primary},primaryLines:value.primaryLines.map(line=>({label:text(line?.label,16,'line label'),text:text(line?.text,800,'line text')})),tenWings:tenWingSources(value.tenWings),analysisPlan:analysisPlan(value.analysisPlan),localReading:localReading(value.localReading)};
     if(copy.question.length<8)return invalid('问题过短。');
     return {ok:true,value:copy};
   }catch(error){return invalid('请求字段不完整：'+error.message+'。')}
