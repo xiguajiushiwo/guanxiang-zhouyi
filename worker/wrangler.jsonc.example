@@ -17,6 +17,6 @@
     "AI_MODEL": "@cf/openai/gpt-oss-120b",
     "PER_IP_HOURLY_LIMIT": "5",
     "DAILY_LIMIT": "50",
-    "MAX_TOKENS": "2400"
+    "MAX_TOKENS": "6000"
   }
 }

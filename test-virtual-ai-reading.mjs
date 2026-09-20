@@ -25,7 +25,7 @@ const payload={
   language:'zh-CN',
   question:'属虎的人从2026年到2030年的事业运势如何？',
   originalIndex:47,
-  changedIndex:26,
+  changedIndex:25,
   original:hex('水风井','水','风','修德待用，资源不改其源','木上有水，井；君子以劳民劝相。','井，改邑不改井，无丧无得。往来井井，汔至亦未繘井，羸其瓶，凶。',sourceLines),
   changed:hex('山天大畜','山','天','蓄德积力，待时而行','天在山中，大畜；君子以多识前言往行，以畜其德。','大畜，利贞。不家食吉，利涉大川。',changingLines),
   moving:[2,3],
@@ -37,7 +37,20 @@ const payload={
     {title:'《彖传·井》',sectionNumber:48,hexagramRole:'primary',kind:'direct',excerpt:'井养而不穷也。'},
     {title:'《象传·大畜》',sectionNumber:26,hexagramRole:'relating',kind:'direct',excerpt:'天在山中，大畜；君子以多识前言往行，以畜其德。'},
   ],
-  analysisPlan:{years:['2026','2027','2028','2029','2030'],originalLineLabels:sourceLines.map(line=>line.label),relatingLineLabels:changingLines.map(line=>line.label),movingLineLabels:['九三','六四'],sequence:['核心主线','本卦当前基础','动爻转折','变卦后续背景','逐年条件性落地']},
+  analysisPlan:{years:['2026','2027','2028','2029','2030'],detailTarget:'long',originalLineLabels:sourceLines.map(line=>line.label),relatingLineLabels:changingLines.map(line=>line.label),movingLineLabels:['九三','六四'],sequence:['核心主线','本卦当前基础','动爻转折','变卦后续背景','逐年条件性落地'],referenceNotes:[
+    '井卦初六：井底有泥、旧井废弃，指资源尚未整理到可用状态。',
+    '井卦九二：浅处逐鱼且汲水器漏，指资源误用或工具不足。',
+    '井卦九三：井已经淘清却无人饮用，重点是能力已备但尚未被识别；不可解释为井水污浊或不可饮。',
+    '井卦六四：用砖石修整井壁，指继续筑牢基础；这是本次动爻，绝不能称为未动。',
+    '井卦九五：井水清冽可饮，指价值进入稳定输出阶段。',
+    '井卦上六：井成后不要遮盖，指让成果开放流通并以诚信维持。',
+    '大畜初九：解读必须明确写出“前行有危险，适宜暂时停止”，不能只泛化成谨慎，也不是自我完善之意。',
+    '大畜九二：解读必须明确写出“车轴连接处脱开而停止，能够审时自止”，不是组织调适或车轮顺畅运行。',
+    '大畜九三：良马追逐仍须艰贞，并每日训练车驾防卫，指准备充分后再进。',
+    '大畜六四：幼牛尚未长角就加以防护，指防患于未然、及早建立约束。',
+    '大畜六五：从根本驯服危险力量，指治本而非只压制表面。',
+    '大畜上九：通达于天衢，指蓄积完成后道路开放。'
+  ]},
   localReading:{summary:'先修基础，再把积累转成机会。',situation:'当前重在修井与建立稳定输出。',turningPoint:'动爻提示主动让价值被看见，并继续筑基。',trend:'后续倾向由积累转向稳健突破。',actions:['梳理技能证据','主动寻找反馈','按阶段复盘'],cautions:['不要把卦象当作确定预测']},
 };
 

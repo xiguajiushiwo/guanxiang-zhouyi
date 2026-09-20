@@ -26,12 +26,15 @@ function tenWingSources(value){
   });
 }
 function analysisPlan(value){
-  if(value===undefined)return {years:[],originalLineLabels:[],relatingLineLabels:[],movingLineLabels:[],sequence:[]};
+  if(value===undefined)return {years:[],detailTarget:'standard',originalLineLabels:[],relatingLineLabels:[],movingLineLabels:[],sequence:[],referenceNotes:[]};
   if(!value||typeof value!=='object')throw new Error('analysisPlan');
-  const labels=(items,label,max=7)=>{if(!Array.isArray(items)||items.length>max)throw new Error(label);return items.map(item=>text(item,16,label))};
+  const labels=(items,label,max=7)=>{if(items===undefined)return [];if(!Array.isArray(items)||items.length>max)throw new Error(label);return items.map(item=>text(item,16,label))};
+  const notes=value.referenceNotes===undefined?[]:value.referenceNotes;
+  if(!Array.isArray(notes)||notes.length>20)throw new Error('analysis reference notes');
   const years=labels(value.years,'analysis years',12);
   if(years.some(year=>!/^(?:19|20)\d{2}$/.test(year)))throw new Error('analysis years');
-  return {years,originalLineLabels:labels(value.originalLineLabels,'analysis original lines'),relatingLineLabels:labels(value.relatingLineLabels,'analysis relating lines'),movingLineLabels:labels(value.movingLineLabels,'analysis moving lines'),sequence:labels(value.sequence,'analysis sequence',8)};
+  if(value.detailTarget!==undefined&&!['standard','long'].includes(value.detailTarget))throw new Error('analysis detail target');
+  return {years,detailTarget:value.detailTarget==='long'?'long':'standard',originalLineLabels:labels(value.originalLineLabels,'analysis original lines'),relatingLineLabels:labels(value.relatingLineLabels,'analysis relating lines'),movingLineLabels:labels(value.movingLineLabels,'analysis moving lines'),sequence:labels(value.sequence,'analysis sequence',8),referenceNotes:notes.map(note=>text(note,300,'analysis reference note'))};
 }
 
 export function validateReadingPayload(value){

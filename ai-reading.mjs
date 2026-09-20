@@ -17,6 +17,27 @@ export function splitAiReadingSections(text){
 }
 
 const REQUIRED_SECTIONS=['核心判断','当前处境','关键变化','后续趋势','行动建议'];
+const LINE_LABEL_PATTERN='(?:初[六九]|[六九][二三四五]|上[六九]|用[六九])';
+const escapeRegExp=value=>String(value).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+
+function hasConsistentLineCitations(text,payload){
+  const lines=[...(payload?.original?.lines||[]),...(payload?.changed?.lines||[])].filter(line=>line?.label&&line?.text);
+  if(!lines.length)return true;
+  return lines.every(line=>{
+    const wrongLabelBeforeText=new RegExp(`(${LINE_LABEL_PATTERN})(?:(?!${LINE_LABEL_PATTERN})[\\s：:，,、“”‘’「」『』()（）]){0,16}${escapeRegExp(line.text)}`,'g');
+    return [...String(text||'').matchAll(wrongLabelBeforeText)].every(match=>match[1]===line.label);
+  });
+}
+
+function hasConsistentMovingLineRoles(text,payload,language){
+  return (payload?.movingLines||[]).every(line=>{
+    const label=escapeRegExp(line.label);
+    return language==='en'
+      ?!new RegExp(`${label}[^\\n]{0,96}(?:is|as) (?:an )?(?:unchanged|non-moving) line`,'i').test(text)
+      :!new RegExp(`${label}[^\\n]{0,96}(?:虽|并)?(?:未动|不是动爻|非动爻)`).test(text);
+  });
+}
+
 export function isCompleteAiReading(text,language='zh-CN',payload=null){
   const sections=language==='en'?splitAiReadingSectionsLocalized(text,'en'):splitAiReadingSections(text);
   const required=language==='en'?['Core judgment','Present situation','Key change','Developing trend','Suggested actions']:['核心判断','当前处境','关键变化','后续趋势','行动建议'];
@@ -24,13 +45,15 @@ export function isCompleteAiReading(text,language='zh-CN',payload=null){
   if(sections.length!==required.length||titles.some((title,index)=>title!==required[index])||new Set(titles).size!==titles.length)return false;
   const actions=sections.at(-1).text.split(/\n+/).map(line=>line.replace(/^\s*(?:[-*•]|\d+[.)])\s*/,'').trim()).filter(Boolean);
   const keyChange=sections[2]?.text||'';
-  const hasThinkingFields=language==='en'
-    ?/Thinking direction\s*:\s*\S/i.test(keyChange)&&/Mindset adjustment\s*:\s*\S/i.test(keyChange)
-    :/思考方向\s*[：:]\s*\S/.test(keyChange)&&/思维调整\s*[：:]\s*\S/.test(keyChange);
-  const movingCovered=!payload?.movingLines?.length||payload.movingLines.every(line=>keyChange.includes(line.label)&&keyChange.includes(line.text));
+  const thinkingMatches=language==='en'?keyChange.match(/Thinking direction\s*:/gi):keyChange.match(/思考方向\s*[：:]/g);
+  const mindsetMatches=language==='en'?keyChange.match(/Mindset adjustment\s*:/gi):keyChange.match(/思维调整\s*[：:]/g);
+  const hasThinkingFields=thinkingMatches?.length===1&&mindsetMatches?.length===1;
+  const movingCovered=!payload?.movingLines?.length||payload.movingLines.every(line=>new RegExp(`${escapeRegExp(line.label)}[\\s：:，,、“”‘’「」『』()（）]{0,16}${escapeRegExp(line.text)}`).test(keyChange));
   const trend=sections[3]?.text||'';
-  const yearsCovered=!payload?.analysisPlan?.years?.length||payload.analysisPlan.years.every(year=>new RegExp(`^\\s*${year}(?:年)?\\s*[：:]`,'m').test(trend));
-  return sections.every(section=>section.text.trim())&&actions.length>=3&&hasThinkingFields&&movingCovered&&yearsCovered;
+  const yearsCovered=!payload?.analysisPlan?.years?.length||payload.analysisPlan.years.every(year=>new RegExp(`^\\s*${year}\\s*(?:年\\s*)?(?:[：:]|$)`,'m').test(trend));
+  const nonWhitespaceLength=String(text||'').replace(/\s/g,'').length;
+  const detailedEnough=payload?.analysisPlan?.detailTarget==='long'?nonWhitespaceLength>=2500:payload?.analysisPlan?.detailTarget==='standard'?nonWhitespaceLength>=1400:true;
+  return sections.every(section=>section.text.trim())&&actions.length===3&&hasThinkingFields&&movingCovered&&yearsCovered&&hasConsistentLineCitations(text,payload)&&hasConsistentMovingLineRoles(text,payload,language)&&detailedEnough;
 }
 
 async function httpError(response,language='zh-CN'){
