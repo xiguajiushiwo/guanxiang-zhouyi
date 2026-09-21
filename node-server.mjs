@@ -98,7 +98,12 @@ export function createZhouyiServer({ root, proxySecret, accountWorkerUrl, accoun
       try {
         if ((await stat(file)).isDirectory()) file = resolve(file, 'index.html');
       } catch {
-        file = resolve(staticRoot, 'index.html');
+        try {
+          const htmlFile = `${target}.html`;
+          file = !extname(target) && (await stat(htmlFile)).isFile() ? htmlFile : resolve(staticRoot, 'index.html');
+        } catch {
+          file = resolve(staticRoot, 'index.html');
+        }
       }
 
       const extension = extname(file).toLowerCase();

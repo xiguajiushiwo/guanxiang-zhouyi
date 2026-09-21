@@ -27,7 +27,7 @@ const AI_REFERENCE_NOTES={
     山天大畜:['Great Taming line 1: danger lies ahead, so stopping for now is beneficial; it does not mean self-improvement.','Great Taming line 2: the axle fastening comes loose and the vehicle stops; this means knowing when to stop, not smooth motion or organizational adjustment.','Great Taming line 3: the good horse pursues, but daily training in driving and defense is required; proceed only after preparation.','Great Taming line 4: restraining a young bull before its horns grow means preventing trouble early and setting constraints in advance.','Great Taming line 5: dangerous force is tamed at its root rather than suppressed only at the surface.','Great Taming line 6: reaching the highway of heaven means the road opens after accumulation is complete.']
   }
 };
-let currentView='home', selectedHex=0, selectedWing=0, selectedPrinciple=0, selectedClassicSection=null, historySelectedId='', historyQuery='', filter='all', readingMode='ancient', pendingImport=null, currentReading=null, aiReadingAbort=null, accountClient=null, accountUser=null, accountBusy=false, accountAuthMode='login', castState={lines:[],working:false,runId:0,ritual:null,confirmed:false,prepared:false,question:'',sessionId:'',mode:'complete'}, tenWings=null, hexagramTexts=null, principleLibrary=null, principleLibraryEn=null, relationsLibrary=null;
+let currentView='home', selectedHex=0, selectedWing=0, selectedPrinciple=0, selectedClassicSection=null, historySelectedId='', historyQuery='', filter='all', readingMode='ancient', pendingImport=null, currentReading=null, aiReadingAbort=null, accountClient=null, accountUser=null, castState={lines:[],working:false,runId:0,ritual:null,confirmed:false,prepared:false,question:'',sessionId:'',mode:'complete'}, tenWings=null, hexagramTexts=null, principleLibrary=null, principleLibraryEn=null, relationsLibrary=null;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const TRIGRAM_GLYPHS={'天':'☰','泽':'☱','火':'☲','雷':'☳','风':'☴','水':'☵','山':'☶','地':'☷'};
 let dailyCoverTimer=0;
@@ -62,10 +62,7 @@ function initDailyCoverHexagram(){
 function initLandingCover(){
   const cover=$('#siteCover'),app=$('.app-shell'),enter=$('#enterSite');
   if(!cover||!app||!enter)return;
-  app.setAttribute('inert','');
-  app.setAttribute('aria-hidden','true');
-  document.body.classList.add('cover-active');
-  const finish=()=>{
+  const revealApp=()=>{
     if(cover.hidden)return;
     cover.hidden=true;
     app.removeAttribute('inert');
@@ -74,11 +71,20 @@ function initLandingCover(){
     $('.main-content')?.focus({preventScroll:true});
     requestAnimationFrame(()=>document.dispatchEvent(new Event('guanxiang:entered')));
   };
+  if(new URLSearchParams(location.search).get('entry')==='account'){
+    revealApp();
+    history.replaceState(null,'',`${location.pathname}${location.hash||'#home'}`);
+    return;
+  }
+  app.setAttribute('inert','');
+  app.setAttribute('aria-hidden','true');
+  document.body.classList.add('cover-active');
+  const openAccountPage=()=>location.assign('./auth');
   enter.addEventListener('click',()=>{
     if(cover.classList.contains('is-leaving'))return;
     cover.classList.add('is-leaving');
-    if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches)finish();
-    else{const complete=event=>{if(event.target!==cover)return;cover.removeEventListener('animationend',complete);finish()};cover.addEventListener('animationend',complete)}
+    if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches)openAccountPage();
+    else{const complete=event=>{if(event.target!==cover)return;cover.removeEventListener('animationend',complete);openAccountPage()};cover.addEventListener('animationend',complete)}
   });
   requestAnimationFrame(()=>enter.focus({preventScroll:true}));
 }
@@ -189,19 +195,13 @@ function validLine(line){return line&&[6,7,8,9].includes(line.value)&&Array.isAr
 function validRitual(ritual,lineCount){if(ritual===null)return true;if(!ritual||ritual.lineNumber!==lineCount+1||ritual.changeNumber<1||ritual.changeNumber>3||ritual.stepIndex<0||ritual.stepIndex>3||!Number.isFinite(ritual.stalks)||!Array.isArray(ritual.history)||!ritual.history.every(validChange))return false;return ritual.change===null||validChange(ritual.change)}
 function saveCast(){try{writeJson(localStorage,'guanxiang-cast-v3',{version:3,savedAt:new Date().toISOString(),sessionId:castState.sessionId,question:castState.question,confirmed:castState.confirmed,prepared:castState.prepared,mode:castState.mode,lines:castState.lines,ritual:castState.ritual})}catch(error){console.warn('起卦进度未能保存',error)}}
 const HISTORY_KEY='guanxiang-history-v1';
+const ACCOUNT_MODE_KEY='guanxiang-account-mode-v1';
 function loadHistory(){const records=normalizeHistoryRecords(readJson(localStorage,HISTORY_KEY,[]));return records.filter(record=>record.lines.every(validLine))}
 function persistHistory(records){writeJson(localStorage,HISTORY_KEY,normalizeHistoryRecords(records))}
+function isGuestAccountMode(){try{return localStorage.getItem(ACCOUNT_MODE_KEY)==='guest'}catch{return false}}
 function accountLanguage(){return getLanguage()==='fa'?'fa':getLanguage()==='en'?'en':'zh-CN'}
 const ACCOUNT_COPY={'zh-CN':{'auth.title':'观象账户','auth.login':'登录','auth.register':'注册','auth.email':'邮箱','auth.password':'密码','auth.submitLogin':'登录账户','auth.submitRegister':'创建账户','auth.logout':'退出登录','auth.guest':'游客模式','auth.accountDescription':'记录会在不同设备间同步。','auth.mergeTitle':'合并此设备的记录？','auth.mergeBody':'旧的本机记录会保留并添加到你的账户。','auth.merge':'合并记录','auth.keepCloud':'只保留云端记录','auth.invalid':'邮箱或密码无效。','auth.network':'账户服务暂时不可用。','auth.loggedIn':'已登录'},en:{'auth.title':'Guanxiang account','auth.login':'Log in','auth.register':'Create account','auth.email':'Email','auth.password':'Password','auth.submitLogin':'Log in','auth.submitRegister':'Create account','auth.logout':'Log out','auth.guest':'Guest mode','auth.accountDescription':'Records sync across your devices.','auth.mergeTitle':'Merge this device’s records?','auth.mergeBody':'Your existing local records will be kept and added to your account.','auth.merge':'Merge records','auth.keepCloud':'Keep cloud records only','auth.invalid':'The email or password is not valid.','auth.network':'The account service is temporarily unavailable.','auth.loggedIn':'Signed in'},fa:{'auth.title':'حساب گوانشیانگ','auth.login':'ورود','auth.register':'ثبت‌نام','auth.email':'ایمیل','auth.password':'رمز عبور','auth.submitLogin':'ورود به حساب','auth.submitRegister':'ساخت حساب','auth.logout':'خروج','auth.guest':'حالت مهمان','auth.accountDescription':'رکوردهای شما در دستگاه‌های مختلف همگام می‌شوند.','auth.mergeTitle':'رکوردهای این دستگاه ادغام شوند؟','auth.mergeBody':'رکوردهای محلی قدیمی حفظ می‌شوند و به حساب شما اضافه خواهند شد.','auth.merge':'ادغام رکوردها','auth.keepCloud':'فقط رکوردهای ابری','auth.invalid':'ایمیل یا رمز عبور معتبر نیست.','auth.network':'خدمت حساب موقتاً در دسترس نیست.','auth.loggedIn':'وارد شده‌اید'}};
 function accountCopy(key){const value=t(key);return value===key?(ACCOUNT_COPY[accountLanguage()]?.[key]||key):value}
-function accountErrorMessage(error){
-  if(error instanceof AccountApiError){
-    if(error.code==='NETWORK_ERROR'||error.status===503)return accountCopy('auth.network');
-    if(error.status===401||error.status===409||error.code==='INVALID_CREDENTIALS'||error.code==='ACCOUNT_EXISTS')return accountCopy('auth.invalid');
-    return error.message||t('auth.network');
-  }
-  return accountCopy('auth.network');
-}
 function renderAccountStatus(){
   const button=$('#profileButton');
   if(!button)return;
@@ -214,35 +214,6 @@ function renderAccountStatus(){
   button.classList.toggle('signed-in',Boolean(accountUser));
   document.body.classList.toggle('account-signed-in',Boolean(accountUser));
 }
-function openAccountDialog(mode=accountUser?'status':'login'){
-  const dialog=$('#accountDialog');if(!dialog)return;
-  accountAuthMode=mode;
-  renderAccountDialog();
-  if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
-  requestAnimationFrame(()=>dialog.querySelector('input:not([type="hidden"]):not([disabled])')?.focus());
-}
-function renderAccountDialog(){
-  const dialog=$('#accountDialog');if(!dialog)return;
-  const form=dialog.querySelector('form'),fields=dialog.querySelector('[data-account-fields]'),status=dialog.querySelector('[data-account-status]');
-  dialog.querySelector('[data-account-kicker]').textContent=accountCopy('auth.title');
-  dialog.querySelector('[data-account-title]').textContent=accountCopy('auth.title');
-  dialog.querySelector('[data-account-email-label]').textContent=accountCopy('auth.email');
-  dialog.querySelector('[data-account-password-label]').textContent=accountCopy('auth.password');
-  dialog.querySelector('[data-account-submit]').textContent=accountAuthMode==='register'?accountCopy('auth.submitRegister'):accountCopy('auth.submitLogin');
-  dialog.querySelector('[data-account-logout]').textContent=accountCopy('auth.logout');
-  const switchLabel=dialog.querySelector('[data-account-switch-label]');
-  if(switchLabel)switchLabel.textContent=accountAuthMode==='register'?accountCopy('auth.login'):accountCopy('auth.register');
-  else dialog.querySelector('[data-account-switch]')?.replaceChildren(document.createTextNode(accountAuthMode==='register'?accountCopy('auth.login'):accountCopy('auth.register')));
-  const signedIn=accountAuthMode==='status'&&accountUser;
-  fields.classList.toggle('hidden',Boolean(signedIn));
-  dialog.querySelector('[data-account-actions]').classList.toggle('hidden',Boolean(signedIn));
-  dialog.querySelector('[data-account-user]').textContent=accountUser?.email||'';
-  dialog.querySelector('[data-account-user]').classList.toggle('hidden',!signedIn);
-  dialog.querySelector('[data-account-logout]').classList.toggle('hidden',!signedIn);
-  if(status)status.textContent=signedIn?accountCopy('auth.accountDescription'):'';
-  if(form)form.reset();
-}
-function closeAccountDialog(){const dialog=$('#accountDialog');if(dialog?.open)dialog.close();else dialog?.removeAttribute('open')}
 function openMergeDialog(remoteRecords){
   const dialog=$('#accountMergeDialog');if(!dialog)return Promise.resolve('merge');
   const localCount=loadHistory().length,remoteCount=remoteRecords.length;
@@ -268,23 +239,10 @@ async function syncAccountAfterLogin(){
 }
 async function restoreAccountSession(){
   accountClient=createAccountClient({language:accountLanguage()});
+  if(isGuestAccountMode()){accountUser=null;renderAccountStatus();return}
   try{const result=await accountClient.me();accountUser=result.user||null;await syncAccountAfterLogin()}
   catch(error){if(!(error instanceof AccountApiError&&[401,403].includes(error.status)))console.warn('账户状态未能读取',error);accountUser=null}
   renderAccountStatus();
-}
-async function submitAccountForm(event){
-  event.preventDefault();if(accountBusy)return;
-  const form=event.currentTarget,email=String(form.elements.email.value||'').trim(),password=String(form.elements.password.value||''),errorBox=$('#accountError');
-  if(errorBox)errorBox.textContent='';accountBusy=true;form.setAttribute('aria-busy','true');
-  try{
-    accountClient=createAccountClient({language:accountLanguage()});
-    const result=accountAuthMode==='register'?await accountClient.register(email,password):await accountClient.login(email,password);
-    accountUser=result.user||null;closeAccountDialog();await syncAccountAfterLogin();renderAccountStatus();showNotice(accountCopy('auth.loggedIn'));
-  }catch(error){if(errorBox)errorBox.textContent=accountErrorMessage(error)}finally{accountBusy=false;form.removeAttribute('aria-busy')}
-}
-async function logoutAccount(){
-  try{await accountClient?.logout()}catch(error){console.warn('退出登录未能完成',error)}
-  accountUser=null;accountClient=createAccountClient({language:accountLanguage()});renderAccountStatus();closeAccountDialog();showNotice(accountCopy('auth.guest'));
 }
 function syncCloudRecord(record){if(!accountUser||!accountClient)return;accountClient.upsertReading(record).catch(error=>console.warn('云端记录未能保存',error))}
 function syncCloudDelete(id){if(!accountUser||!accountClient)return;accountClient.deleteReading(id).catch(error=>console.warn('云端记录未能删除',error))}
@@ -603,7 +561,6 @@ function toggleLanguageMenu(menu){
   renderBackupReminder()
   updateCastButton()
   translateKnownText(document)
-  renderAccountDialog()
   renderAccountStatus()
   updateLanguageMenus()
   updateDailyCoverHexagram()
@@ -677,7 +634,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('#confirmImport')?.addEventListener('click',confirmHistoryImport);
   $('#cancelImport')?.addEventListener('click',()=>{pendingImport=null});
   $('#themeToggle')?.addEventListener('click',()=>applyTheme(document.body.classList.contains('dark-mode')?'light':'dark',true));
-  $('#accountForm')?.addEventListener('submit',submitAccountForm);
   document.addEventListener('click',event=>{if(event.target.closest('.wing-order-item'))requestAnimationFrame(()=>renderAnnotationPanel($('#classicsGrid'),'classic',String(selectedWing)))});
   $('#onboardingStart')?.addEventListener('click',dismissOnboarding);
   $('#onboardingLater')?.addEventListener('click',dismissOnboarding);
@@ -689,10 +645,7 @@ document.addEventListener('DOMContentLoaded',()=>{if(!castState.confirmed)return
 
 document.addEventListener('click',event=>{if(!event.target.closest('[data-language-menu]'))closeLanguageMenus()});
 document.addEventListener('click',event=>{
-  if(event.target.closest('#profileButton')){event.preventDefault();const dialog=$('#accountDialog');if(dialog){accountAuthMode=accountUser?'status':'login';renderAccountDialog();dialog.setAttribute('open','')}return}
-  if(event.target.closest('[data-account-close]')){event.preventDefault();closeAccountDialog();return}
-  if(event.target.closest('[data-account-logout]')){event.preventDefault();logoutAccount();return}
-  if(event.target.closest('[data-account-switch]')){event.preventDefault();accountAuthMode=accountAuthMode==='register'?'login':'register';renderAccountDialog();return}
+  if(event.target.closest('#profileButton')){event.preventDefault();location.assign('./auth?from=app')}
 });
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'){

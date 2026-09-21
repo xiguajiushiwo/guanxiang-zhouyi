@@ -6,8 +6,8 @@ const output=path.resolve(root,'dist');
 if(path.dirname(output)!==root||path.basename(output)!=='dist')throw new Error('Refusing to clean an unexpected output path.');
 
 const files=[
-  'index.html','styles.css','landing-v2.css','landing-rich.css','landing-details.css',
-  'app.js','i18n.mjs','hexagram-i18n.mjs','hexagram-catalog.mjs','daily-hexagram.mjs','yarrow-core.mjs',
+  'index.html','auth.html','styles.css','auth.css','landing-v2.css','landing-rich.css','landing-details.css',
+  'app.js','auth.js','i18n.mjs','hexagram-i18n.mjs','hexagram-catalog.mjs','daily-hexagram.mjs','yarrow-core.mjs',
   'reading-rules.mjs','interpretation.mjs','ai-reading.mjs','ai-sources.mjs','derived-hexagrams.mjs',
   'study-storage.mjs','storage.mjs','account-sync.mjs','html-safety.mjs','service-worker-update.mjs',
   'ten-wings.json','hexagram-texts.json','principles.json','principles-en.json','relations.json',

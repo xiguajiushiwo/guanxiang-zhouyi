@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2e302c" />
+    <title>进入观象</title>
+    <link rel="icon" href="app-icon.svg" />
+    <link rel="stylesheet" href="auth.css?v=20260921-auth2" />
+  </head>
+  <body>
+    <div class="auth-page">
+      <header class="auth-masthead">
+        <a class="auth-brand" href="./" aria-label="观象首页" data-i18n-aria-label="auth.homeLabel">
+          <span class="auth-brand-mark" aria-hidden="true">觀</span>
+          <span><b>观象</b><small>ZHOUYI STUDY</small></span>
+        </a>
+        <div class="auth-language" data-auth-language>
+          <button type="button" class="auth-language-trigger" aria-haspopup="menu" aria-expanded="false">
+            <span data-language-label>Language</span><span aria-hidden="true">⌄</span>
+          </button>
+          <div class="auth-language-options" role="menu" hidden>
+            <button type="button" role="menuitemradio" data-language="zh-CN">中文</button>
+            <button type="button" role="menuitemradio" data-language="en">English</button>
+            <button type="button" role="menuitemradio" data-language="fa">فارسی</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="auth-main">
+        <section class="auth-emblem" aria-hidden="true">
+          <div class="auth-orbit auth-orbit-outer"></div>
+          <div class="auth-orbit auth-orbit-inner"></div>
+          <div class="auth-hexagram">
+            <i></i><i class="broken"><b></b><b></b></i><i></i>
+            <i></i><i class="broken"><b></b><b></b></i><i></i>
+          </div>
+          <div class="auth-emblem-copy">
+            <span data-i18n="auth.emblemKicker">观象而入</span>
+            <blockquote data-i18n="auth.emblemQuote">穷则变，变则通，通则久。</blockquote>
+          </div>
+        </section>
+
+        <section class="auth-panel" aria-labelledby="authTitle">
+          <div class="auth-panel-heading">
+            <span data-i18n="auth.pageKicker">观象账户</span>
+            <h1 id="authTitle" data-i18n="auth.pageTitle">进入观象</h1>
+            <p data-i18n="auth.pageDescription">登录后跨设备保存占问记录，也可以作为游客只在本机使用。</p>
+          </div>
+
+          <div class="auth-signed hidden" data-signed-view>
+            <span class="auth-status-dot" aria-hidden="true"></span>
+            <p data-i18n="auth.signedInAs">当前登录 ID</p>
+            <strong data-account-id></strong>
+            <small data-i18n="auth.accountDescription">记录会在不同设备间同步。</small>
+            <button type="button" class="auth-primary" data-continue data-i18n="auth.continue">进入观象</button>
+            <button type="button" class="auth-quiet" data-logout data-i18n="auth.logout">退出登录</button>
+          </div>
+
+          <div data-auth-view>
+            <div class="auth-modes" role="tablist" aria-label="账户方式" data-i18n-aria-label="auth.modeLabel">
+              <button type="button" role="tab" aria-selected="true" data-auth-mode="login" data-i18n="auth.login">登录</button>
+              <button type="button" role="tab" aria-selected="false" data-auth-mode="register" data-i18n="auth.register">注册</button>
+            </div>
+
+            <form class="auth-form" id="authForm">
+              <label>
+                <span data-i18n="auth.email">邮箱</span>
+                <input name="email" type="email" autocomplete="email" required maxlength="254" inputmode="email" />
+              </label>
+              <label>
+                <span data-i18n="auth.password">密码</span>
+                <input name="password" type="password" autocomplete="current-password" required minlength="8" maxlength="200" />
+                <small data-i18n="auth.passwordHint">至少 8 位字符</small>
+              </label>
+              <p class="auth-error" id="authError" role="alert"></p>
+              <button type="submit" class="auth-primary" data-auth-submit>登录账户</button>
+            </form>
+
+            <div class="auth-divider"><span data-i18n="auth.or">或者</span></div>
+            <button type="button" class="auth-guest" data-guest>
+              <span aria-hidden="true">○</span>
+              <span><b data-i18n="auth.guestEnter">游客进入</b><small data-i18n="auth.guestDescription">记录只保存在此设备。</small></span>
+            </button>
+          </div>
+
+          <a class="auth-back" href="./"><span aria-hidden="true">←</span><span data-i18n="auth.backCover">返回封面</span></a>
+        </section>
+      </main>
+
+      <footer class="auth-footer">
+        <span data-i18n="auth.footerLeft">六十四卦 · 十翼 · 大衍筮法</span>
+        <span data-i18n="auth.footerRight">账户密码经加密后保存</span>
+      </footer>
+    </div>
+    <script type="module" src="auth.js?v=20260921-auth3"></script>
+  </body>
+</html>

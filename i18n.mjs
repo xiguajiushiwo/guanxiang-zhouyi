@@ -216,6 +216,33 @@ Object.assign(DICTIONARY['zh-CN'], {
 Object.assign(DICTIONARY.en, {
   'language.fa': 'Persian', 'auth.title': 'Guanxiang account', 'auth.login': 'Log in', 'auth.register': 'Create account', 'auth.email': 'Email', 'auth.password': 'Password', 'auth.submitLogin': 'Log in', 'auth.submitRegister': 'Create account', 'auth.logout': 'Log out', 'auth.guest': 'Guest mode', 'auth.guestDescription': 'Records stay on this device.', 'auth.accountDescription': 'Records sync across your devices.', 'auth.mergeTitle': 'Merge this device’s records?', 'auth.mergeBody': 'Your existing local records will be kept and added to your account.', 'auth.merge': 'Merge records', 'auth.keepCloud': 'Keep cloud records only', 'auth.invalid': 'The email or password is not valid.', 'auth.network': 'The account service is temporarily unavailable.', 'auth.loggedIn': 'Signed in',
 });
+Object.assign(DICTIONARY['zh-CN'], {
+  'auth.browserTitle': '进入观象 · 账户', 'auth.pageKicker': '观象账户', 'auth.pageTitle': '进入观象',
+  'auth.pageDescription': '登录后跨设备保存占问记录，也可以作为游客只在本机使用。',
+  'auth.emblemKicker': '观象而入', 'auth.emblemQuote': '穷则变，变则通，通则久。',
+  'auth.passwordHint': '至少 8 位字符', 'auth.or': '或者', 'auth.guestEnter': '游客进入',
+  'auth.signedInAs': '当前登录 ID', 'auth.continue': '进入观象', 'auth.backCover': '返回封面',
+  'auth.homeLabel': '观象首页', 'auth.modeLabel': '账户方式',
+  'auth.footerLeft': '六十四卦 · 十翼 · 大衍筮法', 'auth.footerRight': '账户密码经加密后保存',
+});
+Object.assign(DICTIONARY.en, {
+  'auth.browserTitle': 'Enter Guanxiang · Account', 'auth.pageKicker': 'Guanxiang account', 'auth.pageTitle': 'Enter Guanxiang',
+  'auth.pageDescription': 'Sign in to sync your readings across devices, or continue as a guest and keep them on this device.',
+  'auth.emblemKicker': 'Enter through the image', 'auth.emblemQuote': 'At an impasse, change; through change, passage; through passage, endurance.',
+  'auth.passwordHint': 'At least 8 characters', 'auth.or': 'or', 'auth.guestEnter': 'Continue as guest',
+  'auth.signedInAs': 'Signed-in ID', 'auth.continue': 'Enter Guanxiang', 'auth.backCover': 'Back to cover',
+  'auth.homeLabel': 'Guanxiang home', 'auth.modeLabel': 'Account access',
+  'auth.footerLeft': '64 Hexagrams · Ten Wings · Great Derivation', 'auth.footerRight': 'Account passwords are stored securely',
+});
+Object.assign(DICTIONARY.fa, {
+  'auth.browserTitle': 'ورود به گوانشیانگ · حساب', 'auth.pageKicker': 'حساب گوانشیانگ', 'auth.pageTitle': 'ورود به گوانشیانگ',
+  'auth.pageDescription': 'برای همگام‌سازی خوانش‌ها وارد شوید، یا به‌عنوان مهمان ادامه دهید و آن‌ها را فقط در این دستگاه نگه دارید.',
+  'auth.emblemKicker': 'از تصویر وارد شوید', 'auth.emblemQuote': 'در بن‌بست، تغییر؛ با تغییر، گشایش؛ با گشایش، پایداری.',
+  'auth.passwordHint': 'حداقل ۸ نویسه', 'auth.or': 'یا', 'auth.guestEnter': 'ورود به‌عنوان مهمان',
+  'auth.signedInAs': 'شناسه واردشده', 'auth.continue': 'ورود به گوانشیانگ', 'auth.backCover': 'بازگشت به جلد',
+  'auth.homeLabel': 'صفحه اصلی گوانشیانگ', 'auth.modeLabel': 'روش ورود به حساب',
+  'auth.footerLeft': '۶۴ هگزاگرام · ده بال · اشتقاق بزرگ', 'auth.footerRight': 'رمز حساب به‌شکل امن ذخیره می‌شود',
+});
 
 const TEXT_MAP = Object.fromEntries(Object.keys(DICTIONARY['zh-CN']).map(key => [DICTIONARY['zh-CN'][key], DICTIONARY.en[key]]));
 const PERSIAN_TEXT_MAP = Object.fromEntries(Object.keys(DICTIONARY['zh-CN']).map(key => [DICTIONARY['zh-CN'][key], DICTIONARY.fa[key] ?? DICTIONARY.en[key]]));
