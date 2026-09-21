@@ -17,6 +17,7 @@ assert.match(html,/data-auth-mode="register"/);
 assert.match(html,/data-guest/);
 assert.match(html,/data-account-id/);
 assert.match(html,/class="auth-emblem-core"/);
+assert.equal((html.match(/class="auth-trigrams"/g)||[]).length,1);
 assert.equal((html.match(/data-language="(?:zh-CN|en|fa)"/g)||[]).length,3);
 assert.doesNotMatch(index,/id="accountDialog"/);
 assert.match(index,/id="profileButton"/);
@@ -37,6 +38,6 @@ assert.match(build,/'auth\.js'/);
 assert.match(worker,/'\.\/auth\.html'/);
 assert.match(worker,/'\.\/auth\.css'/);
 assert.match(worker,/'\.\/auth\.js'/);
-assert.match(worker,/guanxiang-shell-v43/);
+assert.match(worker,/guanxiang-shell-v44/);
 
 console.log('Standalone account page checks passed.');

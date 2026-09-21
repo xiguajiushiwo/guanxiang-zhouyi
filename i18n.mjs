@@ -219,7 +219,7 @@ Object.assign(DICTIONARY.en, {
 Object.assign(DICTIONARY['zh-CN'], {
   'auth.browserTitle': '进入观象 · 账户', 'auth.pageKicker': '观象账户', 'auth.pageTitle': '进入观象',
   'auth.pageDescription': '登录后跨设备保存占问记录，也可以作为游客只在本机使用。',
-  'auth.emblemKicker': '观象而入', 'auth.emblemQuote': '穷则变，变则通，通则久。',
+  'auth.emblemKicker': '观象而入', 'auth.emblemQuote': '穷则变，变则通，通则久。', 'auth.emblemSource': '《周易·系辞下》',
   'auth.passwordHint': '至少 8 位字符', 'auth.or': '或者', 'auth.guestEnter': '游客进入',
   'auth.signedInAs': '当前登录 ID', 'auth.continue': '进入观象', 'auth.backCover': '返回封面',
   'auth.homeLabel': '观象首页', 'auth.modeLabel': '账户方式',
@@ -228,7 +228,7 @@ Object.assign(DICTIONARY['zh-CN'], {
 Object.assign(DICTIONARY.en, {
   'auth.browserTitle': 'Enter Guanxiang · Account', 'auth.pageKicker': 'Guanxiang account', 'auth.pageTitle': 'Enter Guanxiang',
   'auth.pageDescription': 'Sign in to sync your readings across devices, or continue as a guest and keep them on this device.',
-  'auth.emblemKicker': 'Enter through the image', 'auth.emblemQuote': 'At an impasse, change; through change, passage; through passage, endurance.',
+  'auth.emblemKicker': 'Enter through the image', 'auth.emblemQuote': 'At an impasse, change; through change, passage; through passage, endurance.', 'auth.emblemSource': 'Zhouyi · Xici II',
   'auth.passwordHint': 'At least 8 characters', 'auth.or': 'or', 'auth.guestEnter': 'Continue as guest',
   'auth.signedInAs': 'Signed-in ID', 'auth.continue': 'Enter Guanxiang', 'auth.backCover': 'Back to cover',
   'auth.homeLabel': 'Guanxiang home', 'auth.modeLabel': 'Account access',
@@ -237,7 +237,7 @@ Object.assign(DICTIONARY.en, {
 Object.assign(DICTIONARY.fa, {
   'auth.browserTitle': 'ورود به گوانشیانگ · حساب', 'auth.pageKicker': 'حساب گوانشیانگ', 'auth.pageTitle': 'ورود به گوانشیانگ',
   'auth.pageDescription': 'برای همگام‌سازی خوانش‌ها وارد شوید، یا به‌عنوان مهمان ادامه دهید و آن‌ها را فقط در این دستگاه نگه دارید.',
-  'auth.emblemKicker': 'از تصویر وارد شوید', 'auth.emblemQuote': 'در بن‌بست، تغییر؛ با تغییر، گشایش؛ با گشایش، پایداری.',
+  'auth.emblemKicker': 'از تصویر وارد شوید', 'auth.emblemQuote': 'در بن‌بست، تغییر؛ با تغییر، گشایش؛ با گشایش، پایداری.', 'auth.emblemSource': 'ژوئی · شی‌تسی ۲',
   'auth.passwordHint': 'حداقل ۸ نویسه', 'auth.or': 'یا', 'auth.guestEnter': 'ورود به‌عنوان مهمان',
   'auth.signedInAs': 'شناسه واردشده', 'auth.continue': 'ورود به گوانشیانگ', 'auth.backCover': 'بازگشت به جلد',
   'auth.homeLabel': 'صفحه اصلی گوانشیانگ', 'auth.modeLabel': 'روش ورود به حساب',
