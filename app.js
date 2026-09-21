@@ -9,7 +9,7 @@ import { buildLocalInterpretation, buildEnglishInterpretation } from './interpre
 import { AiReadingError, requestAiReading, splitAiReadingSections, splitAiReadingSectionsLocalized } from './ai-reading.mjs';
 import { attributeHtml, textHtml } from './html-safety.mjs';
 import { createServiceWorkerActivator } from './service-worker-update.mjs';
-import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20260917-reviewfix1';
+import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20260921-auth';
 import { displayHexagramName, HEXAGRAM_EN, TRIGRAM_EN } from './hexagram-i18n.mjs';
 import { selectTenWingSources } from './ai-sources.mjs';
 import { AccountApiError, createAccountClient, synchronizeHistory } from './account-sync.mjs';
@@ -192,20 +192,26 @@ const HISTORY_KEY='guanxiang-history-v1';
 function loadHistory(){const records=normalizeHistoryRecords(readJson(localStorage,HISTORY_KEY,[]));return records.filter(record=>record.lines.every(validLine))}
 function persistHistory(records){writeJson(localStorage,HISTORY_KEY,normalizeHistoryRecords(records))}
 function accountLanguage(){return getLanguage()==='fa'?'fa':getLanguage()==='en'?'en':'zh-CN'}
+const ACCOUNT_COPY={'zh-CN':{'auth.title':'观象账户','auth.login':'登录','auth.register':'注册','auth.email':'邮箱','auth.password':'密码','auth.submitLogin':'登录账户','auth.submitRegister':'创建账户','auth.logout':'退出登录','auth.guest':'游客模式','auth.accountDescription':'记录会在不同设备间同步。','auth.mergeTitle':'合并此设备的记录？','auth.mergeBody':'旧的本机记录会保留并添加到你的账户。','auth.merge':'合并记录','auth.keepCloud':'只保留云端记录','auth.invalid':'邮箱或密码无效。','auth.network':'账户服务暂时不可用。','auth.loggedIn':'已登录'},en:{'auth.title':'Guanxiang account','auth.login':'Log in','auth.register':'Create account','auth.email':'Email','auth.password':'Password','auth.submitLogin':'Log in','auth.submitRegister':'Create account','auth.logout':'Log out','auth.guest':'Guest mode','auth.accountDescription':'Records sync across your devices.','auth.mergeTitle':'Merge this device’s records?','auth.mergeBody':'Your existing local records will be kept and added to your account.','auth.merge':'Merge records','auth.keepCloud':'Keep cloud records only','auth.invalid':'The email or password is not valid.','auth.network':'The account service is temporarily unavailable.','auth.loggedIn':'Signed in'},fa:{'auth.title':'حساب گوانشیانگ','auth.login':'ورود','auth.register':'ثبت‌نام','auth.email':'ایمیل','auth.password':'رمز عبور','auth.submitLogin':'ورود به حساب','auth.submitRegister':'ساخت حساب','auth.logout':'خروج','auth.guest':'حالت مهمان','auth.accountDescription':'رکوردهای شما در دستگاه‌های مختلف همگام می‌شوند.','auth.mergeTitle':'رکوردهای این دستگاه ادغام شوند؟','auth.mergeBody':'رکوردهای محلی قدیمی حفظ می‌شوند و به حساب شما اضافه خواهند شد.','auth.merge':'ادغام رکوردها','auth.keepCloud':'فقط رکوردهای ابری','auth.invalid':'ایمیل یا رمز عبور معتبر نیست.','auth.network':'خدمت حساب موقتاً در دسترس نیست.','auth.loggedIn':'وارد شده‌اید'}};
+function accountCopy(key){const value=t(key);return value===key?(ACCOUNT_COPY[accountLanguage()]?.[key]||key):value}
 function accountErrorMessage(error){
   if(error instanceof AccountApiError){
-    if(error.code==='NETWORK_ERROR'||error.status===503)return t('auth.network');
-    if(error.status===401||error.status===409||error.code==='INVALID_CREDENTIALS'||error.code==='ACCOUNT_EXISTS')return t('auth.invalid');
+    if(error.code==='NETWORK_ERROR'||error.status===503)return accountCopy('auth.network');
+    if(error.status===401||error.status===409||error.code==='INVALID_CREDENTIALS'||error.code==='ACCOUNT_EXISTS')return accountCopy('auth.invalid');
     return error.message||t('auth.network');
   }
-  return t('auth.network');
+  return accountCopy('auth.network');
 }
 function renderAccountStatus(){
   const button=$('#profileButton');
   if(!button)return;
-  button.textContent=accountUser?.email?.slice(0,1).toUpperCase()||'知';
-  button.title=accountUser?.email||t('auth.guest');
-  button.setAttribute('aria-label',accountUser?.email||t('auth.guest'));
+  const avatar=button.querySelector('.account-avatar'),label=button.querySelector('.account-label');
+  if(avatar)avatar.textContent=accountUser?.email?.slice(0,1).toUpperCase()||'知';
+  if(label)label.textContent=accountUser?.email||accountCopy('auth.login');
+  else button.textContent=accountUser?.email?.slice(0,1).toUpperCase()||accountCopy('auth.login');
+  button.title=accountUser?.email||accountCopy('auth.login');
+  button.setAttribute('aria-label',accountUser?.email||accountCopy('auth.login'));
+  button.classList.toggle('signed-in',Boolean(accountUser));
   document.body.classList.toggle('account-signed-in',Boolean(accountUser));
 }
 function openAccountDialog(mode=accountUser?'status':'login'){
@@ -218,27 +224,33 @@ function openAccountDialog(mode=accountUser?'status':'login'){
 function renderAccountDialog(){
   const dialog=$('#accountDialog');if(!dialog)return;
   const form=dialog.querySelector('form'),fields=dialog.querySelector('[data-account-fields]'),status=dialog.querySelector('[data-account-status]');
-  dialog.querySelector('[data-account-title]').textContent=t('auth.title');
-  dialog.querySelector('[data-account-email-label]').textContent=t('auth.email');
-  dialog.querySelector('[data-account-password-label]').textContent=t('auth.password');
-  dialog.querySelector('[data-account-submit]').textContent=accountAuthMode==='register'?t('auth.submitRegister'):t('auth.submitLogin');
+  dialog.querySelector('[data-account-kicker]').textContent=accountCopy('auth.title');
+  dialog.querySelector('[data-account-title]').textContent=accountCopy('auth.title');
+  dialog.querySelector('[data-account-email-label]').textContent=accountCopy('auth.email');
+  dialog.querySelector('[data-account-password-label]').textContent=accountCopy('auth.password');
+  dialog.querySelector('[data-account-submit]').textContent=accountAuthMode==='register'?accountCopy('auth.submitRegister'):accountCopy('auth.submitLogin');
+  dialog.querySelector('[data-account-logout]').textContent=accountCopy('auth.logout');
   const switchLabel=dialog.querySelector('[data-account-switch-label]');
-  if(switchLabel)switchLabel.textContent=accountAuthMode==='register'?t('auth.login'):t('auth.register');
-  else dialog.querySelector('[data-account-switch]')?.replaceChildren(document.createTextNode(accountAuthMode==='register'?t('auth.login'):t('auth.register')));
+  if(switchLabel)switchLabel.textContent=accountAuthMode==='register'?accountCopy('auth.login'):accountCopy('auth.register');
+  else dialog.querySelector('[data-account-switch]')?.replaceChildren(document.createTextNode(accountAuthMode==='register'?accountCopy('auth.login'):accountCopy('auth.register')));
   const signedIn=accountAuthMode==='status'&&accountUser;
   fields.classList.toggle('hidden',Boolean(signedIn));
   dialog.querySelector('[data-account-actions]').classList.toggle('hidden',Boolean(signedIn));
   dialog.querySelector('[data-account-user]').textContent=accountUser?.email||'';
   dialog.querySelector('[data-account-user]').classList.toggle('hidden',!signedIn);
   dialog.querySelector('[data-account-logout]').classList.toggle('hidden',!signedIn);
-  if(status)status.textContent=signedIn?t('auth.accountDescription'):'';
+  if(status)status.textContent=signedIn?accountCopy('auth.accountDescription'):'';
   if(form)form.reset();
 }
 function closeAccountDialog(){const dialog=$('#accountDialog');if(dialog?.open)dialog.close();else dialog?.removeAttribute('open')}
 function openMergeDialog(remoteRecords){
   const dialog=$('#accountMergeDialog');if(!dialog)return Promise.resolve('merge');
   const localCount=loadHistory().length,remoteCount=remoteRecords.length;
-  dialog.querySelector('[data-merge-body]').textContent=`${t('auth.mergeBody')} (${localCount} / ${remoteCount})`;
+  dialog.querySelector('.panel-kicker').textContent=accountCopy('auth.mergeTitle');
+  dialog.querySelector('h2').textContent=accountCopy('auth.mergeTitle');
+  dialog.querySelector('[data-merge-body]').textContent=`${accountCopy('auth.mergeBody')} (${localCount} / ${remoteCount})`;
+  dialog.querySelector('[data-merge-choice="cloud"]').textContent=accountCopy('auth.keepCloud');
+  dialog.querySelector('[data-merge-choice="merge"]').textContent=accountCopy('auth.merge');
   if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
   return new Promise(resolve=>{
     const finish=choice=>{dialog.close?.();dialog.removeAttribute('open');dialog.removeEventListener('click',onClick);resolve(choice)};
@@ -267,12 +279,12 @@ async function submitAccountForm(event){
   try{
     accountClient=createAccountClient({language:accountLanguage()});
     const result=accountAuthMode==='register'?await accountClient.register(email,password):await accountClient.login(email,password);
-    accountUser=result.user||null;closeAccountDialog();await syncAccountAfterLogin();renderAccountStatus();showNotice(t('auth.loggedIn'));
+    accountUser=result.user||null;closeAccountDialog();await syncAccountAfterLogin();renderAccountStatus();showNotice(accountCopy('auth.loggedIn'));
   }catch(error){if(errorBox)errorBox.textContent=accountErrorMessage(error)}finally{accountBusy=false;form.removeAttribute('aria-busy')}
 }
 async function logoutAccount(){
   try{await accountClient?.logout()}catch(error){console.warn('退出登录未能完成',error)}
-  accountUser=null;accountClient=createAccountClient({language:accountLanguage()});renderAccountStatus();closeAccountDialog();showNotice(t('auth.guest'));
+  accountUser=null;accountClient=createAccountClient({language:accountLanguage()});renderAccountStatus();closeAccountDialog();showNotice(accountCopy('auth.guest'));
 }
 function syncCloudRecord(record){if(!accountUser||!accountClient)return;accountClient.upsertReading(record).catch(error=>console.warn('云端记录未能保存',error))}
 function syncCloudDelete(id){if(!accountUser||!accountClient)return;accountClient.deleteReading(id).catch(error=>console.warn('云端记录未能删除',error))}
@@ -592,6 +604,7 @@ function toggleLanguageMenu(menu){
   updateCastButton()
   translateKnownText(document)
   renderAccountDialog()
+  renderAccountStatus()
   updateLanguageMenus()
   updateDailyCoverHexagram()
 }
