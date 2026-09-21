@@ -128,8 +128,8 @@ await evaluate(`(() => {
   window.__guanxiangRealFetch=window.__guanxiangRealFetch||window.fetch.bind(window);
   window.fetch=(url,options)=>{
     if(String(url)!==window.GUANXIANG_AI_ENDPOINT)return window.__guanxiangRealFetch(url,options);
-    const encoder=new TextEncoder();
-    return Promise.resolve(new Response(new ReadableStream({start(controller){controller.enqueue(encoder.encode('【核心判断】\\n首段已经到达。\\n【当前处境】\\n条件仍在形成。'));setTimeout(()=>{controller.enqueue(encoder.encode('\\n【关键变化】\\n先核实转折条件。\\n思考方向：先辨明事实。\\n思维调整：从确定答案转向逐步验证。\\n【后续趋势】\\n后续倾向逐步展开。\\n【行动建议】\\n1. 核实事实\\n2. 小步验证\\n3. 按期复盘'));controller.close()},600)}}),{status:200,headers:{'content-type':'text/plain; charset=utf-8'}}));
+    const encoder=new TextEncoder(),detailed='条件仍在形成。'.repeat(220),payload=JSON.parse(options?.body||'{}'),movingEvidence=(payload.movingLines||[]).map(line=>line.label+'“'+line.text+'”。').join('\\n');
+    return Promise.resolve(new Response(new ReadableStream({start(controller){controller.enqueue(encoder.encode('【核心判断】\\n首段已经到达。\\n【当前处境】\\n'+detailed));setTimeout(()=>{controller.enqueue(encoder.encode('\\n【关键变化】\\n'+movingEvidence+'\\n先核实转折条件。\\n思考方向：先辨明事实。\\n思维调整：从确定答案转向逐步验证。\\n【后续趋势】\\n后续倾向逐步展开。\\n【行动建议】\\n1. 核实事实\\n2. 小步验证\\n3. 按期复盘'));controller.close()},600)}}),{status:200,headers:{'content-type':'text/plain; charset=utf-8'}}));
   };
   const button=document.querySelector('#generateAiReading');button.disabled=false;button.click();return true;
 })()`);
