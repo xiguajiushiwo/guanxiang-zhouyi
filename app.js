@@ -12,6 +12,7 @@ import { createServiceWorkerActivator } from './service-worker-update.mjs';
 import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20260917-reviewfix1';
 import { displayHexagramName, HEXAGRAM_EN, TRIGRAM_EN } from './hexagram-i18n.mjs';
 import { selectTenWingSources } from './ai-sources.mjs';
+import { AccountApiError, createAccountClient, synchronizeHistory } from './account-sync.mjs';
 
 const yaoTexts=['初九：潜龙勿用。','九二：见龙在田，利见大人。','九三：君子终日乾乾，夕惕若厉，无咎。','九四：或跃在渊，无咎。','九五：飞龙在天，利见大人。','上九：亢龙有悔。'];
 const canonicalClassicSummaries=['逐卦断义，说明卦名、卦辞与上下体之大旨。','承接上经，论三十卦之时位与吉凶。','取卦象明君子之用，列上经三十卦大象。','逐卦取象明德，列下经三十四卦大象。','总论天地之道、象数之源与易学体用。','论圣人设卦、观象玩辞与卜筮之道。','专释乾坤，申说元亨利贞与君子之德。','说明八卦取象、方位、性情与万物类象。','说明六十四卦相承的次序与变化的链条。','以错综互杂比较诸卦，见相反相成之理。'];
@@ -26,7 +27,7 @@ const AI_REFERENCE_NOTES={
     山天大畜:['Great Taming line 1: danger lies ahead, so stopping for now is beneficial; it does not mean self-improvement.','Great Taming line 2: the axle fastening comes loose and the vehicle stops; this means knowing when to stop, not smooth motion or organizational adjustment.','Great Taming line 3: the good horse pursues, but daily training in driving and defense is required; proceed only after preparation.','Great Taming line 4: restraining a young bull before its horns grow means preventing trouble early and setting constraints in advance.','Great Taming line 5: dangerous force is tamed at its root rather than suppressed only at the surface.','Great Taming line 6: reaching the highway of heaven means the road opens after accumulation is complete.']
   }
 };
-let currentView='home', selectedHex=0, selectedWing=0, selectedPrinciple=0, selectedClassicSection=null, historySelectedId='', historyQuery='', filter='all', readingMode='ancient', pendingImport=null, currentReading=null, aiReadingAbort=null, castState={lines:[],working:false,runId:0,ritual:null,confirmed:false,prepared:false,question:'',sessionId:'',mode:'complete'}, tenWings=null, hexagramTexts=null, principleLibrary=null, principleLibraryEn=null, relationsLibrary=null;
+let currentView='home', selectedHex=0, selectedWing=0, selectedPrinciple=0, selectedClassicSection=null, historySelectedId='', historyQuery='', filter='all', readingMode='ancient', pendingImport=null, currentReading=null, aiReadingAbort=null, accountClient=null, accountUser=null, accountBusy=false, accountAuthMode='login', castState={lines:[],working:false,runId:0,ritual:null,confirmed:false,prepared:false,question:'',sessionId:'',mode:'complete'}, tenWings=null, hexagramTexts=null, principleLibrary=null, principleLibraryEn=null, relationsLibrary=null;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const TRIGRAM_GLYPHS={'天':'☰','泽':'☱','火':'☲','雷':'☳','风':'☴','水':'☵','山':'☶','地':'☷'};
 let dailyCoverTimer=0;
@@ -190,11 +191,96 @@ function saveCast(){try{writeJson(localStorage,'guanxiang-cast-v3',{version:3,sa
 const HISTORY_KEY='guanxiang-history-v1';
 function loadHistory(){const records=normalizeHistoryRecords(readJson(localStorage,HISTORY_KEY,[]));return records.filter(record=>record.lines.every(validLine))}
 function persistHistory(records){writeJson(localStorage,HISTORY_KEY,normalizeHistoryRecords(records))}
+function accountLanguage(){return getLanguage()==='fa'?'fa':getLanguage()==='en'?'en':'zh-CN'}
+function accountErrorMessage(error){
+  if(error instanceof AccountApiError){
+    if(error.code==='NETWORK_ERROR'||error.status===503)return t('auth.network');
+    if(error.status===401||error.status===409||error.code==='INVALID_CREDENTIALS'||error.code==='ACCOUNT_EXISTS')return t('auth.invalid');
+    return error.message||t('auth.network');
+  }
+  return t('auth.network');
+}
+function renderAccountStatus(){
+  const button=$('#profileButton');
+  if(!button)return;
+  button.textContent=accountUser?.email?.slice(0,1).toUpperCase()||'知';
+  button.title=accountUser?.email||t('auth.guest');
+  button.setAttribute('aria-label',accountUser?.email||t('auth.guest'));
+  document.body.classList.toggle('account-signed-in',Boolean(accountUser));
+}
+function openAccountDialog(mode=accountUser?'status':'login'){
+  const dialog=$('#accountDialog');if(!dialog)return;
+  accountAuthMode=mode;
+  renderAccountDialog();
+  if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
+  requestAnimationFrame(()=>dialog.querySelector('input:not([type="hidden"]):not([disabled])')?.focus());
+}
+function renderAccountDialog(){
+  const dialog=$('#accountDialog');if(!dialog)return;
+  const form=dialog.querySelector('form'),fields=dialog.querySelector('[data-account-fields]'),status=dialog.querySelector('[data-account-status]');
+  dialog.querySelector('[data-account-title]').textContent=t('auth.title');
+  dialog.querySelector('[data-account-email-label]').textContent=t('auth.email');
+  dialog.querySelector('[data-account-password-label]').textContent=t('auth.password');
+  dialog.querySelector('[data-account-submit]').textContent=accountAuthMode==='register'?t('auth.submitRegister'):t('auth.submitLogin');
+  const switchLabel=dialog.querySelector('[data-account-switch-label]');
+  if(switchLabel)switchLabel.textContent=accountAuthMode==='register'?t('auth.login'):t('auth.register');
+  else dialog.querySelector('[data-account-switch]')?.replaceChildren(document.createTextNode(accountAuthMode==='register'?t('auth.login'):t('auth.register')));
+  const signedIn=accountAuthMode==='status'&&accountUser;
+  fields.classList.toggle('hidden',Boolean(signedIn));
+  dialog.querySelector('[data-account-actions]').classList.toggle('hidden',Boolean(signedIn));
+  dialog.querySelector('[data-account-user]').textContent=accountUser?.email||'';
+  dialog.querySelector('[data-account-user]').classList.toggle('hidden',!signedIn);
+  dialog.querySelector('[data-account-logout]').classList.toggle('hidden',!signedIn);
+  if(status)status.textContent=signedIn?t('auth.accountDescription'):'';
+  if(form)form.reset();
+}
+function closeAccountDialog(){const dialog=$('#accountDialog');if(dialog?.open)dialog.close();else dialog?.removeAttribute('open')}
+function openMergeDialog(remoteRecords){
+  const dialog=$('#accountMergeDialog');if(!dialog)return Promise.resolve('merge');
+  const localCount=loadHistory().length,remoteCount=remoteRecords.length;
+  dialog.querySelector('[data-merge-body]').textContent=`${t('auth.mergeBody')} (${localCount} / ${remoteCount})`;
+  if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
+  return new Promise(resolve=>{
+    const finish=choice=>{dialog.close?.();dialog.removeAttribute('open');dialog.removeEventListener('click',onClick);resolve(choice)};
+    const onClick=event=>{const choice=event.target.closest('[data-merge-choice]')?.dataset.mergeChoice;if(choice)finish(choice)};
+    dialog.addEventListener('click',onClick);
+  });
+}
+async function syncAccountAfterLogin(){
+  const local=loadHistory();
+  const remote=(await accountClient.listReadings()).records||[];
+  const choice=local.length?await openMergeDialog(remote):'merge';
+  if(choice==='cloud'){persistHistory(remote)}
+  else {const result=await synchronizeHistory({client:accountClient,localRecords:local,strategy:'merge'});persistHistory(mergeJournalRecords(local,result.records))}
+  renderHistory();renderBackupReminder();
+}
+async function restoreAccountSession(){
+  accountClient=createAccountClient({language:accountLanguage()});
+  try{const result=await accountClient.me();accountUser=result.user||null;await syncAccountAfterLogin()}
+  catch(error){if(!(error instanceof AccountApiError&&[401,403].includes(error.status)))console.warn('账户状态未能读取',error);accountUser=null}
+  renderAccountStatus();
+}
+async function submitAccountForm(event){
+  event.preventDefault();if(accountBusy)return;
+  const form=event.currentTarget,email=String(form.elements.email.value||'').trim(),password=String(form.elements.password.value||''),errorBox=$('#accountError');
+  if(errorBox)errorBox.textContent='';accountBusy=true;form.setAttribute('aria-busy','true');
+  try{
+    accountClient=createAccountClient({language:accountLanguage()});
+    const result=accountAuthMode==='register'?await accountClient.register(email,password):await accountClient.login(email,password);
+    accountUser=result.user||null;closeAccountDialog();await syncAccountAfterLogin();renderAccountStatus();showNotice(t('auth.loggedIn'));
+  }catch(error){if(errorBox)errorBox.textContent=accountErrorMessage(error)}finally{accountBusy=false;form.removeAttribute('aria-busy')}
+}
+async function logoutAccount(){
+  try{await accountClient?.logout()}catch(error){console.warn('退出登录未能完成',error)}
+  accountUser=null;accountClient=createAccountClient({language:accountLanguage()});renderAccountStatus();closeAccountDialog();showNotice(t('auth.guest'));
+}
+function syncCloudRecord(record){if(!accountUser||!accountClient)return;accountClient.upsertReading(record).catch(error=>console.warn('云端记录未能保存',error))}
+function syncCloudDelete(id){if(!accountUser||!accountClient)return;accountClient.deleteReading(id).catch(error=>console.warn('云端记录未能删除',error))}
 function journalMeta(){return readJson(localStorage,'guanxiang-journal-meta-v1',{})||{}}
 function persistJournalMeta(meta){writeJson(localStorage,'guanxiang-journal-meta-v1',meta)}
 function renderBackupReminder(){const target=$('#backupReminder');if(!target)return;const status=backupStatus(loadHistory(),journalMeta());const dismissed=readJson(localStorage,'guanxiang-backup-dismissed-v1',false);if(!status.due||dismissed){target.classList.add('hidden');return}target.classList.remove('hidden');target.innerHTML=`<span>本地已有 ${status.count} 条记录，建议导出一份备份。</span><button type="button" class="text-button" id="dismissBackup">稍后提醒</button>`;$('#dismissBackup').onclick=()=>{writeJson(localStorage,'guanxiang-backup-dismissed-v1',true);target.classList.add('hidden')}}
-function saveReadingHistory(originalIndex,changedIndex,moving){if(!castState.sessionId||castState.lines.length!==6||!castState.lines.every(validLine))return;try{const records=loadHistory(),stamp=new Date().toISOString(),record={id:castState.sessionId,completedAt:stamp,createdAt:stamp,updatedAt:stamp,question:castState.question,lines:castState.lines,originalIndex,changedIndex,moving,mode:castState.mode,tags:[],reviewState:'未开始'};const existing=records.findIndex(item=>item.id===record.id);if(existing>=0)records[existing]={...records[existing],...record,note:records[existing].note||'',createdAt:records[existing].createdAt||record.createdAt};else records.unshift({...record,note:''});persistHistory(records);renderBackupReminder();if(currentView==='history')renderHistory()}catch(error){console.warn('占问记录未能保存',error)}}
-function updateHistoryNote(id,note){const records=loadHistory(),record=records.find(item=>item.id===id);if(!record)return false;record.note=String(note||'').trim().slice(0,2000);persistHistory(records);return true}
+function saveReadingHistory(originalIndex,changedIndex,moving){if(!castState.sessionId||castState.lines.length!==6||!castState.lines.every(validLine))return;try{const records=loadHistory(),stamp=new Date().toISOString(),record={id:castState.sessionId,completedAt:stamp,createdAt:stamp,updatedAt:stamp,question:castState.question,lines:castState.lines,originalIndex,changedIndex,moving,mode:castState.mode,tags:[],reviewState:'未开始'};const existing=records.findIndex(item=>item.id===record.id);if(existing>=0)records[existing]={...records[existing],...record,note:records[existing].note||'',createdAt:records[existing].createdAt||record.createdAt};else records.unshift({...record,note:''});const saved=records.find(item=>item.id===record.id);persistHistory(records);syncCloudRecord(saved);renderBackupReminder();if(currentView==='history')renderHistory()}catch(error){console.warn('占问记录未能保存',error)}}
+function updateHistoryNote(id,note){const records=loadHistory(),record=records.find(item=>item.id===id);if(!record)return false;record.note=String(note||'').trim().slice(0,2000);record.updatedAt=new Date().toISOString();persistHistory(records);syncCloudRecord(record);return true}
 function renderHistory(){
   const list=$('#historyList'),detail=$('#historyDetail'),indexPage=$('#historyIndexPage'),recordPage=$('#historyRecordPage');
   if(!list||!detail||!indexPage||!recordPage)return;
@@ -219,7 +305,7 @@ function renderHistory(){
   const english=getLanguage()==='en',dateLocale=english?'en-US':'zh-CN';
   list.innerHTML=visible.map(record=>{const original=hexagrams[record.originalIndex],changed=hexagrams[record.changedIndex],date=new Date(record.completedAt),dateText=Number.isNaN(date.getTime())?t('history.timeMissing'):date.toLocaleString(dateLocale,{year:'numeric',month:english?'short':'long',day:'numeric',hour:'2-digit',minute:'2-digit'}),name=english?`${displayHexagramName(record.originalIndex,'en',original?.[0])} → ${displayHexagramName(record.changedIndex,'en',changed?.[0])}`:`${original?.[2]||'本卦'}之${changed?.[2]||'变卦'}`;return `<div class="history-item" data-history-id="${attributeHtml(record.id)}"><button type="button" class="history-item-open" aria-label="${attributeHtml(record.question)}"><span class="history-glyph">${original?.[1]||'—'}<i>→</i>${changed?.[1]||'—'}</span><span class="history-item-copy"><b data-user-content>${textHtml(record.question)}</b><small>${textHtml(name)}${record.note?` · ${t('history.hasNote')}`:''}</small></span><time>${textHtml(dateText)}</time><span class="history-item-arrow" aria-hidden="true">→</span></button><button type="button" class="history-item-delete" data-history-delete="${attributeHtml(record.id)}" aria-label="${attributeHtml(t('history.delete'))}" title="${attributeHtml(t('history.delete'))}">×</button></div>`}).join('');
   list.querySelectorAll('.history-item').forEach(item=>item.addEventListener('click',event=>{if(event.target.closest('[data-history-delete]'))return;historySelectedId=item.dataset.historyId;nav('history');renderHistory()}));
-  list.querySelectorAll('[data-history-delete]').forEach(button=>button.addEventListener('click',event=>{event.stopPropagation();const id=button.dataset.historyDelete;if(!confirm(t('history.deleteConfirm')))return;persistHistory(loadHistory().filter(item=>item.id!==id));if(historySelectedId===id){historySelectedId='';history.replaceState(null,'','#history')}renderHistory();renderBackupReminder();showNotice(t('history.deleted'))}));
+  list.querySelectorAll('[data-history-delete]').forEach(button=>button.addEventListener('click',event=>{event.stopPropagation();const id=button.dataset.historyDelete;if(!confirm(t('history.deleteConfirm')))return;persistHistory(loadHistory().filter(item=>item.id!==id));syncCloudDelete(id);if(historySelectedId===id){historySelectedId='';history.replaceState(null,'','#history')}renderHistory();renderBackupReminder();showNotice(t('history.deleted'))}));
 }
 function renderHistoryDetail(record){
   const detail=$('#historyDetail');
@@ -234,7 +320,7 @@ function renderHistoryDetail(record){
   detail.querySelector('[data-history-back]')?.addEventListener('click',()=>{historySelectedId='';history.replaceState(null,'','#history');renderHistory();window.scrollTo({top:0,behavior:'smooth'})});
   detail.querySelector('[data-history-hex]')?.addEventListener('click',event=>{selectedHex=Number(event.currentTarget.dataset.historyHex)||0;setMobileDetail('hexagrams',true);nav('hexagrams');renderHexList();renderHexDetail()});
   $('#saveHistoryNote')?.addEventListener('click',()=>{if(updateHistoryNote(record.id,$('#historyNote').value))$('#historyNoteStatus').textContent=t('common.saved')});
-  $('#deleteHistory')?.addEventListener('click',()=>{if(!confirm(t('history.deleteConfirm')))return;persistHistory(loadHistory().filter(item=>item.id!==record.id));historySelectedId='';history.replaceState(null,'','#history');renderHistory();renderBackupReminder();showNotice(t('history.deleted'))});
+  $('#deleteHistory')?.addEventListener('click',()=>{if(!confirm(t('history.deleteConfirm')))return;persistHistory(loadHistory().filter(item=>item.id!==record.id));syncCloudDelete(record.id);historySelectedId='';history.replaceState(null,'','#history');renderHistory();renderBackupReminder();showNotice(t('history.deleted'))});
   const reading=createReadingContext({question:record.question,originalIndex:record.originalIndex,changedIndex:record.changedIndex,moving}).local;
   const cached=record.aiReading&&(!record.aiReading.language||record.aiReading.language===getLanguage())?record.aiReading:null;
   renderHistoryInterpretation(detail,reading,cached);
@@ -242,7 +328,7 @@ function renderHistoryDetail(record){
 }
 function exportHistory(){const exportedAt=new Date().toISOString(),payload={type:'guanxiang-history',...migrateJournalPayload({records:loadHistory(),exportedAt})},blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`观象占问记录-${exportedAt.slice(0,10)}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);persistJournalMeta({...journalMeta(),lastExportAt:exportedAt});try{localStorage.removeItem('guanxiang-backup-dismissed-v1')}catch{}renderBackupReminder()}
 	async function importHistoryFile(file){if(!file)return;try{const parsed=JSON.parse(await file.text()),raw=Array.isArray(parsed)?parsed:parsed?.records;if(!Array.isArray(raw))throw new Error('invalid format');const incoming=migrateJournalPayload(parsed).records;if(incoming.length!==raw.length||!incoming.every(record=>record.lines.every(validLine)))throw new Error('invalid records');const local=loadHistory(),localById=new Map(local.map(record=>[record.id,record])),added=incoming.filter(record=>!localById.has(record.id)).length,updated=incoming.filter(record=>localById.has(record.id)&&new Date(record.updatedAt)>new Date(localById.get(record.id).updatedAt)).length,conflicts=incoming.filter(record=>localById.has(record.id)&&new Date(record.updatedAt).getTime()===new Date(localById.get(record.id).updatedAt).getTime()&&JSON.stringify(record)!==JSON.stringify(localById.get(record.id))).length;pendingImport={records:mergeJournalRecords(local,incoming),firstId:incoming[0]?.id||'',count:incoming.length};$('#importSummary').textContent=t('history.importSummary',{count:incoming.length,added,updated,conflicts});const dialog=$('#importDialog');if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','')}catch(error){pendingImport=null;showNotice(t('history.importInvalid'));console.warn(error)}finally{$('#historyFile').value=''}}
-	function confirmHistoryImport(){if(!pendingImport)return;persistHistory(pendingImport.records);historySelectedId=pendingImport.firstId;const count=pendingImport.count;pendingImport=null;nav('history');renderHistory();renderBackupReminder();showNotice(t('history.imported',{count}))}
+	function confirmHistoryImport(){if(!pendingImport)return;persistHistory(pendingImport.records);pendingImport.records.forEach(syncCloudRecord);historySelectedId=pendingImport.firstId;const count=pendingImport.count;pendingImport=null;nav('history');renderHistory();renderBackupReminder();showNotice(t('history.imported',{count}))}
 function setCastMode(mode,force=false){if((castState.confirmed&&!force)||!['complete','quick'].includes(mode))return;castState.mode=mode;$$('[data-cast-mode]').forEach(button=>{button.classList.toggle('active',button.dataset.castMode===mode);button.setAttribute('aria-pressed',String(button.dataset.castMode===mode));button.disabled=castState.confirmed});$('#guideTime').textContent=mode==='quick'?'快速演蓍 · 约 1–2 分钟':'完整仪式 · 约 8–12 分钟';$('#view-divination').classList.toggle('quick-mode',mode==='quick');if(!castState.confirmed)setProcedure('问题确认后，占筮仪式将在这里开始',mode==='quick'?'每次点击演示一爻的完整三变':'每一营由你亲手推进','')}
 function updateCastButton(){const button=$('#castButton'),resetButton=$('#resetButton'),nextButton=$('#nextReadingButton'),ritual=castState.ritual,nextTranslation=t('divination.next'),nextLabel=nextTranslation==='divination.next'?(getLanguage()==='en'?'Start next reading':'开始下一卦'):nextTranslation;if(resetButton)resetButton.textContent=castState.lines.length>=6?nextLabel:t('divination.reset');if(nextButton)nextButton.textContent=nextLabel;if(!castState.confirmed){button.innerHTML='请先确认问题';button.disabled=true;return}if(!castState.prepared){button.innerHTML='亲手虚一策 · 象太极 <span>→</span>';button.disabled=false;return}if(castState.lines.length>=6){button.innerHTML='六爻已成';button.disabled=true;return}button.disabled=castState.working;if(castState.mode==='quick'&&!ritual){button.innerHTML=`演蓍成第${castState.lines.length+1}爻 <span>→</span>`;return}if(!ritual){button.innerHTML=`准备第${castState.lines.length+1}爻 <span>→</span>`;return}if(ritual.stepIndex===0&&!ritual.splitReady){button.innerHTML=`请先按住蓍束再松开 · 第${ritual.lineNumber}爻`;button.disabled=true;return}const labels=['分二','挂一','揲四','归奇'];button.innerHTML=`执行${labels[ritual.stepIndex]} · 第${ritual.lineNumber}爻 <span>→</span>`}
 function beginRitual(){castState.ritual={lineNumber:castState.lines.length+1,changeNumber:1,stepIndex:0,stalks:49,change:null,history:[]};$('#ritualTitle').textContent=`准备起第${castState.lines.length+1}爻 · 三变十二营`;setTotal(49);paintStalks('leftStalks',49);paintStalks('rightStalks',0);paintStalks('hangStalks',0);paintStalks('discardStalks',0);markOperation('split');setProcedure('第一变 · 按住蓍束，凭感觉松开','分界与策数暂不显露，执行分二时才揭开','');prepareSplitControl();saveCast()}
@@ -505,6 +591,7 @@ function toggleLanguageMenu(menu){
   renderBackupReminder()
   updateCastButton()
   translateKnownText(document)
+  renderAccountDialog()
   updateLanguageMenus()
   updateDailyCoverHexagram()
 }
@@ -547,45 +634,53 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('#mobileMoreClose')?.addEventListener('click',()=>closeMobileMore(true));
   $('#mobileMoreBackdrop')?.addEventListener('click',()=>closeMobileMore(true));
   $$('[data-cast-phase]').forEach(button=>button.addEventListener('click',()=>setDivinationPhase(button.dataset.castPhase)));
-  $('#hexSearch').addEventListener('input',renderHexList);
-  $('#wingSearch').addEventListener('input',renderClassics);
+  $('#hexSearch')?.addEventListener('input',renderHexList);
+  $('#wingSearch')?.addEventListener('input',renderClassics);
   $$('[data-reading-mode]').forEach(button=>button.addEventListener('click',()=>{readingMode=button.dataset.readingMode;try{localStorage.setItem('guanxiang-reading-mode',readingMode)}catch(error){console.warn('阅读模式未能保存',error)}renderClassics()}));
-  $('#bookmarkWing').addEventListener('click',()=>{if(!tenWings?.wings?.[selectedWing])return;const id=tenWings.wings[selectedWing].id,bookmarks=wingBookmarks(),next=bookmarks.includes(id)?bookmarks.filter(item=>item!==id):[...bookmarks,id];try{localStorage.setItem('guanxiang-wing-bookmarks',JSON.stringify(next))}catch(error){console.warn('收藏未能保存',error)}renderClassics()});
+  $('#bookmarkWing')?.addEventListener('click',()=>{if(!tenWings?.wings?.[selectedWing])return;const id=tenWings.wings[selectedWing].id,bookmarks=wingBookmarks(),next=bookmarks.includes(id)?bookmarks.filter(item=>item!==id):[...bookmarks,id];try{localStorage.setItem('guanxiang-wing-bookmarks',JSON.stringify(next))}catch(error){console.warn('收藏未能保存',error)}renderClassics()});
   $$('.filter-button').forEach(button=>button.addEventListener('click',()=>{$$('.filter-button').forEach(item=>item.classList.remove('active'));button.classList.add('active');filter=button.dataset.filter;renderHexList()}));
-  $('#questionInput').addEventListener('input',validateQuestion);
+  $('#questionInput')?.addEventListener('input',validateQuestion);
   $$('[data-cast-mode]').forEach(button=>button.addEventListener('click',()=>setCastMode(button.dataset.castMode)));
   $$('[data-question-example]').forEach(button=>button.addEventListener('click',()=>{$('#questionInput').value=button.dataset.questionExample;validateQuestion()}));
   $('#confirmQuestion').addEventListener('click',requestDivinationConfirmation);
   $('#confirmDivination').addEventListener('click',()=>{confirmQuestion();if(castState.confirmed)setDivinationPhase('cast')});
-  $('#splitChooser').addEventListener('pointerdown',beginSplitFeeling);
-  $('#splitChooser').addEventListener('pointermove',trackSplitFeeling);
-  $('#splitChooser').addEventListener('pointerup',finishSplitFeeling);
-  $('#splitChooser').addEventListener('pointercancel',cancelSplitFeeling);
-  $('#splitChooser').addEventListener('keydown',beginSplitFeeling);
-  $('#splitChooser').addEventListener('keyup',finishSplitFeeling);
-  $('#castButton').addEventListener('click',castLine);
-  $('#resetButton').addEventListener('click',()=>{if(castState.lines.length>=6){startNextReading();return}if(castState.confirmed||castState.lines.length||castState.ritual){const dialog=$('#resetDialog');if(typeof dialog.showModal==='function')dialog.showModal();else if(confirm(t('dialog.resetTitle'))){resetCast();setDivinationPhase('prepare')}}else{resetCast();setDivinationPhase('prepare')}});
-  $('#confirmReset').addEventListener('click',()=>{resetCast();setDivinationPhase('prepare')});
-  $('#nextReadingButton').addEventListener('click',startNextReading);
-  $('#resultRead').addEventListener('click',()=>{nav('hexagrams');renderHexList();renderHexDetail()});
-  $('#generateAiReading').addEventListener('click',generateAiReading);
-  $('#saveReadingNote').addEventListener('click',saveCurrentReadingNote);
-  $('#historySearch').addEventListener('input',event=>{historyQuery=event.target.value;renderHistory()});
-  $('#exportHistory').addEventListener('click',exportHistory);
-  $('#importHistory').addEventListener('click',()=>$('#historyFile').click());
-  $('#historyFile').addEventListener('change',event=>importHistoryFile(event.target.files?.[0]));
-  $('#confirmImport').addEventListener('click',confirmHistoryImport);
-  $('#cancelImport').addEventListener('click',()=>{pendingImport=null});
-  $('#themeToggle').addEventListener('click',()=>applyTheme(document.body.classList.contains('dark-mode')?'light':'dark',true));
+  $('#splitChooser')?.addEventListener('pointerdown',beginSplitFeeling);
+  $('#splitChooser')?.addEventListener('pointermove',trackSplitFeeling);
+  $('#splitChooser')?.addEventListener('pointerup',finishSplitFeeling);
+  $('#splitChooser')?.addEventListener('pointercancel',cancelSplitFeeling);
+  $('#splitChooser')?.addEventListener('keydown',beginSplitFeeling);
+  $('#splitChooser')?.addEventListener('keyup',finishSplitFeeling);
+  $('#castButton')?.addEventListener('click',castLine);
+  $('#resetButton')?.addEventListener('click',()=>{if(castState.lines.length>=6){startNextReading();return}if(castState.confirmed||castState.lines.length||castState.ritual){const dialog=$('#resetDialog');if(typeof dialog.showModal==='function')dialog.showModal();else if(confirm(t('dialog.resetTitle'))){resetCast();setDivinationPhase('prepare')}}else{resetCast();setDivinationPhase('prepare')}});
+  $('#confirmReset')?.addEventListener('click',()=>{resetCast();setDivinationPhase('prepare')});
+  $('#nextReadingButton')?.addEventListener('click',startNextReading);
+  $('#resultRead')?.addEventListener('click',()=>{nav('hexagrams');renderHexList();renderHexDetail()});
+  $('#generateAiReading')?.addEventListener('click',generateAiReading);
+  $('#saveReadingNote')?.addEventListener('click',saveCurrentReadingNote);
+  $('#historySearch')?.addEventListener('input',event=>{historyQuery=event.target.value;renderHistory()});
+  $('#exportHistory')?.addEventListener('click',exportHistory);
+  $('#importHistory')?.addEventListener('click',()=>$('#historyFile')?.click());
+  $('#historyFile')?.addEventListener('change',event=>importHistoryFile(event.target.files?.[0]));
+  $('#confirmImport')?.addEventListener('click',confirmHistoryImport);
+  $('#cancelImport')?.addEventListener('click',()=>{pendingImport=null});
+  $('#themeToggle')?.addEventListener('click',()=>applyTheme(document.body.classList.contains('dark-mode')?'light':'dark',true));
+  $('#accountForm')?.addEventListener('submit',submitAccountForm);
   document.addEventListener('click',event=>{if(event.target.closest('.wing-order-item'))requestAnimationFrame(()=>renderAnnotationPanel($('#classicsGrid'),'classic',String(selectedWing)))});
   $('#onboardingStart')?.addEventListener('click',dismissOnboarding);
   $('#onboardingLater')?.addEventListener('click',dismissOnboarding);
   $('#onboardingDialog')?.addEventListener('cancel',dismissOnboarding);
+  restoreAccountSession();
 });
 window.addEventListener('hashchange',applyRoute);
 document.addEventListener('DOMContentLoaded',()=>{if(!castState.confirmed)return;$('#questionFeedback').textContent='问题已锁定，当前仪式进度已保存在本机。';$('#questionFeedback').className='valid';if(castState.prepared)paintStalks('taijiStalks',1,'discarded')});
 
 document.addEventListener('click',event=>{if(!event.target.closest('[data-language-menu]'))closeLanguageMenus()});
+document.addEventListener('click',event=>{
+  if(event.target.closest('#profileButton')){event.preventDefault();const dialog=$('#accountDialog');if(dialog){accountAuthMode=accountUser?'status':'login';renderAccountDialog();dialog.setAttribute('open','')}return}
+  if(event.target.closest('[data-account-close]')){event.preventDefault();closeAccountDialog();return}
+  if(event.target.closest('[data-account-logout]')){event.preventDefault();logoutAccount();return}
+  if(event.target.closest('[data-account-switch]')){event.preventDefault();accountAuthMode=accountAuthMode==='register'?'login':'register';renderAccountDialog();return}
+});
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'){
     if(document.body.classList.contains('mobile-more-open')){closeMobileMore(true);event.preventDefault();return}

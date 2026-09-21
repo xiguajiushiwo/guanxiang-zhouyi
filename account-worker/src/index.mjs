@@ -87,6 +87,7 @@ async function mergeRecords(request,session,env){
 export default {async fetch(request,env){
   const origin=request.headers.get('origin')||'',allowed=allowedOrigins(env.ALLOWED_ORIGINS),language=(request.headers.get('accept-language')||'').toLowerCase().startsWith('fa')?'fa':'zh-CN';
   if(!origin||!allowed.has(origin))return error('UNAUTHORIZED',403,language);
+  if(env.ACCOUNT_PROXY_SECRET && request.headers.get('x-guanxiang-account-proxy-secret')!==env.ACCOUNT_PROXY_SECRET)return error('UNAUTHORIZED',403,language);
   if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{'access-control-allow-methods':'GET, POST, PUT, DELETE, OPTIONS','access-control-allow-headers':'content-type','cache-control':'no-store','vary':'Origin'}});
   if(!env.DB||!env.SESSION_SECRET)return error('SERVICE_ERROR',503,language);
   const path=routePath(request),segments=path.split('/').filter(Boolean),route=segments[0]||'';

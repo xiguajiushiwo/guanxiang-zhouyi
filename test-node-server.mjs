@@ -11,14 +11,19 @@ await writeFile(join(root,'index.html'),'<h1>INDEX</h1>');
 await writeFile(join(root,'app.js'),'console.log("asset")');
 
 let forwarded;
+let accountForwarded;
 const fetchImpl=async(url,init)=>{
+  if(String(url).includes('account.example')){
+    accountForwarded={url,init,body:init.body?await new Response(init.body).text():''};
+    return new Response(JSON.stringify({user:{email:'reader@example.com'}}),{status:200,headers:{'content-type':'application/json','set-cookie':'__Host-guanxiang_session=abc; Path=/; Secure; HttpOnly; SameSite=Lax'}});
+  }
   forwarded={url,init,body:await new Response(init.body).text()};
   return new Response('【核心判断】\n测试通过。',{
     status:200,
     headers:{'content-type':'text/plain; charset=utf-8','retry-after':'7'},
   });
 };
-const server=createZhouyiServer({root,proxySecret:'liara-secret',fetchImpl});
+const server=createZhouyiServer({root,proxySecret:'liara-secret',accountWorkerUrl:'https://account.example',accountProxySecret:'account-secret',fetchImpl});
 server.listen(0,'127.0.0.1');
 await once(server,'listening');
 const origin=`http://127.0.0.1:${server.address().port}`;
@@ -61,6 +66,14 @@ try{
 
   const oversized=await fetch(`${origin}/api/reading`,{method:'POST',body:'x'.repeat(MAX_BODY_BYTES+1)});
   assert.equal(oversized.status,413);
+
+  const account=await fetch(`${origin}/api/account/me`,{headers:{cookie:'__Host-guanxiang_session=old','x-real-ip':'198.51.100.4'}});
+  assert.equal(account.status,200);
+  assert.equal((await account.json()).user.email,'reader@example.com');
+  assert.equal(accountForwarded.init.headers.cookie,'__Host-guanxiang_session=old');
+  assert.equal(accountForwarded.init.headers['x-guanxiang-account-proxy-secret'],'account-secret');
+  assert.equal(accountForwarded.init.headers['x-guanxiang-client-ip'],'198.51.100.4');
+  assert.match(account.headers.get('set-cookie'),/__Host-guanxiang_session=abc/);
 }finally{
   await new Promise(resolve=>server.close(resolve));
   await rm(root,{recursive:true,force:true});

@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "guanxiang-account",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-09-21",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "guanxiang-accounts",
+      "database_id": "2689dee2-afe4-4e06-81d8-bdaf8c13d567",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "ALLOWED_ORIGINS": "https://guanxiang-zhouyi-evf.pages.dev,https://guanxiang-zhouyi.liara.run,http://127.0.0.1:4175,http://localhost:4175"
+  }
+}

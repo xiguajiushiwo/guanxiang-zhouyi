@@ -4,6 +4,7 @@ npm-debug.log*
 Thumbs.db
 .playwright-cli/
 .netlify/
+.netlify-npx-cache/
 .wrangler/
 worker/.wrangler/
 worker/wrangler.jsonc

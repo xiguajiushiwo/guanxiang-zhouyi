@@ -69,7 +69,7 @@ assert.match(script, /function renderHistoryDetail\(record\)/);
 assert.match(styles, /prefers-reduced-motion:\s*reduce/);
 assert.doesNotMatch(styles, /gradient\(/);
 assert.match(worker, /['"]\.\/landing-v2\.css['"]/);
-assert.match(worker, /CACHE_NAME='guanxiang-shell-v37'/);
+assert.match(worker, /CACHE_NAME='guanxiang-shell-v38'/);
 
 const endpointScript=html.match(/<script>window\.GUANXIANG_AI_ENDPOINT=.*?<\/script>/s)?.[0].replace(/^<script>|<\/script>$/g,'');
 assert.ok(endpointScript);

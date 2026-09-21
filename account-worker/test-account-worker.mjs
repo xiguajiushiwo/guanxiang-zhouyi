@@ -35,10 +35,13 @@ class FakeD1 {
 }
 
 const db=new FakeD1();
-const env={DB:db,SESSION_SECRET:'test-session-secret',ALLOWED_ORIGINS:'https://example.com'};
-const request=(path,method='GET',body,cookie='',origin='https://example.com')=>new Request(`https://account.example${path}`,{method,headers:{origin,'content-type':'application/json',...(cookie?{cookie}:{} )},...(body===undefined?{}:{body:JSON.stringify(body)})});
+const env={DB:db,SESSION_SECRET:'test-session-secret',ACCOUNT_PROXY_SECRET:'test-account-proxy-secret',ALLOWED_ORIGINS:'https://example.com'};
+const request=(path,method='GET',body,cookie='',origin='https://example.com')=>new Request(`https://account.example${path}`,{method,headers:{origin,'x-guanxiang-account-proxy-secret':'test-account-proxy-secret','content-type':'application/json',...(cookie?{cookie}:{} )},...(body===undefined?{}:{body:JSON.stringify(body)})});
 const call=(path,method='GET',body,cookie='')=>worker.fetch(request(path,method,body,cookie),env);
 const sessionCookie=response=>response.headers.get('set-cookie');
+
+const missingSecret=await worker.fetch(new Request('https://account.example/me',{headers:{origin:'https://example.com'}}),env);
+assert.equal(missingSecret.status,403);
 
 const register=await call('/register','POST',{email:'reader@example.com',password:'correct horse battery',language:'fa'});
 assert.equal(register.status,201);

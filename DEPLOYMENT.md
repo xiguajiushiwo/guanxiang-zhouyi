@@ -12,7 +12,30 @@ https://guanxiang-zhouyi-evf.pages.dev
 https://github.com/xiguajiushiwo/guanxiang-zhouyi
 ```
 
-浏览器只请求同源的 `/api/reading`。Pages Function 再通过仅保存在 Cloudflare 中的 `PROXY_SECRET` 转发给 AI Worker，因此前端不保存密钥，也不直接依赖本地网络能否访问 `workers.dev`。
+浏览器只请求同源的 `/api/reading` 和 `/api/account/*`。Pages Function 再通过仅保存在 Cloudflare 中的 `PROXY_SECRET`、`ACCOUNT_PROXY_SECRET` 转发给对应 Worker，因此前端不保存密钥，也不直接依赖本地网络能否访问 `workers.dev`。
+
+## Cloudflare D1 账号服务
+
+账号 Worker 已部署为：
+
+```text
+https://guanxiang-account.1510351214.workers.dev
+```
+
+D1 数据库为 `guanxiang-accounts`，绑定配置在 `account-worker/wrangler.jsonc`，迁移文件在 `account-worker/migrations/`。注册用户的邮箱、密码哈希、会话和占问记录保存在 D1；密码原文和会话原文不会写入数据库。游客和登录前的旧记录仍只保存在当前浏览器的 `guanxiang-history-v1`。
+
+部署或更新账号服务：
+
+```powershell
+Push-Location account-worker
+npx wrangler@latest d1 migrations apply DB --remote
+npx wrangler@latest deploy
+Pop-Location
+```
+
+首次配置必须设置 `SESSION_SECRET` 和 `ACCOUNT_PROXY_SECRET` Worker secret，并把同一个 `ACCOUNT_PROXY_SECRET` 设置为 Pages 项目 secret。Liara Node 服务使用同一个值作为 `ACCOUNT_PROXY_SECRET`，同时设置 `ACCOUNT_WORKER_URL=https://guanxiang-account.1510351214.workers.dev`。这些值不要写入仓库、前端或构建产物。
+
+登录后如果本机已有记录，界面会先显示合并选择：选择“合并记录”会把本机记录和云端记录按 `updatedAt` 合并；选择“只保留云端记录”才会用云端列表替换当前浏览器列表。未登录、D1 暂时不可用或网络失败时，本机记录不会被删除。
 
 ## Liara 伊朗镜像
 

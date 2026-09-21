@@ -3,6 +3,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { extname, resolve, sep } from 'node:path';
 import { Readable } from 'node:stream';
 import { proxyReading } from './functions/_shared/reading-proxy.mjs';
+import { proxyAccount } from './functions/_shared/account-proxy.mjs';
 
 const TYPES = {
   '.css': 'text/css; charset=utf-8',
@@ -31,7 +32,7 @@ async function sendWebResponse(response, webResponse) {
   Readable.fromWeb(webResponse.body).pipe(response);
 }
 
-export function createZhouyiServer({ root, proxySecret, fetchImpl = globalThis.fetch }) {
+export function createZhouyiServer({ root, proxySecret, accountWorkerUrl, accountProxySecret, fetchImpl = globalThis.fetch }) {
   const staticRoot = resolve(root);
 
   return createServer(async (request, response) => {
@@ -51,6 +52,27 @@ export function createZhouyiServer({ root, proxySecret, fetchImpl = globalThis.f
           request: webRequest,
           proxySecret,
           clientIp: clientIpForNodeRequest(request),
+          fetchImpl,
+        });
+        await sendWebResponse(response, webResponse);
+        return;
+      }
+
+      if (url.pathname === '/api/account' || url.pathname.startsWith('/api/account/')) {
+        const upstreamPath = url.pathname.replace(/^\/api\/account/, '') || '/';
+        const upstreamUrl = new URL(upstreamPath + url.search, accountWorkerUrl || 'http://127.0.0.1');
+        const body = ['GET', 'HEAD'].includes(request.method || 'GET') ? undefined : Readable.toWeb(request);
+        const webRequest = new Request(url, {
+          method: request.method,
+          headers: request.headers,
+          body,
+          duplex: body ? 'half' : undefined,
+        });
+        const webResponse = await proxyAccount({
+          request: webRequest,
+          proxySecret: accountProxySecret,
+          clientIp: clientIpForNodeRequest(request),
+          upstreamUrl,
           fetchImpl,
         });
         await sendWebResponse(response, webResponse);

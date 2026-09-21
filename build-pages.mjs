@@ -9,7 +9,7 @@ const files=[
   'index.html','styles.css','landing-v2.css','landing-rich.css','landing-details.css',
   'app.js','i18n.mjs','hexagram-i18n.mjs','hexagram-catalog.mjs','daily-hexagram.mjs','yarrow-core.mjs',
   'reading-rules.mjs','interpretation.mjs','ai-reading.mjs','ai-sources.mjs','derived-hexagrams.mjs',
-  'study-storage.mjs','storage.mjs','html-safety.mjs','service-worker-update.mjs',
+  'study-storage.mjs','storage.mjs','account-sync.mjs','html-safety.mjs','service-worker-update.mjs',
   'ten-wings.json','hexagram-texts.json','principles.json','principles-en.json','relations.json',
   'manifest.webmanifest','app-icon.svg','service-worker.js'
 ];

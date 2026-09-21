@@ -7,7 +7,7 @@
     "start": "node serve.mjs --production",
     "dev": "node serve.mjs",
     "test": "npm run test:unit",
-    "test:unit": "node test-yarrow.mjs && node test-derived-hexagrams.mjs && node test-daily-hexagram.mjs && node test-storage.mjs && node test-html-safety.mjs && node test-service-worker-update.mjs && node test-i18n.mjs && node test-landing.mjs && node test-interpretation.mjs && node test-ai-sources.mjs && node test-ai-reading.mjs && node worker/test-worker.mjs && node test-virtual-ai-reading.mjs && node test-reading-proxy.mjs && node test-pages-proxy.mjs && node test-netlify-proxy.mjs && node test-node-server.mjs",
+    "test:unit": "node test-yarrow.mjs && node test-derived-hexagrams.mjs && node test-daily-hexagram.mjs && node test-storage.mjs && node test-html-safety.mjs && node test-service-worker-update.mjs && node test-i18n.mjs && node test-landing.mjs && node test-interpretation.mjs && node test-ai-sources.mjs && node test-ai-reading.mjs && node worker/test-worker.mjs && node account-worker/test-account-worker.mjs && node test-account-sync.mjs && node test-account-proxy.mjs && node test-virtual-ai-reading.mjs && node test-reading-proxy.mjs && node test-pages-proxy.mjs && node test-netlify-proxy.mjs && node test-node-server.mjs",
     "test:server": "node test-node-server.mjs",
     "test:browser": "node run-browser-test.mjs",
     "build:relations": "node build-relations.mjs",
