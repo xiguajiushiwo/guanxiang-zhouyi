@@ -37,6 +37,6 @@ assert.match(build,/'auth\.js'/);
 assert.match(worker,/'\.\/auth\.html'/);
 assert.match(worker,/'\.\/auth\.css'/);
 assert.match(worker,/'\.\/auth\.js'/);
-assert.match(worker,/guanxiang-shell-v42/);
+assert.match(worker,/guanxiang-shell-v43/);
 
 console.log('Standalone account page checks passed.');
