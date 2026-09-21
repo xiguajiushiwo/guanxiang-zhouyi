@@ -20,6 +20,7 @@ const validPayload=()=>({version:1,question:'未来三个月我该如何推进�
 assert.deepEqual([...parseAllowedOrigins(' https://a.example,https://b.example, https://a.example ')],['https://a.example','https://b.example']);
 assert.equal(validateReadingPayload(validPayload()).ok,true);
 assert.equal(validateReadingPayload({...validPayload(),language:'en'}).value.language,'en');
+assert.equal(validateReadingPayload({...validPayload(),language:'fa'}).value.language,'fa');
 assert.equal(validateReadingPayload({...validPayload(),language:'fr'}).ok,false);
 assert.equal(validateReadingPayload({...validPayload(),question:'问'.repeat(101)}).ok,false);
 assert.equal(validateReadingPayload({...validPayload(),originalIndex:64}).ok,false);
@@ -111,6 +112,11 @@ assert.match(englishPrompt,/Thinking direction:/);
 assert.match(englishPrompt,/Mindset adjustment:/);
 assert.match(englishPrompt,/first non-whitespace character must be \[/i);
 assert.match(englishPrompt,/Markdown heading markers are forbidden/i);
+const persianPrompt=promptFor({...validPayload(),language:'fa'})[0].content;
+assert.match(persianPrompt,/به فارسی/);
+assert.match(persianPrompt,/\[قضاوت اصلی\]/);
+assert.match(persianPrompt,/جهت اندیشه/);
+assert.match(persianPrompt,/تنظیم نگرش/);
 
 const streamEnvironment=environment();
 streamEnvironment.AI.run=async()=>providerStream();

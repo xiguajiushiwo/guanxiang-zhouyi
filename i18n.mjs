@@ -1,5 +1,59 @@
-export const LANGUAGES = Object.freeze({ 'zh-CN': '中文', en: 'English' });
+export const LANGUAGES = Object.freeze({ 'zh-CN': '中文', en: 'English', fa: 'فارسی' });
 export const LANGUAGE_STORAGE_KEY = 'guanxiang-language';
+export const LANGUAGE_META = Object.freeze({
+  'zh-CN': { label: '中文', locale: 'zh-CN', direction: 'ltr' },
+  en: { label: 'English', locale: 'en', direction: 'ltr' },
+  fa: { label: 'فارسی', locale: 'fa', direction: 'rtl' },
+});
+
+const PERSIAN_OVERRIDES = {
+  'app.title': 'گوانشیانگ · مطالعه ژوئی',
+  'nav.home': 'نمای کلی مطالعه', 'nav.hexagrams': '۶۴ هگزاگرام', 'nav.divination': 'روش اشتقاق بزرگ',
+  'nav.history': 'دفترچه', 'nav.classics': 'ده بال', 'nav.principles': 'اصول', 'nav.more': 'بیشتر',
+  'nav.classicsIndex': 'فهرست متون', 'nav.closeMore': 'بستن منوی بیشتر', 'brand.subtitle': 'مطالعه ژوئی',
+  'cover.masthead': 'مطالعه ژوئی و روش اشتقاق بزرگ', 'cover.overline': 'مشاهده تصویر · خواندن متن · پیگیری اصول',
+  'cover.quote': 'با مشاهده نقش‌های آسمان، تغییرات زمان را بشناسید', 'cover.footer': '۶۴ هگزاگرام · ده بال · اصول · پیشگویی',
+  'cover.enter': 'ورود به گوانشیانگ', 'cover.caption': 'از تصویر وارد شوید؛ روشنایی از تغییر می‌آید',
+  'home.eyebrow': 'مشاهده · خواندن · فهمیدن', 'home.title': 'در میان تغییر، آنچه تغییر نمی‌کند را ببینید.',
+  'home.description': 'از راه هگزاگرام‌ها وارد شوید و متن کلاسیک و تفسیرهای آن را با آرامش بخوانید. گوانشیانگ ۶۴ هگزاگرام، ده بال، اصول و آیین کامل اشتقاق بزرگ را گرد هم می‌آورد.',
+  'home.descriptionCompact': '۶۴ هگزاگرام، ده بال و اصول را مطالعه کنید یا پرسشی را به آیین اشتقاق بزرگ بسپارید.',
+  'home.start': 'آغاز یک خوانش', 'home.startNote': 'آیین کامل یا فال‌گیری سریع', 'home.browse': 'مرور هگزاگرام‌ها', 'home.quickAccess': 'از اینجا آغاز کنید',
+  'home.pathsLabel': 'مسیرهای مطالعه', 'home.hexShort': 'حکم، متن خطوط و تصویر', 'home.wingsShort': 'همه تفسیرها را به ترتیب بخوانید', 'home.principlesShort': 'تصویر، عدد، زمان و تغییر',
+  'home.quickNote': 'متون کلاسیک، تصویرها و یک پرسش', 'home.hexDesc': 'تصویرها، احکام و متن خطوط را به ترتیب مرور کنید.',
+  'home.wingDesc': 'فهرستی از تفسیرهای توآن، تصویر، شی‌تسو و وِن‌یَن.', 'home.divinationDesc': 'تقسیم، کنارگذاری و شمارش چهارتایی را خط‌به‌خط دنبال کنید.',
+  'home.quote': 'ای تغییر، بی‌اندیشه و بی‌کنشی؛ آرام و بی‌حرکت، پاسخ می‌دهد و امور جهان را درمی‌نوردد.',
+  'hex.title': '۶۴ هگزاگرام', 'hex.description': 'شش خط یک هگزاگرام می‌سازد. یکی را انتخاب کنید تا متن‌ها و یادداشت‌های آن باز شود.',
+  'hex.search': 'جست‌وجوی نام، حکم یا کلیدواژه', 'filter.all': 'همه', 'filter.upper': 'بخش نخست (۱–۳۰)', 'filter.lower': 'بخش دوم (۳۱–۶۴)',
+  'hex.notFound': 'هگزاگرام منطبق یافت نشد', 'hex.back': 'بازگشت به هگزاگرام‌ها', 'hex.order': 'هگزاگرام {n} · {section}', 'hex.upper': 'بخش نخست', 'hex.lower': 'بخش دوم',
+  'hex.judgment': 'حکم · 卦辞', 'hex.tuan': 'تفسیر توآن · 彖传', 'hex.xiang': 'تفسیر تصویر · 象传', 'hex.lines': 'متن خطوط · 爻辞',
+  'hex.related': 'پیوندهای ده بال', 'hex.loading': 'فهرست پیوندها در حال بارگذاری است.',
+  'classics.title': 'ده بال', 'classics.description': 'ده بال را به ترتیب کلاسیک بخوانید. برای رفتن به هر بخش آن را انتخاب کنید.',
+  'classics.ancient': 'ترتیب کلاسیک', 'classics.modern': 'خوانش امروزی', 'classics.search': 'جست‌وجوی متن اصلی',
+  'classics.bookmark': 'نشان‌گذاری این اثر', 'classics.bookmarked': 'نشان‌گذاری شد', 'classics.noMatch': 'متن منطبقی در ده بال یافت نشد.',
+  'principles.title': 'اصول', 'principles.description': 'نقشه‌ای قابل بازبینی از خطوط، تصویرها، اعداد، زمان و تغییر بسازید.',
+  'principles.count': 'موضوع', 'principles.path': 'مسیر مطالعه', 'principles.pathTitle': 'مسیر هشت‌مرحله‌ای مطالعه', 'principles.done': 'تکمیل‌شده', 'principles.markDone': 'علامت‌گذاری به‌عنوان مرورشده',
+  'divination.title': 'روش اشتقاق بزرگ', 'divination.questionTitle': 'پرسش را دقیق کنید', 'divination.questionPlaceholder': 'یک پرسش مشخص بنویسید؛ برای نمونه: در مصاحبه هفته آینده به چه چیزی توجه کنم؟',
+  'divination.confirm': 'تأیید پرسش و آغاز', 'divination.confirmed': 'پرسش تأیید شد', 'divination.reset': 'از نو آغاز کردن', 'divination.next': 'آغاز خوانش بعدی',
+  'divination.complete': 'آیین کامل', 'divination.quick': 'فال‌گیری سریع', 'divination.prepare': 'برای آغاز پرسش را تأیید کنید', 'divination.records': 'ثبت آیین',
+  'divination.empty': 'سه تغییر یک خط می‌سازد\nشش خط از پایین به بالا شکل می‌گیرد', 'divination.result': 'اصلی · پیوسته', 'divination.reading': 'این خوانش', 'divination.openFull': 'باز کردن متن کامل هگزاگرام',
+  'history.title': 'دفترچه', 'history.description': 'خوانش‌های کامل‌شده در این مرورگر می‌مانند و هر زمان قابل بازبینی‌اند.', 'history.search': 'جست‌وجوی پرسش، هگزاگرام یا یادداشت',
+  'history.export': 'خروجی گرفتن', 'history.import': 'وارد کردن رکوردها', 'history.none': 'هنوز خوانشی ثبت نشده', 'history.emptyDescription': 'پس از یک خوانش کامل، هگزاگرام و پرسش شما اینجا ظاهر می‌شود.',
+  'history.noMatch': 'رکورد منطبقی نیست', 'history.noMatchDescription': 'کلیدواژه یا نام هگزاگرام دیگری را امتحان کنید.', 'history.localOnly': 'فقط در این مرورگر ذخیره می‌شود', 'history.selectPrompt': 'یک رکورد را برای دیدن نتیجه کامل انتخاب کنید.',
+  'history.searchEmpty': 'نتیجه‌ای یافت نشد.', 'history.back': 'بازگشت به دفترچه', 'history.timeMissing': 'زمان ثبت نشده', 'history.hasNote': 'دارای یادداشت',
+  'history.noteLabel': 'یادداشت مطالعه', 'history.notePlaceholder': 'مشاهده‌ها و اقدام‌های بعدی را ثبت کنید.', 'history.openHex': 'باز کردن متن هگزاگرام اصلی', 'history.saveNote': 'ذخیره یادداشت', 'history.delete': 'حذف رکورد',
+  'history.deleteConfirm': 'این خوانش حذف شود؟ این کار برگشت‌پذیر نیست.', 'history.deleted': 'خوانش حذف شد.', 'history.questionLabel': 'پرسش', 'history.linesLabel': 'شکل شش‌خطی', 'history.linesHint': 'از پایین به بالا گرفته شده و از خط بالایی نمایش داده می‌شود',
+  'reading.local': 'تفسیر آفلاین', 'reading.ai': 'خوانش عمیق هوش مصنوعی', 'reading.generate': 'تولید خوانش هوش مصنوعی', 'reading.note': 'یادداشت من', 'reading.save': 'ذخیره یادداشت',
+  'reading.original': '۱ · متن کلاسیک', 'reading.rule': '۲ · روش خط متغیر', 'reading.structure': '۳ · ساختار هگزاگرام', 'reading.principle': '۴ · راهنمای اصل', 'reading.related': 'بخش‌های مرتبط ده بال', 'reading.offline': 'قابل استفاده آفلاین · قابل بازبینی',
+  'reading.core': 'قضاوت اصلی', 'reading.situation': 'وضعیت کنونی', 'reading.turningPoint': 'تغییر کلیدی', 'reading.trend': 'روند پیش‌رو', 'reading.actions': 'پیشنهادهای عملی', 'reading.cautions': 'نکات قابل توجه',
+  'reading.basis': 'مبنا', 'reading.current': 'این تفسیر', 'reading.question': 'پرسش: {question}', 'reading.aiSaved': 'نتیجه کامل ذخیره‌شده', 'reading.regenerate': 'تولید دوباره', 'reading.generating': 'در حال خوانش', 'reading.retry': 'تلاش دوباره', 'reading.unconfigured': 'خدمت هوش مصنوعی تنظیم نشده است', 'reading.moving': 'خط‌های متغیر: {lines}', 'reading.still': 'هر شش خط ثابت‌اند',
+  'dialog.cancel': 'لغو', 'dialog.continue': 'ادامه آیین', 'dialog.confirm': 'تأیید', 'dialog.thinkAgain': 'دوباره فکر کنید', 'dialog.confirmBegin': 'آماده‌ام، آغاز کنید', 'dialog.later': 'بعداً', 'dialog.startReading': 'شروع مطالعه',
+  'dialog.importKicker': 'وارد کردن رکوردها', 'dialog.importTitle': 'این رکوردهای محلی ادغام شوند؟', 'dialog.importLoading': 'در حال خواندن فایل.', 'dialog.confirmImport': 'ادغام رکوردها',
+  'common.loading': 'در حال بارگذاری…', 'common.noData': 'داده‌ای نیست', 'common.saved': 'ذخیره شد', 'common.copy': 'کپی پیوند بخش', 'common.delete': 'حذف', 'common.close': 'بستن', 'common.today': 'امروز',
+  'edition.status': 'وضعیت نسخه', 'edition.source': 'منبع: ', 'edition.dataDate': 'تاریخ داده: ', 'edition.dateMissing': 'تاریخ ثبت نشده', 'edition.unspecified': 'مشخص نشده', 'edition.variants': 'اختلاف نسخه‌ها جداگانه مقابله نشده‌اند؛ متن از نسخه انتخابی است',
+  'language.label': 'زبان', 'language.zh': 'چینی', 'language.en': 'انگلیسی',
+  'language.fa': 'فارسی',
+  'auth.title': 'حساب گوانشیانگ', 'auth.login': 'ورود', 'auth.register': 'ثبت‌نام', 'auth.email': 'ایمیل', 'auth.password': 'رمز عبور', 'auth.submitLogin': 'ورود به حساب', 'auth.submitRegister': 'ساخت حساب', 'auth.logout': 'خروج', 'auth.guest': 'حالت مهمان', 'auth.guestDescription': 'رکوردها فقط در این دستگاه ذخیره می‌شوند.', 'auth.accountDescription': 'رکوردهای شما در دستگاه‌های مختلف همگام می‌شوند.', 'auth.mergeTitle': 'رکوردهای این دستگاه ادغام شوند؟', 'auth.mergeBody': 'رکوردهای محلی قدیمی حفظ می‌شوند و به حساب شما اضافه خواهند شد.', 'auth.merge': 'ادغام رکوردها', 'auth.keepCloud': 'فقط رکوردهای ابری', 'auth.invalid': 'ایمیل یا رمز عبور معتبر نیست.', 'auth.network': 'خدمت حساب موقتاً در دسترس نیست.', 'auth.loggedIn': 'وارد شده‌اید',
+};
 
 const DICTIONARY = {
   'zh-CN': {
@@ -152,24 +206,35 @@ const DICTIONARY = {
     'edition.dateMissing': 'Date not recorded', 'edition.unspecified': 'Not specified', 'edition.variants': 'Variants: not separately collated; source text follows the selected edition',
     'language.label': 'Language', 'language.zh': '中文', 'language.en': 'English',
   },
+  fa: {},
 };
 
+Object.assign(DICTIONARY.fa, DICTIONARY.en, PERSIAN_OVERRIDES);
+Object.assign(DICTIONARY['zh-CN'], {
+  'language.fa': 'فارسی', 'auth.title': '观象账户', 'auth.login': '登录', 'auth.register': '注册', 'auth.email': '邮箱', 'auth.password': '密码', 'auth.submitLogin': '登录账户', 'auth.submitRegister': '创建账户', 'auth.logout': '退出登录', 'auth.guest': '游客模式', 'auth.guestDescription': '记录只保存在此设备。', 'auth.accountDescription': '记录会在不同设备间同步。', 'auth.mergeTitle': '合并此设备的记录？', 'auth.mergeBody': '旧的本机记录会保留并添加到你的账户。', 'auth.merge': '合并记录', 'auth.keepCloud': '只保留云端记录', 'auth.invalid': '邮箱或密码无效。', 'auth.network': '账户服务暂时不可用。', 'auth.loggedIn': '已登录',
+});
+Object.assign(DICTIONARY.en, {
+  'language.fa': 'Persian', 'auth.title': 'Guanxiang account', 'auth.login': 'Log in', 'auth.register': 'Create account', 'auth.email': 'Email', 'auth.password': 'Password', 'auth.submitLogin': 'Log in', 'auth.submitRegister': 'Create account', 'auth.logout': 'Log out', 'auth.guest': 'Guest mode', 'auth.guestDescription': 'Records stay on this device.', 'auth.accountDescription': 'Records sync across your devices.', 'auth.mergeTitle': 'Merge this device’s records?', 'auth.mergeBody': 'Your existing local records will be kept and added to your account.', 'auth.merge': 'Merge records', 'auth.keepCloud': 'Keep cloud records only', 'auth.invalid': 'The email or password is not valid.', 'auth.network': 'The account service is temporarily unavailable.', 'auth.loggedIn': 'Signed in',
+});
+
 const TEXT_MAP = Object.fromEntries(Object.keys(DICTIONARY['zh-CN']).map(key => [DICTIONARY['zh-CN'][key], DICTIONARY.en[key]]));
+const PERSIAN_TEXT_MAP = Object.fromEntries(Object.keys(DICTIONARY['zh-CN']).map(key => [DICTIONARY['zh-CN'][key], DICTIONARY.fa[key] ?? DICTIONARY.en[key]]));
 let currentLanguage = 'zh-CN';
 
 export function getLanguage() {
   try {
     const stored = globalThis.localStorage?.getItem(LANGUAGE_STORAGE_KEY);
-    if (stored === 'en' || stored === 'zh-CN') currentLanguage = stored;
+    if (stored === 'en' || stored === 'zh-CN' || stored === 'fa') currentLanguage = stored;
   } catch {}
   return currentLanguage;
 }
 
 export function setLanguage(language) {
-  currentLanguage = language === 'en' ? 'en' : 'zh-CN';
+  currentLanguage = language === 'en' || language === 'fa' ? language : 'zh-CN';
   try { globalThis.localStorage?.setItem(LANGUAGE_STORAGE_KEY, currentLanguage); } catch {}
   if (typeof document !== 'undefined') {
     document.documentElement.lang = currentLanguage;
+    document.documentElement.dir = LANGUAGE_META[currentLanguage].direction;
     document.title = t('app.title');
     document.dispatchEvent(new CustomEvent('guanxiang:languagechange', { detail: { language: currentLanguage } }));
   }
@@ -182,7 +247,7 @@ export function t(key, params = {}) {
   return String(value).replace(/\{(\w+)\}/g, (_, name) => params[name] ?? `{${name}}`);
 }
 
-export function languageLabel(language = currentLanguage) { return language === 'en' ? 'English' : '中文'; }
+export function languageLabel(language = currentLanguage) { return LANGUAGE_META[language]?.label || LANGUAGE_META['zh-CN'].label; }
 
 export function translateDom(root = document) {
   if (!root?.querySelectorAll) return;
@@ -246,8 +311,8 @@ export function translateKnownText(root = document) {
     if (node.parentElement?.closest(SOURCE_TEXT_SELECTOR)) return;
     const value = node.nodeValue.trim();
     if (!value) return;
-    if (currentLanguage === 'en') {
-      const translated = translateUiValue(value);
+    if (currentLanguage === 'en' || currentLanguage === 'fa') {
+      const translated = currentLanguage === 'fa' ? (PERSIAN_TEXT_MAP[value] || value) : translateUiValue(value);
       if (translated === value) return;
       if (!originalText.has(node)) originalText.set(node, node.nodeValue);
       node.nodeValue = node.nodeValue.replace(value, translated);
@@ -264,9 +329,9 @@ export function translateKnownText(root = document) {
     if (!originals) { originals = {}; originalAttributes.set(element, originals); }
     TRANSLATED_ATTRIBUTES.forEach(name => {
       if (!element.hasAttribute(name)) return;
-      if (currentLanguage === 'en') {
+      if (currentLanguage === 'en' || currentLanguage === 'fa') {
         const value = element.getAttribute(name);
-        const translated = translateUiValue(value);
+        const translated = currentLanguage === 'fa' ? (PERSIAN_TEXT_MAP[value] || value) : translateUiValue(value);
         if (translated !== value) {
           if (!(name in originals)) originals[name] = value;
           element.setAttribute(name, translated);

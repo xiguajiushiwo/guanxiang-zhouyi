@@ -22,6 +22,7 @@ assert.match(html, /class="primary-button home-primary-action"[^>]*data-view="di
 assert.match(html, /class="home-path"[^>]*data-view="principles"/);
 assert.doesNotMatch(html, /class="quick-grid"/);
 assert.equal((html.match(/data-language-menu>/g) || []).length, 2);
+assert.equal((html.match(/data-language="fa"/g) || []).length, 2);
 assert.match(html, /id="enterSite"[^>]*>\s*进入观象\s*<\/button>/);
 assert.equal((html.match(/进入观象/g) || []).length, 1);
 assert.match(html, /landing-v2\.css/);

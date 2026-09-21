@@ -1,10 +1,11 @@
 export const AI_ERROR_MESSAGES={INVALID_REQUEST:'解读资料不完整，请重新成卦后再试。',ORIGIN_NOT_ALLOWED:'当前网站地址未获 AI 服务授权。',RATE_LIMITED:'请求过于频繁，请稍后再试。',DAILY_LIMIT_REACHED:'今天的 AI 解读额度已用完，本地解读仍可继续使用。',MODEL_UNAVAILABLE:'AI 模型暂时不可用，请稍后再试。',STREAM_INTERRUPTED:'连接中断，已保留本次收到的部分内容。',INCOMPLETE_RESPONSE:'AI 解读未完整生成，已保留收到的内容，请重新尝试。',SERVICE_ERROR:'AI 解读服务暂时异常，请稍后再试。',ABORTED:'本次 AI 解读已取消。'};
 
 export const AI_ERROR_MESSAGES_EN={INVALID_REQUEST:'The reading data is incomplete. Cast again and retry.',ORIGIN_NOT_ALLOWED:'This site is not authorized to use the AI service.',RATE_LIMITED:'Too many requests. Please try again later.',DAILY_LIMIT_REACHED:'Today’s AI reading allowance is exhausted. The offline interpretation remains available.',MODEL_UNAVAILABLE:'The AI model is temporarily unavailable. Please try again later.',STREAM_INTERRUPTED:'The connection was interrupted. The partial response has been preserved.',INCOMPLETE_RESPONSE:'The AI response was incomplete. The partial response has been preserved; please retry.',SERVICE_ERROR:'The AI reading service is temporarily unavailable. Please try again later.',ABORTED:'This AI reading was cancelled.'};
+export const AI_ERROR_MESSAGES_FA={INVALID_REQUEST:'اطلاعات خوانش ناقص است. دوباره فال بگیرید و تلاش کنید.',ORIGIN_NOT_ALLOWED:'این سایت برای استفاده از خدمت هوش مصنوعی مجاز نیست.',RATE_LIMITED:'درخواست‌ها بیش از حد مجاز است. بعداً دوباره تلاش کنید.',DAILY_LIMIT_REACHED:'سهمیه خوانش هوش مصنوعی امروز تمام شده است. تفسیر آفلاین همچنان در دسترس است.',MODEL_UNAVAILABLE:'مدل هوش مصنوعی موقتاً در دسترس نیست.',STREAM_INTERRUPTED:'ارتباط قطع شد. پاسخ دریافت‌شده حفظ شده است.',INCOMPLETE_RESPONSE:'پاسخ هوش مصنوعی کامل نشد. بخش دریافت‌شده حفظ شده است؛ دوباره تلاش کنید.',SERVICE_ERROR:'خدمت خوانش هوش مصنوعی موقتاً دچار مشکل است.',ABORTED:'این خوانش هوش مصنوعی لغو شد.'};
 const SECTION_IDS=new Map([['核心判断','summary'],['当前处境','situation'],['关键变化','turningPoint'],['后续趋势','trend'],['行动建议','actions']]);
 
 export class AiReadingError extends Error{
-  constructor(code,message='',partialText='',language='zh-CN'){super((language==='en'?AI_ERROR_MESSAGES_EN:AI_ERROR_MESSAGES)[code]||message||(language==='en'?AI_ERROR_MESSAGES_EN:AI_ERROR_MESSAGES).SERVICE_ERROR);this.name='AiReadingError';this.code=code;this.partialText=partialText}
+  constructor(code,message='',partialText='',language='zh-CN'){const messages=language==='en'?AI_ERROR_MESSAGES_EN:language==='fa'?AI_ERROR_MESSAGES_FA:AI_ERROR_MESSAGES;super(messages[code]||message||messages.SERVICE_ERROR);this.name='AiReadingError';this.code=code;this.partialText=partialText}
 }
 
 export function splitAiReadingSections(text){
@@ -39,14 +40,14 @@ function hasConsistentMovingLineRoles(text,payload,language){
 }
 
 export function isCompleteAiReading(text,language='zh-CN',payload=null){
-  const sections=language==='en'?splitAiReadingSectionsLocalized(text,'en'):splitAiReadingSections(text);
-  const required=language==='en'?['Core judgment','Present situation','Key change','Developing trend','Suggested actions']:['核心判断','当前处境','关键变化','后续趋势','行动建议'];
+  const sections=language==='en'||language==='fa'?splitAiReadingSectionsLocalized(text,language):splitAiReadingSections(text);
+  const required=language==='en'?['Core judgment','Present situation','Key change','Developing trend','Suggested actions']:language==='fa'?['قضاوت اصلی','وضعیت کنونی','تغییر کلیدی','روند پیش‌رو','پیشنهادهای عملی']:['核心判断','当前处境','关键变化','后续趋势','行动建议'];
   const titles=sections.map(section=>section.title);
   if(sections.length!==required.length||titles.some((title,index)=>title!==required[index])||new Set(titles).size!==titles.length)return false;
   const actions=sections.at(-1).text.split(/\n+/).map(line=>line.replace(/^\s*(?:[-*•]|\d+[.)])\s*/,'').trim()).filter(Boolean);
   const keyChange=sections[2]?.text||'';
-  const thinkingMatches=language==='en'?keyChange.match(/Thinking direction\s*:/gi):keyChange.match(/思考方向\s*[：:]/g);
-  const mindsetMatches=language==='en'?keyChange.match(/Mindset adjustment\s*:/gi):keyChange.match(/思维调整\s*[：:]/g);
+  const thinkingMatches=language==='en'?keyChange.match(/Thinking direction\s*:/gi):language==='fa'?keyChange.match(/(?:جهت اندیشه|راهنمای اندیشه)\s*[：:]/g):keyChange.match(/思考方向\s*[：:]/g);
+  const mindsetMatches=language==='en'?keyChange.match(/Mindset adjustment\s*:/gi):language==='fa'?keyChange.match(/(?:تنظیم نگرش|تنظیم ذهن)\s*[：:]/g):keyChange.match(/思维调整\s*[：:]/g);
   const hasThinkingFields=thinkingMatches?.length===1&&mindsetMatches?.length===1;
   const movingCovered=!payload?.movingLines?.length||payload.movingLines.every(line=>new RegExp(`${escapeRegExp(line.label)}[\\s：:，,、“”‘’「」『』()（）]{0,16}${escapeRegExp(line.text)}`).test(keyChange));
   const trend=sections[3]?.text||'';
@@ -80,10 +81,14 @@ export async function requestAiReading({endpoint,payload,onChunk=()=>{},fetchImp
 }
 
 const EN_SECTION_IDS=new Map([['Core judgment','summary'],['Present situation','situation'],['Key change','turningPoint'],['Developing trend','trend'],['Suggested actions','actions']]);
+const FA_SECTION_IDS=new Map([['قضاوت اصلی','summary'],['وضعیت کنونی','situation'],['تغییر کلیدی','turningPoint'],['روند پیش‌رو','trend'],['پیشنهادهای عملی','actions']]);
 export function splitAiReadingSectionsLocalized(text,language='zh-CN'){
- if(language!=='en')return splitAiReadingSections(text);
- const sections=[],lines=String(text||'').replace(/\r/g,'').split('\n');let current={id:'summary',title:'Core judgment',lines:[]};
+ if(language!=='en'&&language!=='fa')return splitAiReadingSections(text);
+ const sections=[],lines=String(text||'').replace(/\r/g,'').split('\n'),isFa=language==='fa',ids=isFa?FA_SECTION_IDS:EN_SECTION_IDS;
+ const titles=isFa?['قضاوت اصلی','وضعیت کنونی','تغییر کلیدی','روند پیش‌رو','پیشنهادهای عملی']:['Core judgment','Present situation','Key change','Developing trend','Suggested actions'];
+ let current={id:'summary',title:titles[0],lines:[]};
  const flush=()=>{const value=current.lines.join('\n').trim();if(value)sections.push({id:current.id,title:current.title,text:value})};
- for(const line of lines){const match=line.trim().match(/^(?:\[(Core judgment|Present situation|Key change|Developing trend|Suggested actions)\]|\*\*(Core judgment|Present situation|Key change|Developing trend|Suggested actions)\*\*)$/);if(match){const title=match[1]||match[2];flush();current={id:EN_SECTION_IDS.get(title),title,lines:[]}}else current.lines.push(line)}
- flush();return sections.length?sections:[{id:'summary',title:'Core judgment',text:String(text||'').trim()}].filter(section=>section.text);
+ const pattern=titles.join('|');
+ for(const line of lines){const match=line.trim().match(new RegExp(`^(?:\\[(${pattern})\\]|\\*\\*(${pattern})\\*\\*)$`));if(match){const title=match[1]||match[2];flush();current={id:ids.get(title),title,lines:[]}}else current.lines.push(line)}
+ flush();return sections.length?sections:[{id:'summary',title:titles[0],text:String(text||'').trim()}].filter(section=>section.text);
 }

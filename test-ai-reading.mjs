@@ -48,6 +48,9 @@ assert.equal(isCompleteAiReading(english.replace('Mindset adjustment: Move from 
 const boldEnglish=english.replace(/^\[([^\]]+)\]$/gm,'**$1**');
 assert.equal(isCompleteAiReading(boldEnglish,'en'),true);
 assert.deepEqual(splitAiReadingSectionsLocalized(boldEnglish,'en').map(section=>section.title),['Core judgment','Present situation','Key change','Developing trend','Suggested actions']);
+const persian='[قضاوت اصلی]\nاکنون باید شواهد روشن‌تر را بررسی کرد.\n[وضعیت کنونی]\nشرایط هنوز در حال شکل‌گیری است.\n[تغییر کلیدی]\nجهت اندیشه: کدام فرض را اکنون می‌توان آزمود؟\nتنظیم نگرش: به جای جست‌وجوی قطعیت، شرایط را بررسی کنید.\n[روند پیش‌رو]\nپیشرفت به‌تدریج و مشروط آشکار می‌شود.\n[پیشنهادهای عملی]\n1. واقعیت‌ها را بررسی کنید\n2. یک آزمون کوچک انجام دهید\n3. نتیجه را در زمان مشخص مرور کنید';
+assert.equal(isCompleteAiReading(persian,'fa'),true);
+assert.deepEqual(splitAiReadingSectionsLocalized(persian,'fa').map(section=>section.title),['قضاوت اصلی','وضعیت کنونی','تغییر کلیدی','روند پیش‌رو','پیشنهادهای عملی']);
 
 await assert.rejects(()=>requestAiReading({endpoint:'x',payload:{},fetchImpl:async()=>new Response(JSON.stringify({error:{code:'RATE_LIMITED',message:'too many'}}),{status:429,headers:{'content-type':'application/json'}})}),error=>error instanceof AiReadingError&&error.code==='RATE_LIMITED'&&/频繁/.test(error.message));
 await assert.rejects(()=>requestAiReading({endpoint:'x',payload:{},fetchImpl:async()=>new Response('',{status:200})}),error=>error.code==='MODEL_UNAVAILABLE');

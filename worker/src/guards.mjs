@@ -42,13 +42,13 @@ export function validateReadingPayload(value){
     const serialized=JSON.stringify(value);
     if(!value||typeof value!=='object'||typeof serialized!=='string'||encoder.encode(serialized).byteLength>32*1024)return invalid('请求内容过大或格式不正确。');
     if(value.version!==1)return invalid('不支持的请求版本。');
-    if(value.language!==undefined&&value.language!=='en'&&value.language!=='zh-CN')return invalid('不支持的语言。');
+    if(value.language!==undefined&&!['en','zh-CN','fa'].includes(value.language))return invalid('不支持的语言。');
     const moving=uniqueIndexes(value.moving,6,'moving'),primary=uniqueIndexes(value.rule?.primary,6,'primary');
     if(typeof value.rule?.fromChanged!=='boolean')throw new Error('rule');
     if(!Array.isArray(value.primaryLines)||value.primaryLines.length>6)throw new Error('primaryLines');
     const movingLines=value.movingLines===undefined?[]:value.movingLines;
     if(!Array.isArray(movingLines)||movingLines.length>6)throw new Error('movingLines');
-    const copy={version:1,language:value.language==='en'?'en':'zh-CN',question:text(value.question,100,'question'),originalIndex:index(value.originalIndex,63,'originalIndex'),changedIndex:index(value.changedIndex,63,'changedIndex'),original:hexagram(value.original,'original'),changed:hexagram(value.changed,'changed'),moving,movingLines:movingLines.map(line=>({position:index(line?.position-1,5,'moving line position')+1,label:text(line?.label,16,'moving line label'),text:text(line?.text,800,'moving line text')})),rule:{text:text(value.rule.text,400,'rule'),fromChanged:value.rule.fromChanged,primary},primaryLines:value.primaryLines.map(line=>({label:text(line?.label,16,'line label'),text:text(line?.text,800,'line text')})),tenWings:tenWingSources(value.tenWings),analysisPlan:analysisPlan(value.analysisPlan),localReading:localReading(value.localReading)};
+    const copy={version:1,language:['en','fa'].includes(value.language)?value.language:'zh-CN',question:text(value.question,100,'question'),originalIndex:index(value.originalIndex,63,'originalIndex'),changedIndex:index(value.changedIndex,63,'changedIndex'),original:hexagram(value.original,'original'),changed:hexagram(value.changed,'changed'),moving,movingLines:movingLines.map(line=>({position:index(line?.position-1,5,'moving line position')+1,label:text(line?.label,16,'moving line label'),text:text(line?.text,800,'moving line text')})),rule:{text:text(value.rule.text,400,'rule'),fromChanged:value.rule.fromChanged,primary},primaryLines:value.primaryLines.map(line=>({label:text(line?.label,16,'line label'),text:text(line?.text,800,'line text')})),tenWings:tenWingSources(value.tenWings),analysisPlan:analysisPlan(value.analysisPlan),localReading:localReading(value.localReading)};
     if(copy.question.length<8)return invalid('问题过短。');
     return {ok:true,value:copy};
   }catch(error){return invalid('请求字段不完整：'+error.message+'。')}

@@ -43,7 +43,7 @@ export function normalizeAiReading(value, now = new Date()) {
   if (!value || typeof value !== 'object' || typeof value.text !== 'string') return null;
   const text=value.text.trim().slice(0,12000);
   if (!text) return null;
-  const language=value.language==='en'||value.language==='zh-CN'?value.language:null;
+  const language=value.language==='en'||value.language==='zh-CN'||value.language==='fa'?value.language:null;
   return {text,generatedAt:isoOrFallback(value.generatedAt,now.toISOString()),modelLabel:typeof value.modelLabel==='string'&&value.modelLabel.trim()?value.modelLabel.trim().slice(0,80):'Workers AI',version:1,...(language?{language}:{})};
 }
 export function normalizeJournalRecord(record, index = 0, now = new Date()) {

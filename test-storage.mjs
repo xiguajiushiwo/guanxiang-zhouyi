@@ -13,6 +13,7 @@ const aiReading={text:'【核心判断】\n宜先辨明条件。',generatedAt:'2
 const migratedAi=migrateJournalPayload([{...record('ai','2026-09-11T08:00:00.000Z'),aiReading}]);
 assert.equal(migratedAi.records[0].aiReading.text,aiReading.text);
 assert.equal(migratedAi.records[0].aiReading.language,'zh-CN');
+assert.equal(normalizeAiReading({...aiReading,language:'fa'}).language,'fa');
 assert.equal(normalizeAiReading({text:'',generatedAt:'bad',modelLabel:'x',version:1}),null);
 assert.equal(normalizeAiReading({...aiReading,text:'甲'.repeat(13000)}).text.length,12000);
 assert.equal(Object.hasOwn(normalizeAiReading({...aiReading,language:'invalid'}),'language'),false);

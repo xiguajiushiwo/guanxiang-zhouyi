@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { dictionaryForTests, getLanguage, setLanguage, t, translateUiTextForTests } from './i18n.mjs';
-import { displayHexagramName } from './hexagram-i18n.mjs';
+import { LANGUAGES, dictionaryForTests, getLanguage, setLanguage, t, translateUiTextForTests } from './i18n.mjs';
+import { displayHexagramName, HEXAGRAM_FA } from './hexagram-i18n.mjs';
 import { isCompleteAiReading, splitAiReadingSectionsLocalized } from './ai-reading.mjs';
 
 const memory = new Map();
@@ -18,6 +18,16 @@ assert.equal(t('history.selectPrompt'), 'Select a journal entry to view the comp
 assert.equal(t('edition.status'), 'Edition status');
 assert.equal(t('reading.question',{question:'Should I proceed?'}), 'Question: Should I proceed?');
 assert.equal(displayHexagramName(0,'en','乾'), 'The Creative (乾)');
+assert.equal(HEXAGRAM_FA.length, 64);
+assert.equal(displayHexagramName(0,'fa','乾'), 'آسمان خلاق (乾)');
+assert.equal(LANGUAGES.fa, 'فارسی');
+assert.deepEqual(Object.keys(dictionaryForTests().fa).sort(), Object.keys(dictionaryForTests()['zh-CN']).sort());
+setLanguage('fa');
+assert.equal(getLanguage(), 'fa');
+assert.equal(t('nav.home'), 'نمای کلی مطالعه');
+assert.equal(t('language.label'), 'زبان');
+assert.equal(t('history.localOnly'), 'فقط در این مرورگر ذخیره می‌شود');
+setLanguage('en');
 const englishAi='[Core judgment]\nProceed carefully.\n[Present situation]\nConditions are forming.\n[Key change]\nA decision point is near.\nThinking direction: Which condition matters most?\nMindset adjustment: Move from predicting outcomes to testing assumptions.\n[Developing trend]\nProgress remains conditional.\n[Suggested actions]\n1. Verify assumptions\n2. Set a boundary\n3. Review the outcome';
 assert.equal(isCompleteAiReading(englishAi,'en'),true);
 assert.deepEqual(splitAiReadingSectionsLocalized(englishAi,'en').map(section=>section.title),['Core judgment','Present situation','Key change','Developing trend','Suggested actions']);
