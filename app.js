@@ -9,7 +9,7 @@ import { buildLocalInterpretation, buildEnglishInterpretation } from './interpre
 import { AiReadingError, requestAiReading, splitAiReadingSections, splitAiReadingSectionsLocalized } from './ai-reading.mjs';
 import { attributeHtml, textHtml } from './html-safety.mjs';
 import { createServiceWorkerActivator } from './service-worker-update.mjs';
-import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20260921-auth';
+import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20260922-account-scope1';
 import { displayHexagramName, HEXAGRAM_EN, TRIGRAM_EN } from './hexagram-i18n.mjs';
 import { selectTenWingSources } from './ai-sources.mjs';
 import { AccountApiError, createAccountClient, synchronizeHistory } from './account-sync.mjs';
@@ -219,9 +219,67 @@ function validRitual(ritual,lineCount){if(ritual===null)return true;if(!ritual||
 function saveCast(){try{writeJson(localStorage,'guanxiang-cast-v3',{version:3,savedAt:new Date().toISOString(),sessionId:castState.sessionId,question:castState.question,confirmed:castState.confirmed,prepared:castState.prepared,mode:castState.mode,lines:castState.lines,ritual:castState.ritual})}catch(error){console.warn('起卦进度未能保存',error)}}
 const HISTORY_KEY='guanxiang-history-v1';
 const ACCOUNT_MODE_KEY='guanxiang-account-mode-v1';
-function loadHistory(){const records=normalizeHistoryRecords(readJson(localStorage,HISTORY_KEY,[]));return records.filter(record=>record.lines.every(validLine))}
-function persistHistory(records){writeJson(localStorage,HISTORY_KEY,normalizeHistoryRecords(records))}
+const GUEST_HISTORY_KEY='guanxiang-history-guest-v1';
+const ACCOUNT_HISTORY_PREFIX='guanxiang-history-account-v1:';
+const LEGACY_MIGRATION_KEY='guanxiang-history-legacy-owner-v1';
+const SYNC_QUEUE_PREFIX='guanxiang-sync-queue-v1:';
+let syncState='idle',syncError='',syncInFlight=false,accountSessionResolved=false;
 function isGuestAccountMode(){try{return localStorage.getItem(ACCOUNT_MODE_KEY)==='guest'}catch{return false}}
+function namespaceHash(value){let hash=2166136261;for(const char of String(value||'').trim().toLowerCase()){hash^=char.charCodeAt(0);hash=Math.imul(hash,16777619)}return (hash>>>0).toString(36)}
+function accountHistoryKey(email){return `${ACCOUNT_HISTORY_PREFIX}${namespaceHash(email)}`}
+function activeHistoryKey(){return accountUser?.email?accountHistoryKey(accountUser.email):isGuestAccountMode()?GUEST_HISTORY_KEY:HISTORY_KEY}
+function readHistoryAt(key){const records=normalizeHistoryRecords(readJson(localStorage,key,[]));return records.filter(record=>record.lines.every(validLine))}
+function loadHistory(){if(!accountSessionResolved&&!accountUser&&!isGuestAccountMode())return [];return readHistoryAt(activeHistoryKey())}
+function persistHistory(records,key=activeHistoryKey()){writeJson(localStorage,key,normalizeHistoryRecords(records))}
+function legacyMigration(){return readJson(localStorage,LEGACY_MIGRATION_KEY,{})||{}}
+function persistLegacyMigration(value){writeJson(localStorage,LEGACY_MIGRATION_KEY,value)}
+function migrateLegacyToGuest(){
+  if(!isGuestAccountMode())return;
+  const migration=legacyMigration();
+  if(migration.owner)return;
+  const legacy=readHistoryAt(HISTORY_KEY),guest=readHistoryAt(GUEST_HISTORY_KEY);
+  if(legacy.length)persistHistory(mergeJournalRecords(guest,legacy),GUEST_HISTORY_KEY);
+  if(legacy.length||guest.length)persistLegacyMigration({owner:'guest'});
+}
+function syncNamespace(){return accountUser?.email?namespaceHash(accountUser.email):''}
+function syncQueueKey(){const namespace=syncNamespace();return namespace?`${SYNC_QUEUE_PREFIX}${namespace}`:''}
+function loadSyncQueue(){const value=syncQueueKey()?readJson(localStorage,syncQueueKey(),null):null;return {upserts:{...(value?.upserts||{})},deletes:[...new Set(Array.isArray(value?.deletes)?value.deletes:[])]}}
+function persistSyncQueue(queue){const key=syncQueueKey();if(!key)return;const clean={upserts:queue.upserts||{},deletes:[...new Set(queue.deletes||[])]};if(Object.keys(clean.upserts).length||clean.deletes.length)writeJson(localStorage,key,clean);else localStorage.removeItem(key)}
+function queueUpsert(record){const queue=loadSyncQueue();queue.upserts[record.id]=record;queue.deletes=queue.deletes.filter(id=>id!==record.id);persistSyncQueue(queue)}
+function queueDelete(id){const queue=loadSyncQueue();delete queue.upserts[id];if(!queue.deletes.includes(id))queue.deletes.push(id);persistSyncQueue(queue)}
+function clearQueueUpserts(){const queue=loadSyncQueue();queue.upserts={};persistSyncQueue(queue)}
+function syncCopy(key){const copy={
+  zh:{guest:'游客模式 · 仅保存在本机',loading:'正在读取账户…',syncing:'正在同步到云端…',synced:'云端同步正常',failed:'云端同步失败',retry:'重试同步'},
+  en:{guest:'Guest mode · saved on this device',loading:'Loading account…',syncing:'Syncing to the cloud…',synced:'Cloud sync is up to date',failed:'Cloud sync failed',retry:'Retry sync'},
+  fa:{guest:'حالت مهمان · فقط روی این دستگاه ذخیره می‌شود',loading:'در حال بارگذاری حساب…',syncing:'در حال همگام‌سازی با ابر…',synced:'همگام‌سازی ابری برقرار است',failed:'همگام‌سازی ابری ناموفق بود',retry:'تلاش دوباره'}
+}[accountLanguage()]||{};return copy[key]||key}
+function renderSyncStatus(){
+  const target=$('#syncStatus');if(!target)return;
+  const guest=isGuestAccountMode();
+  if(guest){target.className='sync-status guest';target.innerHTML=`<span>${syncCopy('guest')}</span>`;return}
+  if(!accountUser){
+    if(syncState==='failed'){target.className='sync-status failed';target.innerHTML=`<span>${syncCopy('failed')}${syncError?` · ${textHtml(syncError)}`:''}</span><button type="button" class="text-button" data-sync-retry>${syncCopy('retry')}</button>`;target.querySelector('[data-sync-retry]')?.addEventListener('click',()=>restoreAccountSession());return}
+    target.className='sync-status syncing';target.innerHTML=`<span>${syncCopy('loading')}</span>`;return
+  }
+  const queue=loadSyncQueue(),hasPending=Object.keys(queue.upserts).length||queue.deletes.length;
+  const state=hasPending&&syncState==='idle'?'failed':syncState;
+  const label=syncCopy(state==='syncing'?'syncing':state==='failed'?'failed':'synced');
+  target.className=`sync-status ${state==='failed'?'failed':state==='syncing'?'syncing':'synced'}`;
+  target.innerHTML=`<span>${label}${syncError&&state==='failed'?` · ${textHtml(syncError)}`:''}</span>${state==='failed'?`<button type="button" class="text-button" data-sync-retry>${syncCopy('retry')}</button>`:''}`;
+  target.querySelector('[data-sync-retry]')?.addEventListener('click',()=>flushSyncQueue());
+}
+function setSyncState(state,error=''){syncState=state;syncError=error?String(error).slice(0,120):'';renderSyncStatus()}
+async function flushSyncQueue(){
+  if(!accountUser||!accountClient||syncInFlight)return;
+  const queue=loadSyncQueue();if(!Object.keys(queue.upserts).length&&!queue.deletes.length){setSyncState('synced');return}
+  syncInFlight=true;setSyncState('syncing');
+  try{
+    for(const id of queue.deletes){await accountClient.deleteReading(id);const current=loadSyncQueue();current.deletes=current.deletes.filter(item=>item!==id);persistSyncQueue(current)}
+    for(const record of Object.values(loadSyncQueue().upserts)){await accountClient.upsertReading(record);const current=loadSyncQueue();delete current.upserts[record.id];persistSyncQueue(current)}
+    setSyncState('synced');
+  }catch(error){setSyncState('failed',error instanceof AccountApiError?error.message:'Network error')}
+  finally{syncInFlight=false;renderHistory()}
+}
 function accountLanguage(){return getLanguage()==='fa'?'fa':getLanguage()==='en'?'en':'zh-CN'}
 const ACCOUNT_COPY={'zh-CN':{'auth.title':'观象账户','auth.login':'登录','auth.register':'注册','auth.email':'邮箱','auth.password':'密码','auth.submitLogin':'登录账户','auth.submitRegister':'创建账户','auth.logout':'退出登录','auth.guest':'游客模式','auth.accountDescription':'记录会在不同设备间同步。','auth.mergeTitle':'合并此设备的记录？','auth.mergeBody':'旧的本机记录会保留并添加到你的账户。','auth.merge':'合并记录','auth.keepCloud':'只保留云端记录','auth.invalid':'邮箱或密码无效。','auth.network':'账户服务暂时不可用。','auth.loggedIn':'已登录'},en:{'auth.title':'Guanxiang account','auth.login':'Log in','auth.register':'Create account','auth.email':'Email','auth.password':'Password','auth.submitLogin':'Log in','auth.submitRegister':'Create account','auth.logout':'Log out','auth.guest':'Guest mode','auth.accountDescription':'Records sync across your devices.','auth.mergeTitle':'Merge this device’s records?','auth.mergeBody':'Your existing local records will be kept and added to your account.','auth.merge':'Merge records','auth.keepCloud':'Keep cloud records only','auth.invalid':'The email or password is not valid.','auth.network':'The account service is temporarily unavailable.','auth.loggedIn':'Signed in'},fa:{'auth.title':'حساب گوانشیانگ','auth.login':'ورود','auth.register':'ثبت‌نام','auth.email':'ایمیل','auth.password':'رمز عبور','auth.submitLogin':'ورود به حساب','auth.submitRegister':'ساخت حساب','auth.logout':'خروج','auth.guest':'حالت مهمان','auth.accountDescription':'رکوردهای شما در دستگاه‌های مختلف همگام می‌شوند.','auth.mergeTitle':'رکوردهای این دستگاه ادغام شوند؟','auth.mergeBody':'رکوردهای محلی قدیمی حفظ می‌شوند و به حساب شما اضافه خواهند شد.','auth.merge':'ادغام رکوردها','auth.keepCloud':'فقط رکوردهای ابری','auth.invalid':'ایمیل یا رمز عبور معتبر نیست.','auth.network':'خدمت حساب موقتاً در دسترس نیست.','auth.loggedIn':'وارد شده‌اید'}};
 function accountCopy(key){const value=t(key);return value===key?(ACCOUNT_COPY[accountLanguage()]?.[key]||key):value}
@@ -236,10 +294,11 @@ function renderAccountStatus(){
   button.setAttribute('aria-label',accountUser?.email||accountCopy('auth.login'));
   button.classList.toggle('signed-in',Boolean(accountUser));
   document.body.classList.toggle('account-signed-in',Boolean(accountUser));
+  renderSyncStatus();
 }
-function openMergeDialog(remoteRecords){
+function openMergeDialog(remoteRecords,localCountOverride=null){
   const dialog=$('#accountMergeDialog');if(!dialog)return Promise.resolve('merge');
-  const localCount=loadHistory().length,remoteCount=remoteRecords.length;
+  const localCount=localCountOverride??loadHistory().length,remoteCount=remoteRecords.length;
   dialog.querySelector('.panel-kicker').textContent=accountCopy('auth.mergeTitle');
   dialog.querySelector('h2').textContent=accountCopy('auth.mergeTitle');
   dialog.querySelector('[data-merge-body]').textContent=`${accountCopy('auth.mergeBody')} (${localCount} / ${remoteCount})`;
@@ -253,22 +312,30 @@ function openMergeDialog(remoteRecords){
   });
 }
 async function syncAccountAfterLogin(){
-  const local=loadHistory();
-  const remote=(await accountClient.listReadings()).records||[];
-  const choice=local.length?await openMergeDialog(remote):'merge';
-  if(choice==='cloud'){persistHistory(remote)}
-  else {const result=await synchronizeHistory({client:accountClient,localRecords:local,strategy:'merge'});persistHistory(mergeJournalRecords(local,result.records))}
-  renderHistory();renderBackupReminder();
+  const migration=legacyMigration(),localAccount=loadHistory(),guest=!localAccount.length?readHistoryAt(GUEST_HISTORY_KEY):[],legacy=!migration.owner&&!guest.length?readHistoryAt(HISTORY_KEY):[],local=mergeJournalRecords(localAccount,mergeJournalRecords(guest,legacy));
+  const pending=loadSyncQueue(),pendingDeletes=new Set(pending.deletes);
+  const remote=((await accountClient.listReadings()).records||[]).filter(record=>!pendingDeletes.has(record.id));
+  const choice=local.length?await openMergeDialog(remote,local.length):'merge';
+  if(choice==='cloud'){persistHistory(remote);persistSyncQueue({upserts:{},deletes:[]})}
+  else {const result=await synchronizeHistory({client:accountClient,localRecords:local,strategy:'merge'});persistHistory(mergeJournalRecords(local,result.records));if(guest.length)localStorage.removeItem(GUEST_HISTORY_KEY);if(legacy.length)persistLegacyMigration({owner:`account:${namespaceHash(accountUser.email)}`});clearQueueUpserts()}
+  setSyncState('synced');renderHistory();renderBackupReminder();await flushSyncQueue();
 }
 async function restoreAccountSession(){
+  accountSessionResolved=false;
   accountClient=createAccountClient({language:accountLanguage()});
-  if(isGuestAccountMode()){accountUser=null;renderAccountStatus();return}
+  if(isGuestAccountMode()){accountUser=null;accountSessionResolved=true;migrateLegacyToGuest();setSyncState('idle');renderAccountStatus();renderHistory();return}
   try{const result=await accountClient.me();accountUser=result.user||null;await syncAccountAfterLogin()}
-  catch(error){if(!(error instanceof AccountApiError&&[401,403].includes(error.status)))console.warn('账户状态未能读取',error);accountUser=null}
-  renderAccountStatus();
+  catch(error){if(error instanceof AccountApiError&&[401,403].includes(error.status)){setAccountMode('guest');migrateLegacyToGuest()}else{console.warn('账户状态未能读取',error);setSyncState('failed',accountCopy('auth.network'))}accountUser=null}
+  accountSessionResolved=true;renderAccountStatus();
 }
-function syncCloudRecord(record){if(!accountUser||!accountClient)return;accountClient.upsertReading(record).catch(error=>console.warn('云端记录未能保存',error))}
-function syncCloudDelete(id){if(!accountUser||!accountClient)return;accountClient.deleteReading(id).catch(error=>console.warn('云端记录未能删除',error))}
+function syncCloudRecord(record){
+  if(!accountUser||!accountClient){renderSyncStatus();return}
+  queueUpsert(record);flushSyncQueue();
+}
+function syncCloudDelete(id){
+  if(!accountUser||!accountClient){renderSyncStatus();return}
+  queueDelete(id);flushSyncQueue();
+}
 function journalMeta(){return readJson(localStorage,'guanxiang-journal-meta-v1',{})||{}}
 function persistJournalMeta(meta){writeJson(localStorage,'guanxiang-journal-meta-v1',meta)}
 function renderBackupReminder(){const target=$('#backupReminder');if(!target)return;const status=backupStatus(loadHistory(),journalMeta());const dismissed=readJson(localStorage,'guanxiang-backup-dismissed-v1',false);if(!status.due||dismissed){target.classList.add('hidden');return}target.classList.remove('hidden');target.innerHTML=`<span>本地已有 ${status.count} 条记录，建议导出一份备份。</span><button type="button" class="text-button" id="dismissBackup">稍后提醒</button>`;$('#dismissBackup').onclick=()=>{writeJson(localStorage,'guanxiang-backup-dismissed-v1',true);target.classList.add('hidden')}}
@@ -277,6 +344,7 @@ function updateHistoryNote(id,note){const records=loadHistory(),record=records.f
 function renderHistory(){
   const list=$('#historyList'),detail=$('#historyDetail'),indexPage=$('#historyIndexPage'),recordPage=$('#historyRecordPage');
   if(!list||!detail||!indexPage||!recordPage)return;
+  renderSyncStatus();
   const records=loadHistory(),selected=historySelectedId?records.find(record=>record.id===historySelectedId):null;
   if(historySelectedId&&!selected){
     historySelectedId='';
@@ -664,6 +732,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   restoreAccountSession();
 });
 window.addEventListener('hashchange',applyRoute);
+window.addEventListener('online',()=>{if(accountUser){setSyncState('idle');flushSyncQueue()}});
 document.addEventListener('DOMContentLoaded',()=>{if(!castState.confirmed)return;$('#questionFeedback').textContent='问题已锁定，当前仪式进度已保存在本机。';$('#questionFeedback').className='valid';if(castState.prepared)paintStalks('taijiStalks',1,'discarded')});
 
 document.addEventListener('click',event=>{if(!event.target.closest('[data-language-menu]'))closeLanguageMenus()});

@@ -113,6 +113,11 @@ assert.equal(desktop.activeId, 'enterSite');
 await capture('output/playwright/landing-desktop.png');
 
 await evaluate(`document.querySelector('#enterSite').click(); true`);
+await waitFor(`location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html')`);
+const authDesktop = await evaluate(`({form:Boolean(document.querySelector('#authForm')),guest:Boolean(document.querySelector('[data-guest]')),appVisible:Boolean(document.querySelector('.app-shell'))})`);
+assert.equal(authDesktop.form && authDesktop.guest, true);
+assert.equal(authDesktop.appVisible, false, 'inner application must not flash before authentication');
+await evaluate(`document.querySelector('[data-guest]').click();true`);
 await waitFor(`document.querySelector('#onboardingDialog')?.open`);
 await waitFor(`document.querySelector('#siteCover').hidden`);
 const entered = await evaluate(`({
@@ -139,15 +144,18 @@ assert.ok(mobile.buttonHeight >= 44);
 assert.equal(mobile.appInert && mobile.appHidden, true);
 assert.equal(mobile.onboardingOpen, false);
 await capture('output/playwright/landing-mobile.png');
+await evaluate(`document.querySelector('#enterSite').click();true`);
+await waitFor(`document.querySelector('[data-guest]') && (location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html'))`);
+await evaluate(`document.querySelector('[data-guest]').click();true`);
+await waitFor(`document.querySelector('#siteCover')?.hidden && document.querySelector('#profileButton')`);
+const mobileAccount = await evaluate(`(()=>{const button=document.querySelector('#profileButton'),rect=button.getBoundingClientRect();return {visible:getComputedStyle(button).display!=='none'&&rect.width>0&&rect.height>0,inside:rect.left>=0&&rect.right<=innerWidth,accessible:Boolean(button.getAttribute('aria-label'))}})()`);
+assert.equal(mobileAccount.visible && mobileAccount.inside && mobileAccount.accessible, true);
 
 await command('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
 await navigate();
-const reducedStarted = Date.now();
 await evaluate(`document.querySelector('#enterSite').click(); true`);
-await waitFor(`document.querySelector('#siteCover').hidden`);
-const reduced = await evaluate(`({hidden:document.querySelector('#siteCover').hidden,reduced:matchMedia('(prefers-reduced-motion: reduce)').matches})`);
-reduced.elapsed = Date.now() - reducedStarted;
-assert.equal(reduced.hidden && reduced.reduced, true);
-assert.ok(reduced.elapsed < 400);
+await waitFor(`location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html')`);
+const reduced = await evaluate(`({authVisible:Boolean(document.querySelector('#authForm')),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches})`);
+assert.equal(reduced.authVisible && reduced.reduced, true);
 socket.close();
-console.log(JSON.stringify({ desktop, entered, mobile }, null, 2));
+console.log(JSON.stringify({ desktop, authDesktop, entered, mobile, mobileAccount }, null, 2));

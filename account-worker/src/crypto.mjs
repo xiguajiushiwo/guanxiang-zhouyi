@@ -1,4 +1,5 @@
-const ITERATIONS=120000;
+// Cloudflare Workers production Web Crypto currently caps PBKDF2 at 100,000 iterations.
+const ITERATIONS=100000;
 const encoder=new TextEncoder();
 
 function base64(bytes){return btoa(String.fromCharCode(...bytes))}

@@ -398,9 +398,11 @@
   .brand-name{font-size:19px}.brand-sub{font-size:8px;margin-top:4px}
   .sidebar-rule,.sidebar-section-label,.sidebar-bottom{display:none}
   .topbar{height:0;padding:0;border:0}
-  .breadcrumb,.profile-button{display:none}
+  .breadcrumb{display:none}
   .topbar-actions{position:absolute;z-index:75;top:17px;right:14px;gap:5px}
-  .topbar-actions .language-menu-trigger{min-height:32px;padding:0 7px;font-size:10px}
+  .topbar-actions .language-menu-trigger{width:36px;min-width:36px;min-height:32px;padding:0 5px;font-size:0;justify-content:center;gap:2px}
+  .topbar-actions .language-menu-trigger::before{content:"文";font-size:13px}
+  .topbar-actions .language-menu-chevron{font-size:11px}
   .topbar-actions .icon-button{width:36px;height:36px;font-size:17px}
 
   .sidebar>.primary-nav{position:fixed;z-index:100;isolation:isolate;inset:auto 0 0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;height:calc(66px + env(safe-area-inset-bottom));margin:0;padding:4px 5px env(safe-area-inset-bottom);border-top:1px solid var(--line);background:var(--paper);box-shadow:0 -8px 24px rgba(36,35,31,.11);backdrop-filter:none}
@@ -529,3 +531,16 @@
 .profile-button.signed-in{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
 .profile-button.signed-in .account-avatar{background:var(--accent);color:#fff}
 @media(max-width:680px){.profile-button.signed-in{min-width:0;max-width:120px}.profile-button.signed-in .account-label{max-width:76px}}
+@media(max-width:680px){
+  .topbar-actions .profile-button{display:inline-flex;width:34px;min-width:34px;height:34px;padding:0;border-radius:50%;}
+  .topbar-actions .profile-button .account-label{display:none}
+  .topbar-actions .profile-button .account-avatar{width:22px;height:22px}
+}
+.sync-status{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:36px;margin:0 0 14px;padding:8px 12px;border:1px solid var(--line);background:rgba(255,255,255,.28);color:var(--muted);font-size:11px}
+.sync-status.hidden{display:none}
+.sync-status::before{content:"";width:7px;height:7px;border-radius:50%;background:#8b9a76;flex:none}
+.sync-status.syncing::before{background:var(--accent);animation:syncPulse 1s ease-in-out infinite}
+.sync-status.failed{border-color:#c48b78;color:var(--accent-deep)}
+.sync-status.failed::before{background:var(--accent)}
+.sync-status .text-button{margin-left:auto}
+@keyframes syncPulse{50%{opacity:.35;transform:scale(.75)}}

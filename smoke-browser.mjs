@@ -53,14 +53,20 @@ await command('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduce
 await command('Page.navigate', { url: 'http://127.0.0.1:4175/#divination/prepare' });
 await waitFor(`document.querySelector('[data-cast-mode="quick"]') && document.querySelector('#questionInput')`);
 await evaluate(`(async()=>{
-  ['guanxiang-onboarding-v1','guanxiang-cast-v3','guanxiang-cast-v2','guanxiang-cast','guanxiang-history-v1','guanxiang-language','guanxiang-study-v1'].forEach(key=>localStorage.removeItem(key));
+  ['guanxiang-onboarding-v1','guanxiang-cast-v3','guanxiang-cast-v2','guanxiang-cast','guanxiang-history-v1','guanxiang-history-guest-v1','guanxiang-language','guanxiang-study-v1','guanxiang-history-legacy-owner-v1'].forEach(key=>localStorage.removeItem(key));
+  Object.keys(localStorage).filter(key=>key.startsWith('guanxiang-history-account-v1:')||key.startsWith('guanxiang-sync-queue-v1:')).forEach(key=>localStorage.removeItem(key));
+  localStorage.setItem('guanxiang-account-mode-v1','guest');
   if('serviceWorker' in navigator){const registrations=await navigator.serviceWorker.getRegistrations();await Promise.all(registrations.map(registration=>registration.unregister()))}
   if('caches' in window){const keys=await caches.keys();await Promise.all(keys.map(key=>caches.delete(key)))}
   location.reload();return true;
 })()`);
 await waitFor(`document.body?.classList.contains('cover-active') && document.querySelector('#enterSite') && document.querySelector('#siteCover') && !document.querySelector('#siteCover').hidden`);
-await evaluate(`const cover=document.querySelector('#siteCover');document.querySelector('#enterSite').click();if(!cover.hidden)cover.dispatchEvent(new Event('animationend',{bubbles:true}));true`);
-await waitFor(`document.querySelector('#siteCover').hidden`);
+await evaluate(`document.querySelector('#enterSite').click();true`);
+await waitFor(`location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html')`);
+await waitFor(`document.querySelector('#authForm')`);
+await evaluate(`localStorage.setItem('guanxiang-account-mode-v1','guest');true`);
+await command('Page.navigate', { url: 'http://127.0.0.1:4175/?entry=account#divination/prepare' });
+await waitFor(`document.querySelector('#siteCover')?.hidden && document.querySelector('#onboardingDialog')?.open`);
 await waitFor(`document.querySelector('#onboardingDialog')?.open`);
 const onboarding = await evaluate(`({open:document.querySelector('#onboardingDialog').open,grid:document.querySelectorAll('#onboardingDialog .onboarding-grid section').length})`);
 assert.equal(onboarding.open, true);
@@ -138,33 +144,33 @@ const streaming = await evaluate(`({disabled:document.querySelector('#generateAi
 assert.equal(streaming.disabled, true);
 assert.equal(streaming.label, '正在解读');
 await waitFor(`document.querySelector('#generateAiReading').textContent==='重新生成'`);
-const cachedAi = await evaluate(`JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]')[0]?.aiReading?.text||''`);
+const cachedAi = await evaluate(`JSON.parse(localStorage.getItem('guanxiang-history-guest-v1')||'[]')[0]?.aiReading?.text||''`);
 assert.ok(cachedAi.includes('先核实转折条件'));
 await evaluate(`(() => {
-  const records=JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]');window.__cachedAiReading=records[0].aiReading;delete records[0].aiReading;localStorage.setItem('guanxiang-history-v1',JSON.stringify(records));
+  const records=JSON.parse(localStorage.getItem('guanxiang-history-guest-v1')||'[]');window.__cachedAiReading=records[0].aiReading;delete records[0].aiReading;localStorage.setItem('guanxiang-history-guest-v1',JSON.stringify(records));
   window.fetch=(url,options)=>{if(String(url)!==window.GUANXIANG_AI_ENDPOINT)return window.__guanxiangRealFetch(url,options);const encoder=new TextEncoder();return Promise.resolve(new Response(new ReadableStream({start(controller){controller.enqueue(encoder.encode('【核心判断】\\n断流前内容。'));setTimeout(()=>controller.error(new Error('closed')),50)}}),{status:200}))};
   document.querySelector('#generateAiReading').click();return true;
 })()`);
 await waitFor(`!document.querySelector('#aiReadingError').classList.contains('hidden')`);
-const interruptedAi=await evaluate(`({partial:document.querySelector('#aiReadingContent').textContent,error:document.querySelector('#aiReadingError').textContent,cached:Boolean(JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]')[0]?.aiReading)})`);
+const interruptedAi=await evaluate(`({partial:document.querySelector('#aiReadingContent').textContent,error:document.querySelector('#aiReadingError').textContent,cached:Boolean(JSON.parse(localStorage.getItem('guanxiang-history-guest-v1')||'[]')[0]?.aiReading)})`);
 assert.ok(interruptedAi.partial.includes('断流前内容'));
 assert.ok(interruptedAi.error.includes('连接中断'));
 assert.equal(interruptedAi.cached,false);
-await evaluate(`(()=>{const records=JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]');records[0].aiReading=window.__cachedAiReading;localStorage.setItem('guanxiang-history-v1',JSON.stringify(records));return true})()`);
+await evaluate(`(()=>{const records=JSON.parse(localStorage.getItem('guanxiang-history-guest-v1')||'[]');records[0].aiReading=window.__cachedAiReading;localStorage.setItem('guanxiang-history-guest-v1',JSON.stringify(records));return true})()`);
 await evaluate(`(() => {
-  const records=JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]');delete records[0].aiReading;localStorage.setItem('guanxiang-history-v1',JSON.stringify(records));
+  const records=JSON.parse(localStorage.getItem('guanxiang-history-guest-v1')||'[]');delete records[0].aiReading;localStorage.setItem('guanxiang-history-guest-v1',JSON.stringify(records));
   window.fetch=(url,options)=>{if(String(url)!==window.GUANXIANG_AI_ENDPOINT)return window.__guanxiangRealFetch(url,options);return Promise.resolve(new Response('【核心判断】\\n正常关闭但未完成。',{status:200,headers:{'content-type':'text/plain; charset=utf-8'}}))};
   document.querySelector('#generateAiReading').click();return true;
 })()`);
 await waitFor(`document.querySelector('#aiReadingError').textContent.includes('未完整生成')`);
-const incompleteAi=await evaluate(`({partial:document.querySelector('#aiReadingContent').textContent,error:document.querySelector('#aiReadingError').textContent,cached:Boolean(JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]')[0]?.aiReading)})`);
+const incompleteAi=await evaluate(`({partial:document.querySelector('#aiReadingContent').textContent,error:document.querySelector('#aiReadingError').textContent,cached:Boolean(JSON.parse(localStorage.getItem('guanxiang-history-guest-v1')||'[]')[0]?.aiReading)})`);
 assert.ok(incompleteAi.partial.includes('正常关闭但未完成'));
 assert.ok(incompleteAi.error.includes('未完整生成'));
 assert.equal(incompleteAi.cached,false);
-await evaluate(`(()=>{const records=JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]');records[0].aiReading=window.__cachedAiReading;localStorage.setItem('guanxiang-history-v1',JSON.stringify(records));return true})()`);
+await evaluate(`(()=>{const records=JSON.parse(localStorage.getItem('guanxiang-history-guest-v1')||'[]');records[0].aiReading=window.__cachedAiReading;localStorage.setItem('guanxiang-history-guest-v1',JSON.stringify(records));return true})()`);
 await evaluate(`(()=>{const note=document.querySelector('#readingNote');note.value='浏览器冒烟测试札记';document.querySelector('#saveReadingNote').click();return true})()`);
 const result = await evaluate(`(() => {
-  const records=JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]');
+  const records=JSON.parse(localStorage.getItem('guanxiang-history-guest-v1')||'[]');
   return {
     lineCount:document.querySelector('#lineCount').textContent,
     result:document.querySelector('#readingTitle').textContent,
@@ -185,7 +191,7 @@ const journalIndex = await evaluate(`({
   items:document.querySelectorAll('#historyList .history-item').length,
   detailVisible:document.querySelector('#historyRecordPage').getBoundingClientRect().height>0,
   indexVisible:document.querySelector('#historyIndexPage').getBoundingClientRect().height>0,
-  recordId:JSON.parse(localStorage.getItem('guanxiang-history-v1')||'[]')[0]?.id||''
+  recordId:JSON.parse(localStorage.getItem('guanxiang-history-guest-v1')||'[]')[0]?.id||''
 })`);
 assert.equal(journalIndex.items, 1);
 assert.equal(journalIndex.detailVisible, false);

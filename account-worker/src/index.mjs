@@ -92,18 +92,16 @@ export default {async fetch(request,env){
   if(!env.DB||!env.SESSION_SECRET)return error('SERVICE_ERROR',503,language);
   const path=routePath(request),segments=path.split('/').filter(Boolean),route=segments[0]||'';
   try{
-    if(route==='register'&&request.method==='POST')return register(request,env);
-    if(route==='login'&&request.method==='POST')return login(request,env);
+    if(route==='register'&&request.method==='POST')return await register(request,env);
+    if(route==='login'&&request.method==='POST')return await login(request,env);
     if(route==='logout'&&request.method==='POST'){const token=cookieValue(request);if(token)await env.DB.prepare('/* delete-session */ DELETE FROM sessions WHERE token_hash=?').bind(await hashSessionToken(token)).run();return new Response(null,{status:204,headers:{'set-cookie':cookieHeader('',0),'cache-control':'no-store'}})}
     const session=await requireSession(request,env);if(!session)return error('UNAUTHORIZED',401,language);
-    if(route==='me'&&request.method==='GET')return json({user:userResponse(session)});
-    if(route==='readings'&&segments.length===1&&request.method==='GET')return listReadings(session,env);
-    if(route==='readings'&&segments[1]==='merge'&&request.method==='POST')return mergeRecords(request,session,env);
-    if(route==='readings'&&segments[1]&&request.method==='PUT')return upsertRecord(request,session,env,segments[1]);
-    if(route==='readings'&&segments[1]&&request.method==='DELETE')return deleteRecord(session,env,segments[1]);
-    if(route==='readings'&&segments.length===1&&request.method==='PUT')return upsertRecord(request,session,env);
+    if(route==='me'&&request.method==='GET')return await json({user:userResponse(session)});
+    if(route==='readings'&&segments.length===1&&request.method==='GET')return await listReadings(session,env);
+    if(route==='readings'&&segments[1]==='merge'&&request.method==='POST')return await mergeRecords(request,session,env);
+    if(route==='readings'&&segments[1]&&request.method==='PUT')return await upsertRecord(request,session,env,segments[1]);
+    if(route==='readings'&&segments[1]&&request.method==='DELETE')return await deleteRecord(session,env,segments[1]);
+    if(route==='readings'&&segments.length===1&&request.method==='PUT')return await upsertRecord(request,session,env);
     return error('INVALID_REQUEST',405,language);
   }catch(error){return error('SERVICE_ERROR',503,language)}
 }};
-
-export { MAX_BODY_BYTES };

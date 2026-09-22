@@ -6,6 +6,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const siteUrl = 'http://127.0.0.1:4175/';
+const browserTest = process.argv[2] || 'smoke-browser.mjs';
+if (!['smoke-browser.mjs', 'test-landing-browser.mjs'].includes(browserTest)) throw new Error('Unknown browser test script.');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function availablePort() {
@@ -96,7 +98,7 @@ try {
   browser.unref();
 
   await waitFor(`http://127.0.0.1:${debugPort}/json/version`);
-  await run(process.execPath, ['smoke-browser.mjs', debugPort]);
+  await run(process.execPath, [browserTest, debugPort]);
 } finally {
   await closeBrowser(debugPort);
   server?.kill();
