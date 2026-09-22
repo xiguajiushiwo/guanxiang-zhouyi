@@ -22,7 +22,9 @@ assert.equal((html.match(/data-language="(?:zh-CN|en|fa)"/g)||[]).length,3);
 assert.doesNotMatch(index,/id="accountDialog"/);
 assert.match(index,/id="profileButton"/);
 assert.doesNotMatch(app,/location\.assign\('\.\/auth'\)/);
-assert.match(app,/\.\/auth\?v=20260922-auth7&from=app/);
+assert.doesNotMatch(app,/auth\?v=20260922-auth7&from=app/);
+assert.match(app,/const AUTH_ENTRY='\.\/auth\?v=20260922-auth7'/);
+assert.match(app,/navigateToAuth\(AUTH_ENTRY\)/);
 assert.match(app,/new URLSearchParams\(location\.search\)\.get\('entry'\)==='account'/);
 assert.match(script,/createAccountClient/);
 assert.match(script,/\.register\(email,password\)/);
@@ -41,6 +43,6 @@ assert.match(build,/'auth\.js'/);
 assert.match(worker,/'\.\/auth\.html'/);
 assert.match(worker,/'\.\/auth\.css'/);
 assert.match(worker,/'\.\/auth\.js'/);
-assert.match(worker,/guanxiang-shell-v48/);
+assert.match(worker,/guanxiang-shell-v49/);
 
 console.log('Standalone account page checks passed.');

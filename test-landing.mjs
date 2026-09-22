@@ -27,6 +27,12 @@ assert.match(html, /<a class="cover-enter" id="enterSite" href="\.\/auth\?v=2026
 assert.equal((html.match(/进入观象/g) || []).length, 1);
 assert.match(html, /landing-v2\.css/);
 assert.match(script, /function initLandingCover\(\)/);
+assert.match(script, /const AUTH_ENTRY='\.\/auth\?v=20260922-auth7'/);
+assert.match(script, /async function clearLegacyAuthNavigationState\(\)/);
+assert.match(script, /navigator\.serviceWorker\.getRegistrations\(\)/);
+assert.match(script, /name\.startsWith\('guanxiang-shell-'\)/);
+assert.match(script, /enter\.addEventListener\('click',event=>/);
+assert.match(script, /navigateToAuth\(enter\.href\)/);
 assert.match(script, /function updateDailyCoverHexagram\(/);
 assert.match(script, /function initDailyCoverHexagram\(/);
 assert.match(script, /removeAttribute\(['"]inert['"]\)/);
@@ -72,7 +78,7 @@ assert.match(script, /function renderHistoryDetail\(record\)/);
 assert.match(styles, /prefers-reduced-motion:\s*reduce/);
 assert.doesNotMatch(styles, /gradient\(/);
 assert.match(worker, /['"]\.\/landing-v2\.css['"]/);
-assert.match(worker, /CACHE_NAME='guanxiang-shell-v48'/);
+assert.match(worker, /CACHE_NAME='guanxiang-shell-v49'/);
 
 const endpointScript=html.match(/<script>window\.GUANXIANG_AI_ENDPOINT=.*?<\/script>/s)?.[0].replace(/^<script>|<\/script>$/g,'');
 assert.ok(endpointScript);

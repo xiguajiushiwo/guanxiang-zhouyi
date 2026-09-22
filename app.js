@@ -30,7 +30,32 @@ const AI_REFERENCE_NOTES={
 let currentView='home', selectedHex=0, selectedWing=0, selectedPrinciple=0, selectedClassicSection=null, historySelectedId='', historyQuery='', filter='all', readingMode='ancient', pendingImport=null, currentReading=null, aiReadingAbort=null, accountClient=null, accountUser=null, castState={lines:[],working:false,runId:0,ritual:null,confirmed:false,prepared:false,question:'',sessionId:'',mode:'complete'}, tenWings=null, hexagramTexts=null, principleLibrary=null, principleLibraryEn=null, relationsLibrary=null;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const TRIGRAM_GLYPHS={'天':'☰','泽':'☱','火':'☲','雷':'☳','风':'☴','水':'☵','山':'☶','地':'☷'};
+const AUTH_ENTRY='./auth?v=20260922-auth7';
 let dailyCoverTimer=0;
+let authNavigationPending=false;
+
+async function clearLegacyAuthNavigationState(){
+  if('serviceWorker' in navigator){
+    try{
+      const registrations=await navigator.serviceWorker.getRegistrations();
+      await Promise.allSettled(registrations.map(registration=>registration.unregister()));
+    }catch(error){console.warn('旧版离线服务未能移除',error)}
+  }
+  if('caches' in globalThis){
+    try{
+      const names=await caches.keys();
+      await Promise.allSettled(names.filter(name=>name.startsWith('guanxiang-shell-')).map(name=>caches.delete(name)));
+    }catch(error){console.warn('旧版页面缓存未能清理',error)}
+  }
+}
+
+async function navigateToAuth(href=AUTH_ENTRY){
+  if(authNavigationPending)return;
+  authNavigationPending=true;
+  await clearLegacyAuthNavigationState();
+  location.assign(href);
+}
+
 function updateDailyCoverHexagram(date=new Date()){
   const cover=$('#dailyCoverHexagram');
   if(!cover)return;
@@ -62,6 +87,11 @@ function initDailyCoverHexagram(){
 function initLandingCover(){
   const cover=$('#siteCover'),app=$('.app-shell'),enter=$('#enterSite');
   if(!cover||!app||!enter)return;
+  enter.addEventListener('click',event=>{
+    if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+    event.preventDefault();
+    navigateToAuth(enter.href);
+  });
   const revealApp=()=>{
     if(cover.hidden)return;
     cover.hidden=true;
@@ -638,7 +668,7 @@ document.addEventListener('DOMContentLoaded',()=>{if(!castState.confirmed)return
 
 document.addEventListener('click',event=>{if(!event.target.closest('[data-language-menu]'))closeLanguageMenus()});
 document.addEventListener('click',event=>{
-  if(event.target.closest('#profileButton')){event.preventDefault();location.assign('./auth?v=20260922-auth7&from=app')}
+  if(event.target.closest('#profileButton')){event.preventDefault();navigateToAuth(AUTH_ENTRY)}
 });
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'){
