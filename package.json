@@ -15,5 +15,8 @@
     "deploy:pages": "npm run build:pages && npx wrangler@latest pages deploy dist --project-name guanxiang-zhouyi --branch main --commit-dirty=true",
     "deploy:netlify": "npm run build:pages && npx netlify deploy --prod --dir dist",
     "validate": "node build-relations.mjs && node validate-content.mjs && node validate-i18n.mjs && node --check app.js && npm run test:unit"
+  },
+  "dependencies": {
+    "lunar-javascript": "1.7.7"
   }
 }
