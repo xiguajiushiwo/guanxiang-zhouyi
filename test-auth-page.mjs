@@ -32,12 +32,15 @@ assert.match(script,/guanxiang-account-mode-v1/);
 assert.match(app,/guanxiang-account-mode-v1/);
 assert.match(script,/\.\/\?entry=account#home/);
 assert.match(styles,/@media\(max-width:760px\)/);
+assert.match(styles,/@media\(min-width:761px\)\{\.auth-emblem\{position:relative\}/);
+assert.match(styles,/\.auth-emblem-core\{position:absolute;top:50%;left:50%;transform:translate\(-50%,-50%\)\}/);
+assert.match(styles,/\.auth-emblem-copy\{position:absolute;top:calc\(50% \+ clamp\(115px,min\(15\.5vw,23vh\),170px\) \+ 15px\);left:50%;transform:translateX\(-50%\);margin-top:0\}/);
 assert.match(build,/'auth\.html'/);
 assert.match(build,/'auth\.css'/);
 assert.match(build,/'auth\.js'/);
 assert.match(worker,/'\.\/auth\.html'/);
 assert.match(worker,/'\.\/auth\.css'/);
 assert.match(worker,/'\.\/auth\.js'/);
-assert.match(worker,/guanxiang-shell-v46/);
+assert.match(worker,/guanxiang-shell-v47/);
 
 console.log('Standalone account page checks passed.');
