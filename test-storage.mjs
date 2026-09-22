@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
-import { backupStatus, mergeJournalRecords, migrateJournalPayload, normalizeAiReading, validHistoryRecord } from './storage.mjs';
+import { backupStatus, mergeJournalRecords, migrateJournalPayload, normalizeAiReading, normalizeLiuyaoChart, validHistoryRecord } from './storage.mjs';
 import { deleteAnnotation, loadAnnotations, saveAnnotation, validateAnnotation } from './study-storage.mjs';
 const makeStorage = () => { const map = new Map(); return { getItem: key => map.get(key) || null, setItem: (key, value) => map.set(key, value), removeItem: key => map.delete(key) }; };
 const line = { value: 7, changes: [{ before: 49, left: 24, right: 25, rightAfter: 24, leftR: 1, rightR: 3, removed: 5, remaining: 44 }, { before: 44, left: 20, right: 24, rightAfter: 23, leftR: 4, rightR: 3, removed: 8, remaining: 36 }, { before: 36, left: 16, right: 20, rightAfter: 19, leftR: 4, rightR: 3, removed: 8, remaining: 28 }] };
 const record = (id, updatedAt, note = '') => ({ id, question: '一个具体的问题', lines: Array(6).fill(line), originalIndex: 0, changedIndex: 0, note, completedAt: updatedAt, updatedAt });
+const liuyaoLine = position => ({ position, value: 7, polarity: '阳', moving: false, changedPolarity: '阳', stem: '甲', branch: '子', ganzhi: '甲子', element: '水', relative: '兄弟', spirit: '青龙', shi: position === 1, ying: position === 4, strength: { label: '旺', reasons: ['月建子旺'] }, relations: [], transformed: { stem: '甲', branch: '子', ganzhi: '甲子', element: '水', relative: '兄弟' } });
+const liuyao = { version: 1, castingMethod: 'yarrow', castAt: '2026-09-22T02:30:00.000Z', timeZone: 'Asia/Shanghai', original: { index: 0 }, changed: { index: 0 }, calendar: { yearPillar: '丙午', monthPillar: '丁酉', dayPillar: '己亥', hourPillar: '己巳', monthBranch: '酉', dayBranch: '亥' }, shiYing: { shiIndex: 0, yingIndex: 3 }, lines: Array.from({ length: 6 }, (_, index) => liuyaoLine(index + 1)) };
 const migrated = migrateJournalPayload([record('a', '2026-01-01T00:00:00.000Z')]);
 assert.equal(migrated.version, 2);
 assert.equal(migrated.records[0].reviewState, '未开始');
@@ -13,6 +15,11 @@ const aiReading={text:'【核心判断】\n宜先辨明条件。',generatedAt:'2
 const migratedAi=migrateJournalPayload([{...record('ai','2026-09-11T08:00:00.000Z'),aiReading}]);
 assert.equal(migratedAi.records[0].aiReading.text,aiReading.text);
 assert.equal(migratedAi.records[0].aiReading.language,'zh-CN');
+const migratedLiuyao=migrateJournalPayload([{...record('liuyao','2026-09-11T08:00:00.000Z'),liuyao}]);
+assert.equal(migratedLiuyao.records[0].liuyao.castAt,liuyao.castAt);
+assert.equal(normalizeLiuyaoChart({...liuyao,lines:[]}),null);
+const malformedLiuyao=migrateJournalPayload([{...record('malformed','2026-09-11T08:00:00.000Z'),liuyao:{...liuyao,version:99}}]);
+assert.equal(Object.hasOwn(malformedLiuyao.records[0],'liuyao'),false);
 assert.equal(normalizeAiReading({...aiReading,language:'fa'}).language,'fa');
 assert.equal(normalizeAiReading({text:'',generatedAt:'bad',modelLabel:'x',version:1}),null);
 assert.equal(normalizeAiReading({...aiReading,text:'甲'.repeat(13000)}).text.length,12000);
@@ -21,6 +28,8 @@ const invalidAi=migrateJournalPayload([{...record('invalid-ai','2026-09-11T08:00
 assert.equal(Object.hasOwn(invalidAi.records[0],'aiReading'),false);
 const mergedAi=mergeJournalRecords([record('merge-ai','2026-09-11T08:00:00.000Z')],[{...record('merge-ai','2026-09-11T08:00:00.000Z'),aiReading}]);
 assert.equal(mergedAi[0].aiReading.text,aiReading.text);
+const mergedLiuyao=mergeJournalRecords([record('merge-liuyao','2026-09-11T08:00:00.000Z')],[{...record('merge-liuyao','2026-09-11T08:00:00.000Z'),liuyao}]);
+assert.equal(mergedLiuyao[0].liuyao.original.index,0);
 const storage = makeStorage();
 const annotation = saveAnnotation({ sourceType: 'hexagram', sourceId: '0', note: '记录一个观察', tags: ['复习'] }, storage);
 assert.equal(loadAnnotations(storage).length, 1);
