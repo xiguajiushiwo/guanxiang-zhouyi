@@ -21,8 +21,8 @@ assert.equal((html.match(/class="auth-trigrams"/g)||[]).length,1);
 assert.equal((html.match(/data-language="(?:zh-CN|en|fa)"/g)||[]).length,3);
 assert.doesNotMatch(index,/id="accountDialog"/);
 assert.match(index,/id="profileButton"/);
-assert.match(app,/location\.assign\('\.\/auth'\)/);
-assert.match(app,/location\.assign\('\.\/auth\?from=app'\)/);
+assert.doesNotMatch(app,/location\.assign\('\.\/auth'\)/);
+assert.match(app,/\.\/auth\?v=20260922-auth7&from=app/);
 assert.match(app,/new URLSearchParams\(location\.search\)\.get\('entry'\)==='account'/);
 assert.match(script,/createAccountClient/);
 assert.match(script,/\.register\(email,password\)/);
@@ -41,6 +41,6 @@ assert.match(build,/'auth\.js'/);
 assert.match(worker,/'\.\/auth\.html'/);
 assert.match(worker,/'\.\/auth\.css'/);
 assert.match(worker,/'\.\/auth\.js'/);
-assert.match(worker,/guanxiang-shell-v47/);
+assert.match(worker,/guanxiang-shell-v48/);
 
 console.log('Standalone account page checks passed.');

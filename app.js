@@ -79,13 +79,6 @@ function initLandingCover(){
   app.setAttribute('inert','');
   app.setAttribute('aria-hidden','true');
   document.body.classList.add('cover-active');
-  const openAccountPage=()=>location.assign('./auth');
-  enter.addEventListener('click',()=>{
-    if(cover.classList.contains('is-leaving'))return;
-    cover.classList.add('is-leaving');
-    if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches)openAccountPage();
-    else{const complete=event=>{if(event.target!==cover)return;cover.removeEventListener('animationend',complete);openAccountPage()};cover.addEventListener('animationend',complete)}
-  });
   requestAnimationFrame(()=>enter.focus({preventScroll:true}));
 }
 const searchCharMap=Object.fromEntries([...`傳經數萬與為無後來見龍時國陰陽學觀義禮樂風澤貞變應聖體書辭問斷說損艱廣開閉東門雲氣順處進退長終實虛剛柔動靜險濟師謙豫隨蠱臨頤過離咸恆遯壯晉夷睽蹇解夬姤萃升困井革鼎震巽兌渙節孚過既未`].map((char,index)=>[char,[...`传经数万与为无后来见龙时国阴阳学观义礼乐风泽贞变应圣体书辞问断说损艰广开闭东门云气顺处进退长终实虚刚柔动静险济师谦豫随蛊临颐过离咸恒遁壮晋夷睽蹇解夬姤萃升困井革鼎震巽兑涣节孚过既未`][index]]));
@@ -645,7 +638,7 @@ document.addEventListener('DOMContentLoaded',()=>{if(!castState.confirmed)return
 
 document.addEventListener('click',event=>{if(!event.target.closest('[data-language-menu]'))closeLanguageMenus()});
 document.addEventListener('click',event=>{
-  if(event.target.closest('#profileButton')){event.preventDefault();location.assign('./auth?from=app')}
+  if(event.target.closest('#profileButton')){event.preventDefault();location.assign('./auth?v=20260922-auth7&from=app')}
 });
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'){
