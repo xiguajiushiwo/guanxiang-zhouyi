@@ -14,6 +14,7 @@ const YONG_SHEN_RULES = {
   health: ['世爻', '子孙', '父母']
 };
 const CATEGORY_KEYS = new Set(Object.keys(YONG_SHEN_RULES));
+const ADVANCE_PAIRS = [['亥', '子'], ['寅', '卯'], ['巳', '午'], ['申', '酉'], ['丑', '辰'], ['辰', '未'], ['未', '戌']];
 
 function valueOf(line) { return typeof line === 'number' ? line : line?.value; }
 function polarity(value) { return [7, 9].includes(value) ? '阳' : '阴'; }
@@ -45,6 +46,16 @@ function relationReason(sourceElement, targetElement) {
 function candidateAvailable(candidate, rows) {
   if (candidate === '世爻' || candidate === '应爻') return true;
   return rows.some(row => row.relative === candidate);
+}
+
+function transformedRelations(base, transformed, moving) {
+  if (!moving) return [];
+  const labels = relationBetweenBranches(base.branch, transformed.branch).map(type => type === '六合' ? '化合' : type === '六冲' ? '化冲' : `化${type}`);
+  if (elementGenerates(transformed.element, base.element)) labels.push('化回头生');
+  if (elementControls(transformed.element, base.element)) labels.push('化回头克');
+  if (ADVANCE_PAIRS.some(([from, to]) => from === base.branch && to === transformed.branch)) labels.push('化进神');
+  if (ADVANCE_PAIRS.some(([from, to]) => from === transformed.branch && to === base.branch)) labels.push('化退神');
+  return [...new Set(labels)];
 }
 
 export function recommendYongShen(category, rows) {
@@ -103,7 +114,7 @@ export function buildLiuyaoChart({ lines, castAt, timeZone, question = '', categ
       ying: index === shiYing.yingIndex,
       strength,
       relations: lineRelations,
-      transformed: { stem: transformed.stem, branch: transformed.branch, ganzhi: transformed.ganzhi, element: transformed.element, relative: relativeForElement(originalNajia.palaceElement, transformed.element) }
+      transformed: { stem: transformed.stem, branch: transformed.branch, ganzhi: transformed.ganzhi, element: transformed.element, relative: relativeForElement(originalNajia.palaceElement, transformed.element), relations: transformedRelations(base, transformed, line.moving) }
     };
   });
   const yongShen = recommendYongShen(category, rows);

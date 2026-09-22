@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 globalThis.Solar = require('./node_modules/lunar-javascript/lunar.js').Solar;
 
-const { calendarForInstant, normalizeCastTime } = await import('./sexagenary.mjs');
+const { calendarForInstant, localDateTimeToIso, normalizeCastTime } = await import('./sexagenary.mjs');
 
 const normalized = normalizeCastTime({
   value: '2026-09-22T02:30:00.000Z',
@@ -13,6 +13,8 @@ const normalized = normalizeCastTime({
 assert.equal(normalized.iso, '2026-09-22T02:30:00.000Z');
 assert.equal(normalized.timeZone, 'Asia/Shanghai');
 assert.equal(normalized.localDateTime, '2026-09-22T10:30');
+assert.equal(localDateTimeToIso('2026-09-22T10:30', 'Asia/Shanghai'), normalized.iso);
+assert.equal(new Date(localDateTimeToIso('2026-09-21T12:00', 'America/New_York')).toISOString(), '2026-09-21T16:00:00.000Z');
 
 const calendar = calendarForInstant(normalized.iso, normalized.timeZone);
 assert.equal(calendar.yearPillar, '丙午');

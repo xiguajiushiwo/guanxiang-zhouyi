@@ -28,6 +28,7 @@ assert.equal(chart.lines[0].moving, false);
 assert.equal(chart.lines[2].moving, true);
 assert.equal(chart.lines[2].changedPolarity, '阴');
 assert.equal(chart.lines[2].transformed.ganzhi, chart.changed.lines[2].ganzhi);
+assert.ok(Array.isArray(chart.lines[2].transformed.relations));
 assert.ok(chart.lines[0].relations.some(relation => relation.target === '日辰'));
 assert.ok(chart.lines[0].strength.label);
 assert.equal(chart.yongShen.source, 'auto');

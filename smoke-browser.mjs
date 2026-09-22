@@ -93,6 +93,9 @@ assert.equal(homeLayout.horizontalOverflow, false);
 await evaluate(`document.querySelector('.nav-item[data-view="divination"]').click(); true`);
 await waitFor(`document.querySelector('#view-divination').classList.contains('active')`);
 await sleep(1200);
+const castTimeControls = await evaluate(`({date:Boolean(document.querySelector('#castDate')?.value),clock:Boolean(document.querySelector('#castClock')?.value),zone:document.querySelector('#castTimeZone')?.value||''})`);
+assert.equal(castTimeControls.date && castTimeControls.clock, true);
+assert.ok(castTimeControls.zone);
 await evaluate(`document.querySelector('[data-cast-mode="quick"]').click();
   const input=document.querySelector('#questionInput');
   input.value='面对未来三个月的职业选择，我应当注意什么？';
@@ -121,6 +124,11 @@ const layers = await evaluate(`({
   note:Boolean(document.querySelector('#resultNote'))
 })`);
 assert.equal(Object.values(layers).every(Boolean), true);
+const liuyao = await evaluate(`(()=>{const button=document.querySelector('[data-reading-result-mode="liuyao"]');button.click();return {rows:document.querySelectorAll('#liuyaoReadingMode .liuyao-table tbody tr').length,calendar:document.querySelector('#liuyaoReadingMode .liuyao-overview')?.textContent||'',classicHidden:document.querySelector('#classicReadingMode').classList.contains('hidden'),chart:Boolean(JSON.parse(localStorage.getItem('guanxiang-history-guest-v1')||'[]')[0]?.liuyao)}})()`);
+assert.equal(liuyao.rows,6);
+assert.match(liuyao.calendar,/月建/);
+assert.equal(liuyao.classicHidden&&liuyao.chart,true);
+await evaluate(`document.querySelector('[data-reading-result-mode="classic"]').click();true`);
 const localReading = await evaluate(`({
   visible:Boolean(document.querySelector('#localReading')?.textContent.trim()),
   actions:document.querySelectorAll('#localReading .interpretation-actions li').length,
@@ -209,11 +217,13 @@ const journal = await evaluate(`({
   importButton:Boolean(document.querySelector('#importHistory')),
   deleteButton:Boolean(document.querySelector('#deleteHistory'))
   ,aiReading:Boolean(document.querySelector('#historyDetail .ai-interpretation')),
+  liuyaoRows:document.querySelectorAll('#historyDetail .history-liuyao .liuyao-table tbody tr').length,
   detailWidth:Math.round(document.querySelector('#historyRecordPage').getBoundingClientRect().width)
 })`);
 assert.ok(journal.route.includes(encodeURIComponent(journalIndex.recordId)));
 assert.equal(journal.note, '浏览器冒烟测试札记');
 assert.equal(journal.aiReading, true);
+assert.equal(journal.liuyaoRows, 6);
 assert.equal(journal.exportButton && journal.importButton && journal.deleteButton, true);
 assert.ok(journal.detailWidth >= 800, 'desktop history detail should use a full reading page');
 await evaluate(`document.querySelector('#saveHistoryNote').click();true`);
@@ -231,10 +241,19 @@ await waitFor(`!document.querySelector('#historyRecordPage').hidden && document.
 const originalQuestion = await evaluate(`document.querySelector('.history-detail blockquote').textContent`);
 await evaluate(`document.querySelector('#languageToggle [data-language-menu-trigger]').click();document.querySelector('#languageToggle [data-language="en"]').click();true`);
 await waitFor(`document.documentElement.lang==='en' && document.querySelector('[data-history-back]').textContent.includes('Back to journal')`);
-const journalEnglish = await evaluate(`({question:document.querySelector('.history-detail blockquote').textContent,aiVisible:Boolean(document.querySelector('#historyDetail .ai-interpretation')),lineLabel:document.querySelector('.history-lines b').textContent})`);
+const journalEnglish = await evaluate(`({question:document.querySelector('.history-detail blockquote').textContent,aiVisible:Boolean(document.querySelector('#historyDetail .ai-interpretation')),lineLabel:document.querySelector('.history-lines b').textContent,liuyaoTitle:document.querySelector('.history-liuyao h3').textContent,liuyaoMode:document.querySelector('[data-reading-result-mode="liuyao"]')?.textContent||''})`);
 assert.equal(journalEnglish.question, originalQuestion, 'saved questions must remain exactly as written');
 assert.equal(journalEnglish.aiVisible, false, 'AI readings in another language must not appear as translated results');
 assert.equal(journalEnglish.lineLabel, 'Line 6');
+assert.equal(journalEnglish.liuyaoTitle, 'Restored from the casting time');
+await evaluate(`document.querySelector('#languageToggle [data-language-menu-trigger]').click();document.querySelector('#languageToggle [data-language="fa"]').click();true`);
+await waitFor(`document.documentElement.lang==='fa' && document.querySelector('.history-liuyao h3').textContent.includes('بازسازی')`);
+const journalPersian = await evaluate(`({lineLabel:document.querySelector('.history-lines b').textContent,lineRecord:document.querySelector('#lineRecords .line-record span')?.textContent||'',liuyaoTitle:document.querySelector('.history-liuyao h3').textContent,overflow:document.documentElement.scrollWidth>innerWidth})`);
+assert.equal(journalPersian.lineLabel, 'خط 6');
+assert.match(journalPersian.lineRecord, /^خط 1 ·/);
+assert.doesNotMatch(journalPersian.lineRecord, /第1爻|老[阴阳]|少[阴阳]/);
+assert.equal(journalPersian.liuyaoTitle, 'بازسازی‌شده از زمان فال');
+assert.equal(journalPersian.overflow, false);
 await evaluate(`document.querySelector('#languageToggle [data-language-menu-trigger]').click();document.querySelector('#languageToggle [data-language="zh-CN"]').click();true`);
 await waitFor(`document.documentElement.lang==='zh-CN' && document.querySelector('#historyDetail .ai-interpretation')`);
 

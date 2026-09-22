@@ -28,6 +28,25 @@ function dateParts(date, timeZone) {
   };
 }
 
+export function localDateTimeToIso(localDateTime, timeZone) {
+  const zone = assertTimeZone(timeZone);
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(String(localDateTime || '').trim());
+  if (!match) throw new RangeError('Invalid local date and time');
+  const [yearRaw, monthRaw, dayRaw, hourRaw, minuteRaw, secondRaw] = match.slice(1);
+  const year = Number(yearRaw), month = Number(monthRaw), day = Number(dayRaw), hour = Number(hourRaw), minute = Number(minuteRaw), second = secondRaw ? Number(secondRaw) : 0;
+  const target = Date.UTC(year, month - 1, day, hour, minute, second);
+  let candidate = new Date(target);
+  for (let index = 0; index < 4; index += 1) {
+    const actual = dateParts(candidate, zone);
+    const actualUtc = Date.UTC(actual.year, actual.month - 1, actual.day, actual.hour, actual.minute, actual.second);
+    const difference = target - actualUtc;
+    if (difference === 0) return candidate.toISOString();
+    candidate = new Date(candidate.getTime() + difference);
+  }
+  if (dateParts(candidate, zone).localDateTime !== `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`) throw new RangeError('Local date and time cannot be represented in time zone');
+  return candidate.toISOString();
+}
+
 function solarApi() {
   const Solar = globalThis.Solar;
   if (!Solar || typeof Solar.fromYmdHms !== 'function') throw new Error('Sexagenary calendar library is unavailable');

@@ -49,12 +49,12 @@ const BRANCH_PAIRS = {
   相破: [['子', '酉'], ['寅', '亥'], ['卯', '午'], ['辰', '丑'], ['巳', '申'], ['未', '戌']]
 };
 const TRIPLETS = [
-  { branches: ['申', '子', '辰'], label: '三合水局' }, { branches: ['亥', '卯', '未'], label: '三合木局' },
-  { branches: ['寅', '午', '戌'], label: '三合火局' }, { branches: ['巳', '酉', '丑'], label: '三合金局' }
+  { branches: ['申', '子', '辰'], label: '半合水局' }, { branches: ['亥', '卯', '未'], label: '半合木局' },
+  { branches: ['寅', '午', '戌'], label: '半合火局' }, { branches: ['巳', '酉', '丑'], label: '半合金局' }
 ];
 const MEETING_TRIPLETS = [
-  { branches: ['寅', '卯', '辰'], label: '三会木局' }, { branches: ['巳', '午', '未'], label: '三会火局' },
-  { branches: ['申', '酉', '戌'], label: '三会金局' }, { branches: ['亥', '子', '丑'], label: '三会水局' }
+  { branches: ['寅', '卯', '辰'], label: '半会木方' }, { branches: ['巳', '午', '未'], label: '半会火方' },
+  { branches: ['申', '酉', '戌'], label: '半会金方' }, { branches: ['亥', '子', '丑'], label: '半会水方' }
 ];
 
 const includesPair = (pairs, a, b) => pairs.some(([left, right]) => (left === a && right === b) || (left === b && right === a));
@@ -108,8 +108,8 @@ export function relationBetweenBranches(sourceBranch, targetBranch) {
   if (triple) relations.push(triple.label);
   const meeting = includesTriplet(MEETING_TRIPLETS, sourceBranch, targetBranch);
   if (meeting) relations.push(meeting.label);
-  if ((sourceBranch === targetBranch && ['辰', '午', '酉', '亥'].includes(sourceBranch)) || (['子', '卯'].includes(sourceBranch) && ['子', '卯'].includes(targetBranch))) relations.push('相刑');
-  if ((['寅', '巳', '申'].includes(sourceBranch) && ['寅', '巳', '申'].includes(targetBranch)) || (['丑', '未', '戌'].includes(sourceBranch) && ['丑', '未', '戌'].includes(targetBranch))) relations.push('相刑');
+  if ((sourceBranch === targetBranch && ['辰', '午', '酉', '亥'].includes(sourceBranch)) || (sourceBranch !== targetBranch && ['子', '卯'].includes(sourceBranch) && ['子', '卯'].includes(targetBranch))) relations.push('相刑');
+  if (sourceBranch !== targetBranch && ((['寅', '巳', '申'].includes(sourceBranch) && ['寅', '巳', '申'].includes(targetBranch)) || (['丑', '未', '戌'].includes(sourceBranch) && ['丑', '未', '戌'].includes(targetBranch)))) relations.push('相刑');
   return [...new Set(relations)];
 }
 

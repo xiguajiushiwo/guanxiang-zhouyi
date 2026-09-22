@@ -39,8 +39,12 @@ assert.equal(relativeForElement('金', '火'), '官鬼');
 
 assert.ok(relationBetweenBranches('子', '丑').includes('六合'));
 assert.ok(relationBetweenBranches('子', '午').includes('六冲'));
-assert.ok(relationBetweenBranches('申', '子').includes('三合水局'));
+assert.ok(relationBetweenBranches('申', '子').includes('半合水局'));
 assert.ok(relationBetweenBranches('寅', '巳').includes('相刑'));
+assert.ok(relationBetweenBranches('子', '卯').includes('相刑'));
+assert.ok(relationBetweenBranches('辰', '辰').includes('相刑'));
+assert.ok(!relationBetweenBranches('子', '子').includes('相刑'));
+assert.ok(!relationBetweenBranches('寅', '寅').includes('相刑'));
 assert.ok(relationBetweenBranches('子', '未').includes('六害'));
 assert.ok(relationBetweenBranches('子', '酉').includes('相破'));
 
