@@ -50,6 +50,9 @@ assert.doesNotMatch(richStyles, /gradient\(/);
 assert.match(script, /requestAnimationFrame\(\(\)=>document\.dispatchEvent\(new Event\('guanxiang:entered'\)\)\)/);
 assert.ok(script.indexOf("$('.main-content')?.focus") < script.indexOf("requestAnimationFrame(()=>document.dispatchEvent(new Event('guanxiang:entered')))"));
 assert.match(styles, /@media\s*\(max-width:\s*680px\)/);
+assert.match(styles, /\.site-cover\.is-leaving \.cover-frame\s*\{[^}]*animation:\s*cover-content-depart/s);
+assert.match(styles, /@keyframes cover-depart\s*\{[^}]*opacity:\s*1[^}]*transform:\s*none/s);
+assert.match(styles, /@keyframes cover-content-depart\s*\{[\s\S]*100%\s*\{\s*opacity:\s*0;\s*transform:\s*translateY\(-18px\)/s);
 assert.match(appStyles, /\.sidebar>\.primary-nav\{position:fixed/);
 assert.match(appStyles, /#view-hexagrams\.mobile-detail-open/);
 assert.match(appStyles, /#view-home \.home-symbol-quote\{display:grid/);
@@ -69,7 +72,7 @@ assert.match(script, /function renderHistoryDetail\(record\)/);
 assert.match(styles, /prefers-reduced-motion:\s*reduce/);
 assert.doesNotMatch(styles, /gradient\(/);
 assert.match(worker, /['"]\.\/landing-v2\.css['"]/);
-assert.match(worker, /CACHE_NAME='guanxiang-shell-v45'/);
+assert.match(worker, /CACHE_NAME='guanxiang-shell-v46'/);
 
 const endpointScript=html.match(/<script>window\.GUANXIANG_AI_ENDPOINT=.*?<\/script>/s)?.[0].replace(/^<script>|<\/script>$/g,'');
 assert.ok(endpointScript);

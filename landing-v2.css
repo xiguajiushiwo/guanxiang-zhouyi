@@ -262,6 +262,10 @@ body.cover-active { overflow: hidden; }
   animation: cover-depart 640ms cubic-bezier(.72, 0, .2, 1) forwards;
 }
 
+.site-cover.is-leaving .cover-frame {
+  animation: cover-content-depart 640ms cubic-bezier(.72, 0, .2, 1) forwards;
+}
+
 .site-cover.is-leaving .cover-line:nth-child(odd) { transform: translateX(26px); }
 .site-cover.is-leaving .cover-line:nth-child(even) { transform: translateX(-26px); }
 .site-cover.is-leaving .cover-line { transition: transform 500ms cubic-bezier(.72, 0, .2, 1); }
@@ -271,6 +275,10 @@ body.cover-active { overflow: hidden; }
 }
 
 @keyframes cover-depart {
+  from, to { opacity: 1; transform: none; }
+}
+
+@keyframes cover-content-depart {
   0% { opacity: 1; transform: translateY(0); }
   62% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(-18px); }
