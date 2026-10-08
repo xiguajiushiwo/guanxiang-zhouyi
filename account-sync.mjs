@@ -1,4 +1,5 @@
 const DEFAULT_ACCOUNT_API='/api/account';
+const DEFAULT_ACCOUNT_TIMEOUT_MS=12000;
 
 function apiUrl(path,base=DEFAULT_ACCOUNT_API){
   const root=String(base||DEFAULT_ACCOUNT_API).replace(/\/$/,'');
@@ -9,20 +10,24 @@ export class AccountApiError extends Error {
   constructor(code,message,status){super(message||code);this.name='AccountApiError';this.code=code;this.status=status}
 }
 
-async function accountRequest(path,{method='GET',body,language='zh-CN',apiBase,fetchImpl=globalThis.fetch}={}){
+async function accountRequest(path,{method='GET',body,language='zh-CN',apiBase,fetchImpl=globalThis.fetch,timeoutMs=DEFAULT_ACCOUNT_TIMEOUT_MS}={}){
   const headers={'accept-language':language==='fa'?'fa,en;q=0.8':language==='en'?'en,zh-CN;q=0.8':'zh-CN,en;q=0.8'};
   if(body!==undefined)headers['content-type']='application/json';
+  const controller=typeof AbortController==='function'?new AbortController():null;
+  let timer;
+  const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>{controller?.abort();reject(new AccountApiError('TIMEOUT','Account request timed out.',0))},timeoutMs)});
   let response;
-  try{response=await fetchImpl(apiUrl(path,apiBase),{method,headers,credentials:'same-origin',body:body===undefined?undefined:JSON.stringify(body)})}
-  catch(error){throw new AccountApiError('NETWORK_ERROR','Account service is unavailable.',0)}
+  try{response=await Promise.race([fetchImpl(apiUrl(path,apiBase),{method,headers,credentials:'same-origin',body:body===undefined?undefined:JSON.stringify(body),signal:controller?.signal}),timeout])}
+  catch(error){if(error instanceof AccountApiError)throw error;throw new AccountApiError('NETWORK_ERROR','Account service is unavailable.',0)}
+  finally{clearTimeout(timer)}
   let payload=null;
   try{payload=await response.json()}catch{}
   if(!response.ok){const error=payload?.error||{};throw new AccountApiError(error.code||`HTTP_${response.status}`,error.message||'Account request failed.',response.status)}
   return payload;
 }
 
-export function createAccountClient({apiBase=DEFAULT_ACCOUNT_API,fetchImpl=globalThis.fetch,language='zh-CN'}={}){
-  const call=(path,options={})=>accountRequest(path,{...options,apiBase,fetchImpl,language:options.language||language});
+export function createAccountClient({apiBase=DEFAULT_ACCOUNT_API,fetchImpl=globalThis.fetch,language='zh-CN',timeoutMs=DEFAULT_ACCOUNT_TIMEOUT_MS}={}){
+  const call=(path,options={})=>accountRequest(path,{...options,apiBase,fetchImpl,timeoutMs,language:options.language||language});
   return {
     me:()=>call('me'),
     register:(email,password)=>call('register',{method:'POST',body:{email,password,language}}),
@@ -50,4 +55,4 @@ export async function synchronizeHistory({client,localRecords,strategy='merge'}=
   return {records:merged.records||[],uploaded:localRecords.length};
 }
 
-export { DEFAULT_ACCOUNT_API, accountRequest };
+export { DEFAULT_ACCOUNT_API, DEFAULT_ACCOUNT_TIMEOUT_MS, accountRequest };

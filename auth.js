@@ -12,7 +12,7 @@ function accountMode(){try{return localStorage.getItem(ACCOUNT_MODE_KEY)||''}cat
 function setAccountMode(value){try{localStorage.setItem(ACCOUNT_MODE_KEY,value)}catch{}}
 function accountError(error){
   if(error instanceof AccountApiError){
-    if(error.code==='NETWORK_ERROR'||error.status===503)return t('auth.network');
+    if(['NETWORK_ERROR','TIMEOUT'].includes(error.code)||error.status===503)return t('auth.network');
     if([400,401,409].includes(error.status)||['INVALID_CREDENTIALS','ACCOUNT_EXISTS'].includes(error.code))return t('auth.invalid');
     return error.message||t('auth.network');
   }
@@ -55,12 +55,8 @@ async function submit(event){
     enterApp();
   }catch(error){$('#authError').textContent=accountError(error);setBusy(false)}
 }
-async function enterAsGuest(){
-  if(busy)return;
-  setBusy(true);
+function enterAsGuest(){
   setAccountMode('guest');
-  try{await createClient().logout()}catch(error){if(!(error instanceof AccountApiError))console.warn('Guest session cleanup failed',error)}
-  location.assign(APP_ENTRY);
 }
 async function logout(){
   if(busy)return;

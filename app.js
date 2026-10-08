@@ -54,7 +54,7 @@ async function clearLegacyAuthNavigationState(){
 async function navigateToAuth(href=AUTH_ENTRY){
   if(authNavigationPending)return;
   authNavigationPending=true;
-  await clearLegacyAuthNavigationState();
+  void clearLegacyAuthNavigationState();
   location.assign(href);
 }
 
@@ -103,7 +103,9 @@ function initLandingCover(){
     $('.main-content')?.focus({preventScroll:true});
     requestAnimationFrame(()=>document.dispatchEvent(new Event('guanxiang:entered')));
   };
-  if(new URLSearchParams(location.search).get('entry')==='account'){
+  const entry=new URLSearchParams(location.search).get('entry');
+  if(entry==='guest')setAccountMode('guest');
+  if(entry==='account'||entry==='guest'){
     revealApp();
     history.replaceState(null,'',`${location.pathname}${location.hash||'#home'}`);
     return;
@@ -255,6 +257,7 @@ const ACCOUNT_HISTORY_PREFIX='guanxiang-history-account-v1:';
 const LEGACY_MIGRATION_KEY='guanxiang-history-legacy-owner-v1';
 const SYNC_QUEUE_PREFIX='guanxiang-sync-queue-v1:';
 let syncState='idle',syncError='',syncInFlight=false,accountSessionResolved=false;
+function setAccountMode(value){try{localStorage.setItem(ACCOUNT_MODE_KEY,value)}catch{}}
 function isGuestAccountMode(){try{return localStorage.getItem(ACCOUNT_MODE_KEY)==='guest'}catch{return false}}
 function namespaceHash(value){let hash=2166136261;for(const char of String(value||'').trim().toLowerCase()){hash^=char.charCodeAt(0);hash=Math.imul(hash,16777619)}return (hash>>>0).toString(36)}
 function accountHistoryKey(email){return `${ACCOUNT_HISTORY_PREFIX}${namespaceHash(email)}`}

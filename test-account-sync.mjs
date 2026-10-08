@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { AccountApiError, createAccountClient, getAccountSession, synchronizeHistory } from './account-sync.mjs';
+import { AccountApiError, DEFAULT_ACCOUNT_TIMEOUT_MS, createAccountClient, getAccountSession, synchronizeHistory } from './account-sync.mjs';
 
 const calls=[];
 const fetchImpl=async(url,init)=>{
@@ -17,4 +17,7 @@ assert.equal(calls.at(-1).init.credentials,'same-origin');
 assert.equal(JSON.parse(calls.at(-1).init.body).records[0].id,'local');
 const noSession=await getAccountSession({fetchImpl:async()=>new Response(JSON.stringify({error:{code:'UNAUTHORIZED'}}),{status:401,headers:{'content-type':'application/json'}})});
 assert.equal(noSession,null);
+assert.equal(DEFAULT_ACCOUNT_TIMEOUT_MS,12000);
+const timeoutClient=createAccountClient({timeoutMs:15,fetchImpl:()=>new Promise(()=>{})});
+await assert.rejects(timeoutClient.me(),error=>error instanceof AccountApiError&&error.code==='TIMEOUT'&&error.status===0);
 console.log('Account sync tests passed.');

@@ -157,5 +157,12 @@ await evaluate(`document.querySelector('#enterSite').click(); true`);
 await waitFor(`location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html')`);
 const reduced = await evaluate(`({authVisible:Boolean(document.querySelector('#authForm')),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches})`);
 assert.equal(reduced.authVisible && reduced.reduced, true);
+
+await navigate();
+await evaluate(`Object.defineProperty(navigator.serviceWorker,'getRegistrations',{configurable:true,value:()=>new Promise(()=>{})});true`);
+await evaluate(`document.querySelector('#enterSite').click();true`);
+await waitFor(`location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html')`,2000);
+const nonBlockingNavigation=await evaluate(`({authVisible:Boolean(document.querySelector('#authForm')),path:location.pathname})`);
+assert.equal(nonBlockingNavigation.authVisible,true,'service-worker cleanup must not block entry on mobile');
 socket.close();
-console.log(JSON.stringify({ desktop, authDesktop, entered, mobile, mobileAccount }, null, 2));
+console.log(JSON.stringify({ desktop, authDesktop, entered, mobile, mobileAccount, nonBlockingNavigation }, null, 2));
