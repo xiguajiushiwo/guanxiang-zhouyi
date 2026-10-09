@@ -55,6 +55,7 @@ assert.equal(
 );
 assert.equal(shouldInterceptLink(click, anchor('/support', { target: '_blank' }), BASE_URL), false);
 assert.equal(shouldInterceptLink(click, anchor('/manual.pdf', { download: 'manual.pdf' }), BASE_URL), false);
+assert.equal(shouldInterceptLink(click, anchor('/auth', { hasAttribute: (name) => name === 'data-transition-manual' }), BASE_URL), false);
 assert.equal(shouldInterceptLink(click, anchor('/#home'), `${BASE_URL}#history`), false);
 
 {

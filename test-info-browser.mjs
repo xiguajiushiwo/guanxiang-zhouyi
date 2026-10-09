@@ -53,6 +53,12 @@ assert.equal(desktop.unavailable,3);
 assert.equal(desktop.overflow,false);
 await capture('output/playwright/info-desktop.png');
 
+await evaluate(`document.querySelector('[data-info-key="privacy"]').click();true`);
+await waitFor(`location.pathname==='/privacy'&&document.body.dataset.infoPage==='privacy'`);
+await sleep(350);
+const transitionState=await evaluate(`({path:location.pathname,leaving:document.documentElement.classList.contains('page-is-leaving'),entering:document.documentElement.classList.contains('page-is-entering'),overflow:document.documentElement.scrollWidth>innerWidth})`);
+assert.deepEqual(transitionState,{path:'/privacy',leaving:false,entering:false,overflow:false});
+
 await setViewport(390,844,true);
 await navigate('/privacy');
 const mobile=await evaluate(`(()=>{

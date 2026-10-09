@@ -1,0 +1,135 @@
+@view-transition {
+  navigation: auto;
+}
+
+:root {
+  --gx-motion-standard: cubic-bezier(.22, .75, .25, 1);
+  --gx-motion-exit: cubic-bezier(.4, 0, 1, 1);
+}
+
+@keyframes gx-page-old {
+  to { opacity: 0; transform: scale(.996); }
+}
+
+@keyframes gx-page-new {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes gx-peer-old {
+  to { opacity: 0; transform: scale(.992); }
+}
+
+@keyframes gx-peer-new {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes gx-forward-old {
+  to { opacity: 0; transform: translateX(-12px); }
+}
+
+@keyframes gx-forward-new {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes gx-back-old {
+  to { opacity: 0; transform: translateX(12px); }
+}
+
+@keyframes gx-back-new {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: none; }
+}
+
+::view-transition-old(root) {
+  animation: 180ms var(--gx-motion-exit) both gx-page-old;
+}
+
+::view-transition-new(root) {
+  animation: 220ms var(--gx-motion-standard) both gx-page-new;
+}
+
+html[data-transition]::view-transition-old(root),
+html[data-transition]::view-transition-new(root) {
+  animation: none;
+}
+
+html[data-transition="peer"]::view-transition-old(gx-content) {
+  animation: 180ms var(--gx-motion-exit) both gx-peer-old;
+}
+
+html[data-transition="peer"]::view-transition-new(gx-content) {
+  animation: 280ms var(--gx-motion-standard) both gx-peer-new;
+}
+
+html[data-transition="forward"]::view-transition-old(gx-content) {
+  animation: 280ms var(--gx-motion-standard) both gx-forward-old;
+}
+
+html[data-transition="forward"]::view-transition-new(gx-content) {
+  animation: 280ms var(--gx-motion-standard) both gx-forward-new;
+}
+
+html[data-transition="back"]::view-transition-old(gx-content) {
+  animation: 280ms var(--gx-motion-standard) both gx-back-old;
+}
+
+html[data-transition="back"]::view-transition-new(gx-content) {
+  animation: 280ms var(--gx-motion-standard) both gx-back-new;
+}
+
+.page-is-leaving body {
+  animation: 180ms var(--gx-motion-exit) both gx-page-old;
+  pointer-events: none;
+}
+
+.page-is-entering body {
+  animation: 220ms var(--gx-motion-standard) both gx-page-new;
+}
+
+.main-content[data-transition-scope] > .view.active {
+  view-transition-name: gx-content;
+}
+
+.transition-fallback .main-content[data-transition-scope] > .view.active {
+  will-change: opacity, transform;
+}
+
+.transition-fallback-out[data-transition="peer"] .main-content[data-transition-scope] > .view.active {
+  animation: 180ms var(--gx-motion-exit) both gx-peer-old;
+}
+
+.transition-fallback-in[data-transition="peer"] .main-content[data-transition-scope] > .view.active {
+  animation: 280ms var(--gx-motion-standard) both gx-peer-new;
+}
+
+.transition-fallback-out[data-transition="forward"] .main-content[data-transition-scope] > .view.active {
+  animation: 180ms var(--gx-motion-exit) both gx-forward-old;
+}
+
+.transition-fallback-in[data-transition="forward"] .main-content[data-transition-scope] > .view.active {
+  animation: 280ms var(--gx-motion-standard) both gx-forward-new;
+}
+
+.transition-fallback-out[data-transition="back"] .main-content[data-transition-scope] > .view.active {
+  animation: 180ms var(--gx-motion-exit) both gx-back-old;
+}
+
+.transition-fallback-in[data-transition="back"] .main-content[data-transition-scope] > .view.active {
+  animation: 280ms var(--gx-motion-standard) both gx-back-new;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(gx-content),
+  ::view-transition-new(gx-content),
+  .page-is-leaving body,
+  .page-is-entering body,
+  .transition-fallback .main-content[data-transition-scope] > .view.active {
+    animation-duration: .001ms !important;
+    animation-delay: 0ms !important;
+  }
+}

@@ -15,6 +15,7 @@ import { selectTenWingSources } from './ai-sources.mjs';
 import { AccountApiError, createAccountClient, synchronizeHistory } from './account-sync.mjs';
 import { buildLiuyaoChart, applyYongShenOverride } from './liuyao-core.mjs';
 import { localDateTimeToIso, normalizeCastTime } from './sexagenary.mjs';
+import { installPageTransitions, navigateWithTransition, runViewTransition } from './page-transition.mjs';
 
 const yaoTexts=['初九：潜龙勿用。','九二：见龙在田，利见大人。','九三：君子终日乾乾，夕惕若厉，无咎。','九四：或跃在渊，无咎。','九五：飞龙在天，利见大人。','上九：亢龙有悔。'];
 const canonicalClassicSummaries=['逐卦断义，说明卦名、卦辞与上下体之大旨。','承接上经，论三十卦之时位与吉凶。','取卦象明君子之用，列上经三十卦大象。','逐卦取象明德，列下经三十四卦大象。','总论天地之道、象数之源与易学体用。','论圣人设卦、观象玩辞与卜筮之道。','专释乾坤，申说元亨利贞与君子之德。','说明八卦取象、方位、性情与万物类象。','说明六十四卦相承的次序与变化的链条。','以错综互杂比较诸卦，见相反相成之理。'];
@@ -30,12 +31,17 @@ const AI_REFERENCE_NOTES={
   }
 };
 let currentView='home', selectedHex=0, selectedWing=0, selectedPrinciple=0, selectedClassicSection=null, historySelectedId='', historyQuery='', filter='all', readingMode='ancient', pendingImport=null, currentReading=null, aiReadingAbort=null, accountClient=null, accountUser=null, castState={lines:[],working:false,runId:0,ritual:null,confirmed:false,prepared:false,question:'',sessionId:'',mode:'complete',castAt:'',timeZone:''}, tenWings=null, hexagramTexts=null, principleLibrary=null, principleLibraryEn=null, relationsLibrary=null;
+let routeInitialized=false;
+let historyReturnFocusId='';
+let previousRouteShape='';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const TRIGRAM_GLYPHS={'天':'☰','泽':'☱','火':'☲','雷':'☳','风':'☴','水':'☵','山':'☶','地':'☷'};
 const AUTH_ENTRY='./auth?v=20260922-auth7';
 const COVER_EXIT_DURATION=1100;
 let dailyCoverTimer=0;
 let authNavigationPending=false;
+
+installPageTransitions();
 
 async function clearLegacyAuthNavigationState(){
   if('serviceWorker' in navigator){
@@ -63,7 +69,7 @@ async function navigateToAuth(href=AUTH_ENTRY){
     enter?.setAttribute('aria-disabled','true');
     await new Promise(resolve=>setTimeout(resolve,COVER_EXIT_DURATION));
   }
-  location.assign(href);
+  await navigateWithTransition(href,{skipExit:true});
 }
 
 function updateDailyCoverHexagram(date=new Date()){
@@ -138,10 +144,39 @@ function toggleMobileMore(){
   if(open){document.body.classList.add('mobile-more-open');$('#mobileMoreToggle')?.setAttribute('aria-expanded','true');$('#mobileMoreMenu .nav-item')?.focus()}
 }
 function routeForView(view){if(view==='hexagrams')return `#hexagrams/${selectedHex+1}`;if(view==='classics')return `#classics/${selectedWing+1}`;if(view==='principles')return `#principles/${selectedPrinciple+1}`;if(view==='divination')return `#divination/${$('#view-divination')?.dataset.phase||'prepare'}`;if(view==='history')return historySelectedId?`#history/${encodeURIComponent(historySelectedId)}`:'#history';return '#home'}
-function nav(view,updateRoute=true){currentView=view;closeMobileMore();$$('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${view}`));$$('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===view));$('#mobileMoreToggle')?.classList.toggle('active',view==='classics'||view==='principles');const names={home:t('nav.home'),hexagrams:t('nav.hexagrams'),divination:t('nav.divination'),history:t('nav.history'),classics:t('nav.classics'),principles:t('nav.principles')};$('#breadcrumbCurrent').textContent=names[view]||names.home;if(updateRoute&&location.hash!==routeForView(view))history.pushState(null,'',routeForView(view));window.scrollTo({top:0,behavior:'smooth'})}
-function applyRoute(){const [view='home',value='',section='']=(location.hash.slice(1)||'home').split('/');if(view==='hexagrams'){selectedHex=Math.max(0,Math.min(63,(Number(value)||1)-1));nav('hexagrams',false);setMobileDetail('hexagrams',Boolean(value));renderHexList();renderHexDetail();return}if(view==='classics'){selectedWing=Math.max(0,Math.min(9,(Number(value)||1)-1));selectedClassicSection=section?Math.max(0,(Number(section)||1)-1):null;nav('classics',false);renderClassics();return}if(view==='principles'){selectedPrinciple=Math.max(0,Math.min(7,(Number(value)||1)-1));nav('principles',false);renderPrinciples();return}if(view==='divination'){nav('divination',false);setDivinationPhase(value||'prepare',false,false);return}if(view==='history'){try{historySelectedId=decodeURIComponent(value||'')}catch{historySelectedId=''}nav('history',false);renderHistory();return}nav('home',false)}
+function updateViewState(view,updateRoute=true){closeMobileMore();$$('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${view}`));$$('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===view));$('#mobileMoreToggle')?.classList.toggle('active',view==='classics'||view==='principles');const names={home:t('nav.home'),hexagrams:t('nav.hexagrams'),divination:t('nav.divination'),history:t('nav.history'),classics:t('nav.classics'),principles:t('nav.principles')};$('#breadcrumbCurrent').textContent=names[view]||names.home;if(updateRoute&&location.hash!==routeForView(view))history.pushState(null,'',routeForView(view));window.scrollTo({top:0,behavior:'smooth'})}
+function nav(view,updateRoute=true,motionKind='peer'){const changed=view!==currentView;currentView=view;if(!routeInitialized||!changed){updateViewState(view,updateRoute);return Promise.resolve()}return runViewTransition(()=>updateViewState(view,updateRoute),{kind:motionKind,root:document.documentElement}).catch(error=>{console.warn('页面过渡未能完成',error);updateViewState(view,updateRoute)})}
+function routeShape(view,value){if(view==='history')return value?'history-detail':'history-index';if(view==='hexagrams')return value?'hex-detail':'hex-list';return `view-${view}`}
+function routeMotion(previous,next){if(previous==='history-index'&&next==='history-detail'||previous==='hex-list'&&next==='hex-detail')return'forward';if(previous==='history-detail'&&next==='history-index'||previous==='hex-detail'&&next==='hex-list')return'back';return'peer'}
+function restoreRouteFocus(motion,nextShape){if(motion!=='back')return;if(nextShape==='history-index'){const item=$$('.history-item').find(candidate=>candidate.dataset.historyId===historyReturnFocusId);item?.querySelector('.history-item-open')?.focus()}if(nextShape==='hex-list')$$('.hex-row').find(row=>Number(row.dataset.index)===selectedHex)?.focus()}
+function applyRoute(){
+  const [view='home',value='',section='']=(location.hash.slice(1)||'home').split('/');
+  const nextShape=routeShape(view,value),motion=routeMotion(previousRouteShape,nextShape),wasInitialized=routeInitialized,previousView=currentView;
+  const update=()=>{
+    if(view==='hexagrams'){
+      selectedHex=Math.max(0,Math.min(63,(Number(value)||1)-1));nav('hexagrams',false);setMobileDetail('hexagrams',Boolean(value));renderHexList();renderHexDetail();
+    }else if(view==='classics'){
+      selectedWing=Math.max(0,Math.min(9,(Number(value)||1)-1));selectedClassicSection=section?Math.max(0,(Number(section)||1)-1):null;nav('classics',false);renderClassics();
+    }else if(view==='principles'){
+      selectedPrinciple=Math.max(0,Math.min(7,(Number(value)||1)-1));nav('principles',false);renderPrinciples();
+    }else if(view==='divination'){
+      nav('divination',false);setDivinationPhase(value||'prepare',false,false);
+    }else if(view==='history'){
+      try{historySelectedId=decodeURIComponent(value||'')}catch{historySelectedId=''}nav('history',false);renderHistory();
+    }else nav('home',false);
+    routeInitialized=true;previousRouteShape=nextShape;
+  };
+  if(wasInitialized&&previousView===view&&motion!=='peer'){
+    void runViewTransition(update,{kind:motion,root:document.documentElement})
+      .then(()=>restoreRouteFocus(motion,nextShape))
+      .catch(error=>{console.warn('路由过渡未能完成',error);update();restoreRouteFocus(motion,nextShape)});
+  }else update();
+}
+
+function transitionHistory(kind,update){return runViewTransition(update,{kind,root:document.documentElement}).catch(error=>console.warn('记录页过渡未能完成',error))}
+function transitionHexDetail(kind,update){return runViewTransition(update,{kind,root:document.documentElement}).catch(error=>console.warn('卦象详情过渡未能完成',error))}
 function hexSearchCorpus(index,hexagram){const source=hexagramTexts?.hexagrams?.[index],suffix=index<30?'shang':'xia',tuan=tenWings?.wings?.find(wing=>wing.id===`tuan-${suffix}`)?.sections?.find(section=>section.number===index+1),xiang=tenWings?.wings?.find(wing=>wing.id===`xiang-${suffix}`)?.sections?.find(section=>section.number===index+1);return [hexagram.join(' '),source?.text,...(source?.lines||[]).flatMap(line=>[line.label,line.text]),tuan?.text,xiang?.text].filter(Boolean).join(' ')}
-function renderHexList(){const q=normalizeSearchText(($('#hexSearch')?.value||'').trim());const rows=hexagrams.map((hex,i)=>({hex,i})).filter(({hex,i})=>(filter==='all'||(filter==='upper'?i<30:i>=30))&&(!q||normalizeSearchText(hexSearchCorpus(i,hex)).includes(q)));$('#hexList').innerHTML=rows.map(({hex:h,i})=>`<button type="button" class="hex-row ${i===selectedHex?'selected':''}" data-index="${i}" aria-pressed="${i===selectedHex}"><span class="hex-num">${String(i+1).padStart(2,'0')}</span><span class="hex-glyph">${h[1]}</span><span class="hex-row-copy"><span class="hex-row-name">${h[2]}</span><span class="hex-row-trigram">${h[6]}上 · ${h[7]}下</span></span><span class="hex-row-tag">${h[0]}</span></button>`).join('')||'<div class="record-empty">未找到相应卦象</div>';$$('.hex-row').forEach(row=>row.addEventListener('click',()=>{selectedHex=+row.dataset.index;nav('hexagrams');setMobileDetail('hexagrams',true);renderHexList();renderHexDetail();if(innerWidth<=680)window.scrollTo({top:0,behavior:'smooth'})}))}
+function renderHexList(){const q=normalizeSearchText(($('#hexSearch')?.value||'').trim());const rows=hexagrams.map((hex,i)=>({hex,i})).filter(({hex,i})=>(filter==='all'||(filter==='upper'?i<30:i>=30))&&(!q||normalizeSearchText(hexSearchCorpus(i,hex)).includes(q)));$('#hexList').innerHTML=rows.map(({hex:h,i})=>`<button type="button" class="hex-row ${i===selectedHex?'selected':''}" data-index="${i}" aria-pressed="${i===selectedHex}"><span class="hex-num">${String(i+1).padStart(2,'0')}</span><span class="hex-glyph">${h[1]}</span><span class="hex-row-copy"><span class="hex-row-name">${h[2]}</span><span class="hex-row-trigram">${h[6]}上 · ${h[7]}下</span></span><span class="hex-row-tag">${h[0]}</span></button>`).join('')||'<div class="record-empty">未找到相应卦象</div>';$$('.hex-row').forEach(row=>row.addEventListener('click',()=>{const next=+row.dataset.index,update=()=>{selectedHex=next;nav('hexagrams');setMobileDetail('hexagrams',true);renderHexList();renderHexDetail();window.scrollTo({top:0,behavior:'smooth'})};if(innerWidth<=680)void transitionHexDetail('forward',update);else update()}))}
 function relationCards(hexIndex,limit=12){const refs=relationsLibrary?.hexagrams?.[String(hexIndex+1)]?.references||[];return refs.slice(0,limit).map(ref=>`<button type="button" class="relation-link" data-classic-ref="${ref.wingIndex}/${ref.sectionIndex}"><b>${textHtml(ref.wingTitle)}</b><span>第 ${ref.sectionNumber} 段 · ${ref.kind==='direct'?'本卦专释':'文中引卦'}</span><small>${textHtml(ref.excerpt)}${ref.excerpt.length>=92?'…':''}</small></button>`).join('')}
 function openClassicReference(wingIndex,sectionIndex){selectedWing=Number(wingIndex);selectedClassicSection=Number(sectionIndex);location.hash=`#classics/${selectedWing+1}/${selectedClassicSection+1}`}
 function bindRelationLinks(root=document){root.querySelectorAll?.('[data-classic-ref]').forEach(button=>button.addEventListener('click',()=>{const [wing,section]=button.dataset.classicRef.split('/');openClassicReference(wing,section)}))}
@@ -407,7 +442,7 @@ function renderHistory(){
   if(!visible.length){list.innerHTML=`<div class="history-empty"><b>${t('history.noMatch')}</b><p>${t('history.noMatchDescription')}</p></div>`;return}
   const english=getLanguage()==='en',dateLocale=english?'en-US':'zh-CN';
   list.innerHTML=visible.map(record=>{const original=hexagrams[record.originalIndex],changed=hexagrams[record.changedIndex],date=new Date(record.completedAt),dateText=Number.isNaN(date.getTime())?t('history.timeMissing'):date.toLocaleString(dateLocale,{year:'numeric',month:english?'short':'long',day:'numeric',hour:'2-digit',minute:'2-digit'}),name=english?`${displayHexagramName(record.originalIndex,'en',original?.[0])} → ${displayHexagramName(record.changedIndex,'en',changed?.[0])}`:`${original?.[2]||'本卦'}之${changed?.[2]||'变卦'}`;return `<div class="history-item" data-history-id="${attributeHtml(record.id)}"><button type="button" class="history-item-open" aria-label="${attributeHtml(record.question)}"><span class="history-glyph">${original?.[1]||'—'}<i>→</i>${changed?.[1]||'—'}</span><span class="history-item-copy"><b data-user-content>${textHtml(record.question)}</b><small>${textHtml(name)}${record.note?` · ${t('history.hasNote')}`:''}</small></span><time>${textHtml(dateText)}</time><span class="history-item-arrow" aria-hidden="true">→</span></button><button type="button" class="history-item-delete" data-history-delete="${attributeHtml(record.id)}" aria-label="${attributeHtml(t('history.delete'))}" title="${attributeHtml(t('history.delete'))}">×</button></div>`}).join('');
-  list.querySelectorAll('.history-item').forEach(item=>item.addEventListener('click',event=>{if(event.target.closest('[data-history-delete]'))return;historySelectedId=item.dataset.historyId;nav('history');renderHistory()}));
+  list.querySelectorAll('.history-item').forEach(item=>item.addEventListener('click',event=>{if(event.target.closest('[data-history-delete]'))return;historyReturnFocusId=item.dataset.historyId;void transitionHistory('forward',()=>{historySelectedId=item.dataset.historyId;previousRouteShape='history-detail';nav('history');renderHistory()})}));
   list.querySelectorAll('[data-history-delete]').forEach(button=>button.addEventListener('click',event=>{event.stopPropagation();const id=button.dataset.historyDelete;if(!confirm(t('history.deleteConfirm')))return;persistHistory(loadHistory().filter(item=>item.id!==id));syncCloudDelete(id);if(historySelectedId===id){historySelectedId='';history.replaceState(null,'','#history')}renderHistory();renderBackupReminder();showNotice(t('history.deleted'))}));
 }
 function renderHistoryDetail(record){
@@ -420,7 +455,7 @@ function renderHistoryDetail(record){
   const title=language==='zh-CN'?`${original?.[2]||'本卦'}之${changed?.[2]||'变卦'}`:`${displayHexagramName(record.originalIndex,language,original?.[0])} → ${displayHexagramName(record.changedIndex,language,changed?.[0])}`;
   const movingText=moving.length?t('reading.moving',{lines:moving.map(index=>english?index+1:positions[index]).join(english?', ':language==='fa'?'، ':'、')}):t('reading.still');
   detail.innerHTML=`<button type="button" class="history-back-button" data-history-back><span aria-hidden="true">←</span>${t('history.back')}</button><header><span class="panel-kicker">${t('history.stored')} · ${record.mode==='quick'?t('history.quick'):t('history.complete')}</span><time>${Number.isNaN(date.getTime())?'':date.toLocaleString(locale)}</time></header><section class="history-detail-hero"><div><span class="history-question-label">${t('history.questionLabel')}</span><blockquote data-user-content>${textHtml(record.question)}</blockquote></div><div class="history-result-block"><div class="history-result"><span>${original?.[1]||'—'}</span><i>→</i><span>${changed?.[1]||'—'}</span></div><h1>${title}</h1><p>${movingText}</p></div></section><section class="history-line-section"><div class="history-section-heading"><span>${t('history.linesLabel')}</span><small>${t('history.linesHint')}</small></div><div class="history-lines">${record.lines.map((line,index)=>`<div><b>${positions[index]}</b><span>${line.value===6?'⚋ ×':line.value===9?'⚊ ○':line.value===8?'⚋':'⚊'}</span><small>${lineName(line.value)}</small></div>`).reverse().join('')}</div></section><div class="history-interpretation-anchor"></div><section class="history-note"><label for="historyNote">${t('history.noteLabel')}</label><textarea id="historyNote" rows="5" maxlength="2000" placeholder="${t('history.notePlaceholder')}">${textHtml(record.note||'')}</textarea><small id="historyNoteStatus">${t('history.localOnly')}</small></section><div class="history-detail-actions"><button type="button" class="secondary-button" data-history-hex="${record.originalIndex}">${t('history.openHex')}</button><button type="button" class="primary-button" id="saveHistoryNote">${t('history.saveNote')}</button><button type="button" class="danger-button" id="deleteHistory">${t('history.delete')}</button></div>`;
-  detail.querySelector('[data-history-back]')?.addEventListener('click',()=>{historySelectedId='';history.replaceState(null,'','#history');renderHistory();window.scrollTo({top:0,behavior:'smooth'})});
+  detail.querySelector('[data-history-back]')?.addEventListener('click',()=>{void transitionHistory('back',()=>{historySelectedId='';previousRouteShape='history-index';history.replaceState(null,'','#history');renderHistory();window.scrollTo({top:0,behavior:'smooth'})}).then(()=>{const item=$$('.history-item').find(candidate=>candidate.dataset.historyId===historyReturnFocusId);item?.querySelector('.history-item-open')?.focus()})});
   detail.querySelector('[data-history-hex]')?.addEventListener('click',event=>{selectedHex=Number(event.currentTarget.dataset.historyHex)||0;setMobileDetail('hexagrams',true);nav('hexagrams');renderHexList();renderHexDetail()});
   $('#saveHistoryNote')?.addEventListener('click',()=>{if(updateHistoryNote(record.id,$('#historyNote').value))$('#historyNoteStatus').textContent=t('common.saved')});
   $('#deleteHistory')?.addEventListener('click',()=>{if(!confirm(t('history.deleteConfirm')))return;persistHistory(loadHistory().filter(item=>item.id!==record.id));syncCloudDelete(record.id);historySelectedId='';history.replaceState(null,'','#history');renderHistory();renderBackupReminder();showNotice(t('history.deleted'))});
@@ -835,6 +870,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   restoreAccountSession();
 });
 window.addEventListener('hashchange',applyRoute);
+document.addEventListener('click',event=>{
+  const back=event.target.closest?.('[data-mobile-back="hexagrams"]');
+  if(!back||innerWidth>680)return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  void transitionHexDetail('back',()=>{setMobileDetail('hexagrams',false);previousRouteShape='hex-list';history.replaceState(null,'','#hexagrams');window.scrollTo({top:0,behavior:'smooth'})}).then(()=>$$('.hex-row').find(row=>Number(row.dataset.index)===selectedHex)?.focus());
+},true);
 window.addEventListener('online',()=>{if(accountUser){setSyncState('idle');flushSyncQueue()}});
 document.addEventListener('DOMContentLoaded',()=>{if(!castState.confirmed)return;$('#questionFeedback').textContent='问题已锁定，当前仪式进度已保存在本机。';$('#questionFeedback').className='valid';if(castState.prepared)paintStalks('taijiStalks',1,'discarded')});
 

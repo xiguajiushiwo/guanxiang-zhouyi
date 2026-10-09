@@ -38,6 +38,7 @@ for(const slug of expected){
   const html=await readFile(new URL(`./${slug}.html`,import.meta.url),'utf8');
   assert.match(html,new RegExp(`<body[^>]*data-info-page="${slug}"`));
   assert.match(html,/href="\.\/info\.css/);
+  assert.match(html,/href="\.\/page-transition\.css/);
   assert.match(html,/src="\.\/info\.js/);
   assert.match(html,/data-info-title/);
   assert.match(html,/data-info-socials/);
@@ -60,17 +61,20 @@ const [infoScript,infoStyles,buildSource,workerSource]=await Promise.all([
   readFile(new URL('./service-worker.js',import.meta.url),'utf8'),
 ]);
 assert.match(infoScript,/INFO_PAGES/);
+assert.match(infoScript,/import \{[^}]*installPageTransitions[^}]*\} from '\.\/page-transition\.mjs'/);
+assert.match(infoScript,/installPageTransitions\(\)/);
 assert.match(infoScript,/data-info-description/);
 assert.match(infoScript,/aria-current/);
 assert.match(infoScript,/document\.documentElement\.dir/);
 assert.match(infoStyles,/@media\(max-width:390px\)/);
 assert.match(infoStyles,/@media\(prefers-reduced-motion:reduce\)/);
+assert.match(infoStyles,/\.info-language-options:not\(\[hidden\]\)/);
 assert.doesNotMatch(infoStyles,/gradient\(/);
-for(const file of [...expected.map(slug=>`${slug}.html`),'info.css','info.js','info-content.mjs']){
+for(const file of [...expected.map(slug=>`${slug}.html`),'info.css','info.js','info-content.mjs','page-transition.css','page-transition.mjs']){
   assert.ok(buildSource.includes(`'${file}'`),`build is missing ${file}`);
   assert.ok(workerSource.includes(`'./${file}'`),`service worker is missing ${file}`);
 }
-assert.match(workerSource,/guanxiang-shell-v56/);
+assert.match(workerSource,/guanxiang-shell-v57/);
 assert.match(workerSource,/STATIC_PAGE_FALLBACKS/);
 
 console.log('Information page metadata and translations passed.');

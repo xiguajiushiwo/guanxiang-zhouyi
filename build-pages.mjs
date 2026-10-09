@@ -7,8 +7,8 @@ if(path.dirname(output)!==root||path.basename(output)!=='dist')throw new Error('
 
 const files=[
   'index.html','auth.html','support.html','changelog.html','pro.html','disclaimer.html','privacy.html','feedback.html','report.html',
-  'styles.css','auth.css','info.css','landing-v2.css','landing-rich.css','landing-details.css',
-  'app.js','auth.js','i18n.mjs','hexagram-i18n.mjs','hexagram-catalog.mjs','daily-hexagram.mjs','yarrow-core.mjs',
+  'styles.css','auth.css','info.css','page-transition.css','landing-v2.css','landing-rich.css','landing-details.css',
+  'app.js','auth.js','page-transition.mjs','i18n.mjs','hexagram-i18n.mjs','hexagram-catalog.mjs','daily-hexagram.mjs','yarrow-core.mjs',
   'reading-rules.mjs','interpretation.mjs','ai-reading.mjs','ai-sources.mjs','derived-hexagrams.mjs',
   'liuyao-core.mjs','liuyao-rules.mjs','sexagenary.mjs',
   'study-storage.mjs','storage.mjs','account-sync.mjs','info-content.mjs','html-safety.mjs','service-worker-update.mjs',

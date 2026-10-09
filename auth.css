@@ -96,3 +96,6 @@ button,a{touch-action:manipulation}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 .auth-support-link{min-height:36px;display:inline-flex;align-items:center;color:var(--muted);text-underline-offset:4px}.auth-support-link:hover{color:var(--accent)}.auth-support-link:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 @media(max-width:760px){.auth-support-link{min-height:44px}}
+@keyframes auth-menu-enter{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.auth-language-options:not([hidden]){animation:auth-menu-enter 180ms cubic-bezier(.22,.75,.25,1) both}
+@media(prefers-reduced-motion:reduce){.auth-language-options:not([hidden]){animation-duration:.001ms!important}}

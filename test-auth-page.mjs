@@ -12,6 +12,7 @@ const [html,script,styles,index,app,build,worker]=await Promise.all([
 ]);
 
 assert.match(html,/id="authForm"/);
+assert.match(html,/page-transition\.css/);
 assert.match(html,/data-auth-mode="login"/);
 assert.match(html,/data-auth-mode="register"/);
 assert.match(html,/data-guest/);
@@ -30,6 +31,10 @@ assert.match(app,/navigateToAuth\(AUTH_ENTRY\)/);
 assert.match(app,/const entry=new URLSearchParams\(location\.search\)\.get\('entry'\)/);
 assert.match(app,/if\(entry==='account'\|\|entry==='guest'\)/);
 assert.match(script,/createAccountClient/);
+assert.match(script,/import \{[^}]*installPageTransitions[^}]*\} from '\.\/page-transition\.mjs'/);
+assert.match(script,/installPageTransitions\(\)/);
+assert.match(script,/navigateWithTransition\(APP_ENTRY\)/);
+assert.match(script,/runViewTransition\(\(\)=>\{mode=button\.dataset\.authMode;render\(\)\}/);
 assert.match(script,/\.register\(email,password\)/);
 assert.match(script,/\.login\(email,password\)/);
 assert.match(script,/\.logout\(\)/);
@@ -49,12 +54,15 @@ assert.match(styles,/@media\(max-width:760px\)/);
 assert.match(styles,/@media\(min-width:761px\)\{\.auth-emblem\{position:relative\}/);
 assert.match(styles,/\.auth-emblem-core\{position:absolute;top:50%;left:50%;transform:translate\(-50%,-50%\)\}/);
 assert.match(styles,/\.auth-emblem-copy\{position:absolute;top:calc\(50% \+ clamp\(115px,min\(15\.5vw,23vh\),170px\) \+ 15px\);left:50%;transform:translateX\(-50%\);margin-top:0\}/);
+assert.match(styles,/\.auth-language-options:not\(\[hidden\]\)/);
 assert.match(build,/'auth\.html'/);
 assert.match(build,/'auth\.css'/);
 assert.match(build,/'auth\.js'/);
 assert.match(worker,/'\.\/auth\.html'/);
 assert.match(worker,/'\.\/auth\.css'/);
 assert.match(worker,/'\.\/auth\.js'/);
-assert.match(worker,/guanxiang-shell-v56/);
+assert.match(worker,/guanxiang-shell-v57/);
+assert.match(build,/'page-transition\.css'/);
+assert.match(build,/'page-transition\.mjs'/);
 
 console.log('Standalone account page checks passed.');

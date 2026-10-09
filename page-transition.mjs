@@ -36,7 +36,11 @@ export function shouldInterceptLink(event, anchor, currentUrl = globalThis.locat
     || event.altKey
   ) return false;
 
-  if ((anchor.target && anchor.target !== '_self') || anchor.download) return false;
+  if (
+    (anchor.target && anchor.target !== '_self')
+    || anchor.download
+    || anchor.hasAttribute?.('data-transition-manual')
+  ) return false;
 
   const current = new URL(currentUrl);
   const target = new URL(anchor.href, current);

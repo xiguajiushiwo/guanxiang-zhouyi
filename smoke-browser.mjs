@@ -193,8 +193,10 @@ assert.ok(result.related >= 2);
 assert.equal(result.history, 1);
 assert.equal(result.note, '浏览器冒烟测试札记');
 
+await command('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] });
 await evaluate(`location.hash='#history'; true`);
 await waitFor(`document.querySelectorAll('#historyList .history-item').length===1 && !document.querySelector('#historyIndexPage').hidden && document.querySelector('#historyRecordPage').hidden`);
+await waitFor(`!document.documentElement.dataset.transition`);
 const journalIndex = await evaluate(`({
   items:document.querySelectorAll('#historyList .history-item').length,
   detailVisible:document.querySelector('#historyRecordPage').getBoundingClientRect().height>0,
@@ -207,8 +209,10 @@ assert.equal(journalIndex.indexVisible, true);
 assert.ok(journalIndex.recordId);
 await evaluate(`const search=document.querySelector('#historySearch');search.value='浏览器冒烟';search.dispatchEvent(new Event('input',{bubbles:true}));true`);
 await waitFor(`document.querySelectorAll('#historyList .history-item').length===1`);
-await evaluate(`document.querySelector('#historyList .history-item').click(); true`);
+const historyForward=await evaluate(`(()=>{document.querySelector('#historyList .history-item').click();return document.documentElement.dataset.transition||''})()`);
+assert.equal(historyForward,'forward');
 await waitFor(`location.hash.startsWith('#history/') && document.querySelector('#historyDetail #historyNote') && document.querySelector('#historyIndexPage').hidden && !document.querySelector('#historyRecordPage').hidden`);
+await waitFor(`!document.documentElement.dataset.transition`);
 await waitFor(`document.querySelector('#historyDetail .ai-interpretation')?.textContent.includes('先核实转折条件')`);
 const journal = await evaluate(`({
   route:location.hash,
@@ -229,11 +233,19 @@ assert.ok(journal.detailWidth >= 800, 'desktop history detail should use a full 
 await evaluate(`document.querySelector('#saveHistoryNote').click();true`);
 await waitFor(`document.querySelector('#historyNoteStatus').textContent.includes('已保存')`);
 await evaluate(`history.back();true`);
+await waitFor(`document.documentElement.dataset.transition==='back'`);
 await waitFor(`location.hash==='#history' && !document.querySelector('#historyIndexPage').hidden && document.querySelector('#historyRecordPage').hidden`);
-await evaluate(`document.querySelector('#historyList .history-item').click();true`);
+await waitFor(`!document.documentElement.dataset.transition`);
+assert.equal(await evaluate(`document.activeElement?.classList.contains('history-item-open')`),true);
+const historyForwardAgain=await evaluate(`(()=>{document.querySelector('#historyList .history-item').click();return document.documentElement.dataset.transition||''})()`);
+assert.equal(historyForwardAgain,'forward');
 await waitFor(`location.hash.startsWith('#history/') && !document.querySelector('#historyRecordPage').hidden`);
-await evaluate(`document.querySelector('[data-history-back]').click();true`);
+await waitFor(`!document.documentElement.dataset.transition`);
+const historyBack=await evaluate(`(()=>{document.querySelector('[data-history-back]').click();return document.documentElement.dataset.transition||''})()`);
+assert.equal(historyBack,'back');
 await waitFor(`location.hash==='#history' && !document.querySelector('#historyIndexPage').hidden`);
+await waitFor(`!document.documentElement.dataset.transition`);
+assert.equal(await evaluate(`document.activeElement?.classList.contains('history-item-open')`),true);
 await evaluate(`location.hash='#history/not-a-real-record';true`);
 await waitFor(`location.hash==='#history' && !document.querySelector('#historyIndexPage').hidden && document.querySelectorAll('#historyList .history-item').length===1`);
 await evaluate(`location.hash='#history/${encodeURIComponent(journalIndex.recordId)}';true`);

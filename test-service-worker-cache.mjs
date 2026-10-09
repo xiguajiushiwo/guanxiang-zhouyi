@@ -3,6 +3,8 @@ import vm from 'node:vm';
 import { readFile } from 'node:fs/promises';
 
 const source=await readFile(new URL('./service-worker.js',import.meta.url),'utf8');
+assert.match(source,/\.\/page-transition\.css/);
+assert.match(source,/\.\/page-transition\.mjs/);
 const handlers={};
 const writes=[];
 let skipWaitingCalls=0,networkCalls=0,networkFails=false,cachedResponse=null;

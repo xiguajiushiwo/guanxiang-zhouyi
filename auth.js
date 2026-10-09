@@ -1,10 +1,13 @@
 import { AccountApiError, createAccountClient } from './account-sync.mjs';
 import { getLanguage, setLanguage, t, translateDom } from './i18n.mjs?v=20260921-auth2';
+import { installPageTransitions, navigateWithTransition, runViewTransition } from './page-transition.mjs';
 
 const $=selector=>document.querySelector(selector);
 const APP_ENTRY='./?entry=account#home';
 const ACCOUNT_MODE_KEY='guanxiang-account-mode-v1';
 let mode='login',user=null,busy=false,client=null;
+
+installPageTransitions();
 
 function language(){const value=getLanguage();return value==='fa'?'fa':value==='en'?'en':'zh-CN'}
 function createClient(){client=createAccountClient({language:language()});return client}
@@ -18,7 +21,7 @@ function accountError(error){
   }
   return t('auth.network');
 }
-function enterApp(){setAccountMode('account');location.assign(APP_ENTRY)}
+function enterApp(){setAccountMode('account');return navigateWithTransition(APP_ENTRY)}
 function renderLanguage(){
   $('[data-language-label]').textContent=t('language.label');
   document.querySelectorAll('[data-language]').forEach(button=>button.setAttribute('aria-checked',String(button.dataset.language===language())));
@@ -85,7 +88,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   setLanguage(getLanguage());
   render();
   $('#authForm').addEventListener('submit',submit);
-  document.querySelectorAll('[data-auth-mode]').forEach(button=>button.addEventListener('click',()=>{mode=button.dataset.authMode;render();$('#authForm').elements.email.focus()}));
+  document.querySelectorAll('[data-auth-mode]').forEach(button=>button.addEventListener('click',()=>{
+    if(button.dataset.authMode===mode)return;
+    void runViewTransition(()=>{mode=button.dataset.authMode;render()},{kind:'peer',root:document.documentElement});
+    $('#authForm').elements.email.focus();
+  }));
   $('[data-guest]').addEventListener('click',enterAsGuest);
   $('[data-continue]').addEventListener('click',enterApp);
   $('[data-logout]').addEventListener('click',logout);

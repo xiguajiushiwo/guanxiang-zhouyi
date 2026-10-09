@@ -130,6 +130,8 @@ assert.ok(Date.now()-exitStarted>=950,'cover exit animation should finish before
 const authDesktop = await evaluate(`({form:Boolean(document.querySelector('#authForm')),guest:Boolean(document.querySelector('[data-guest]')),appVisible:Boolean(document.querySelector('.app-shell'))})`);
 assert.equal(authDesktop.form && authDesktop.guest, true);
 assert.equal(authDesktop.appVisible, false, 'inner application must not flash before authentication');
+await sleep(350);
+assert.equal(await evaluate(`!document.documentElement.classList.contains('page-is-leaving')&&!document.documentElement.classList.contains('page-is-entering')`),true);
 await evaluate(`document.querySelector('[data-guest]').click();true`);
 await waitFor(`document.querySelector('#onboardingDialog')?.open`);
 await waitFor(`document.querySelector('#siteCover').hidden`);
@@ -146,6 +148,28 @@ assert.equal(entered.appInert || entered.appHidden, false);
 assert.equal(entered.activeClass, true);
 assert.equal(entered.onboardingOpen, true);
 assert.equal(entered.activeElement, 'onboardingStart');
+
+await evaluate(`document.querySelector('#onboardingStart').click();true`);
+await waitFor(`!document.querySelector('#onboardingDialog').open`);
+await waitFor(`document.querySelectorAll('#hexList .hex-row').length>0`);
+const peerState=await evaluate(`(()=>{document.querySelector('.primary-nav [data-view="hexagrams"]').click();return document.documentElement.dataset.transition||''})()`);
+assert.equal(peerState,'peer');
+await waitFor(`document.querySelector('#view-hexagrams').classList.contains('active')&&!document.documentElement.dataset.transition`);
+
+const fallbackState=await evaluate(`(()=>{Object.defineProperty(Document.prototype,'startViewTransition',{configurable:true,value:undefined});document.querySelector('.primary-nav [data-view="home"]').click();return {kind:document.documentElement.dataset.transition||'',fallback:document.documentElement.classList.contains('transition-fallback-out')}})()`);
+assert.deepEqual(fallbackState,{kind:'peer',fallback:true});
+await waitFor(`document.querySelector('#view-home').classList.contains('active')&&!document.documentElement.dataset.transition`);
+
+await setViewport(390,844,true);
+await evaluate(`document.querySelector('.primary-nav [data-view="hexagrams"]').click();true`);
+await waitFor(`document.querySelector('#view-hexagrams').classList.contains('active')&&!document.documentElement.dataset.transition`);
+const hexForward=await evaluate(`(()=>{document.querySelector('#hexList .hex-row').click();return document.documentElement.dataset.transition||''})()`);
+assert.equal(hexForward,'forward');
+await waitFor(`document.querySelector('#view-hexagrams').classList.contains('mobile-detail-open')&&!document.documentElement.dataset.transition`);
+const hexBack=await evaluate(`(()=>{document.querySelector('[data-mobile-back="hexagrams"]').click();return document.documentElement.dataset.transition||''})()`);
+assert.equal(hexBack,'back');
+await waitFor(`!document.querySelector('#view-hexagrams').classList.contains('mobile-detail-open')&&!document.documentElement.dataset.transition`);
+assert.equal(await evaluate(`document.activeElement?.classList.contains('hex-row')&&document.documentElement.scrollWidth<=innerWidth`),true);
 
 await setViewport(390, 844, true);
 await navigate();

@@ -7,6 +7,7 @@
     <link rel="canonical" href="./" />
     <link rel="manifest" href="manifest.webmanifest" />
     <title>观象 · 周易研读</title>
+    <link rel="stylesheet" href="page-transition.css?v=20261009-motion1" />
     <link rel="stylesheet" href="styles.css?v=20260922-account-scope1" />
     <link rel="stylesheet" href="landing-v2.css?v=20261009-cover-exit" />
     <link rel="stylesheet" href="landing-rich.css?v=20260914-1" />
@@ -42,7 +43,7 @@
         </div>
         <footer class="cover-footer">
           <p>六十四卦 · 十翼 · 易理 · 筮法</p>
-          <a class="cover-enter" id="enterSite" href="./auth?v=20260922-auth7">进入观象</a>
+          <a class="cover-enter" id="enterSite" href="./auth?v=20260922-auth7" data-transition-manual>进入观象</a>
           <div class="cover-footnote"><small>循象而入，因变而明</small><a class="cover-support-link" href="./support" data-i18n="info.supportEntry">支持与关于</a></div>
         </footer>
       </div>
@@ -83,7 +84,7 @@
         </div>
       </aside>
 
-      <main class="main-content" tabindex="-1">
+      <main class="main-content" data-transition-scope tabindex="-1">
         <header class="topbar">
           <div class="breadcrumb"><span>周易</span><i>/</i><strong id="breadcrumbCurrent">研读总览</strong></div>
           <div class="topbar-actions"><div class="language-menu" id="languageToggle" data-language-menu><button type="button" class="language-menu-trigger" data-language-menu-trigger aria-haspopup="menu" aria-expanded="false" aria-label="Language"><span data-language-menu-label>Language</span><span class="language-menu-chevron" aria-hidden="true">⌄</span></button><div class="language-menu-options" role="menu" hidden><button type="button" role="menuitemradio" aria-checked="true" data-language="zh-CN">中文</button><button type="button" role="menuitemradio" aria-checked="false" data-language="en">English</button><button type="button" role="menuitemradio" aria-checked="false" data-language="fa">فارسی</button></div></div><button class="icon-button" id="themeToggle" title="切换阅读氛围" aria-label="切换阅读氛围">◐</button><button class="profile-button" id="profileButton" title="登录" aria-label="登录"><span class="account-avatar" aria-hidden="true">知</span><span class="account-label" data-account-label>登录</span></button></div>

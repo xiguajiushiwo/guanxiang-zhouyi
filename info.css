@@ -71,3 +71,6 @@ a{color:inherit}
 }
 
 @media(prefers-reduced-motion:reduce){.info-page *{scroll-behavior:auto!important;transition:none!important}}
+@keyframes info-menu-enter{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.info-language-options:not([hidden]){animation:info-menu-enter 180ms cubic-bezier(.22,.75,.25,1) both}
+@media(prefers-reduced-motion:reduce){.info-language-options:not([hidden]){animation-duration:.001ms!important}}

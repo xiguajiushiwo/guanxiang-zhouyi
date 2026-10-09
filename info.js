@@ -1,8 +1,11 @@
 import { INFO_PAGES, getInfoPage } from './info-content.mjs';
 import { getLanguage, languageLabel, setLanguage, t, translateDom } from './i18n.mjs';
+import { installPageTransitions } from './page-transition.mjs';
 
 const $=selector=>document.querySelector(selector);
 const page=getInfoPage(document.body.dataset.infoPage);
+
+installPageTransitions();
 
 function renderInfoPage(){
   const language=getLanguage();
