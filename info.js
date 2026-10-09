@@ -15,7 +15,7 @@ function renderInfoPage(){
   translateDom(document);
   document.querySelectorAll('[data-info-key]').forEach(link=>{
     link.querySelector('[data-info-key-title]').textContent=t(`info.${link.dataset.infoKey}.title`);
-    link.querySelector('[data-info-key-description]').textContent=t(`info.${link.dataset.infoKey}.description`);
+    link.toggleAttribute('aria-current',link.dataset.infoKey===page.key);
   });
   document.querySelectorAll('[data-social-name]').forEach(label=>{label.textContent=t(`info.${label.dataset.socialName}`)});
   document.querySelectorAll('[data-social-unavailable] small').forEach(label=>{label.textContent=t('info.unavailable')});

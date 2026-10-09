@@ -37,15 +37,17 @@ await setViewport(1440,900,false);
 await navigate('/support');
 const desktop=await evaluate(`({
   page:document.body.dataset.infoPage,
-  directoryCount:document.querySelectorAll('[data-info-directory] a').length,
-  descriptions:[...document.querySelectorAll('[data-info-key-description]')].every(item=>item.textContent.trim().length>8),
+  navCount:document.querySelectorAll('[data-info-shell-nav] a').length,
+  current:document.querySelector('[data-info-shell-nav] [aria-current="page"]')?.getAttribute('href'),
+  placeholder:document.querySelector('.info-placeholder strong')?.textContent,
   github:document.querySelector('[data-social="github"]')?.href,
   unavailable:document.querySelectorAll('[data-social-unavailable]').length,
   overflow:document.documentElement.scrollWidth>innerWidth
 })`);
 assert.equal(desktop.page,'support');
-assert.equal(desktop.directoryCount,6);
-assert.equal(desktop.descriptions,true);
+assert.equal(desktop.navCount,7);
+assert.equal(desktop.current,'./support');
+assert.equal(desktop.placeholder,'即将开放');
 assert.equal(desktop.github,'https://github.com/xiguajiushiwo/guanxiang-zhouyi');
 assert.equal(desktop.unavailable,3);
 assert.equal(desktop.overflow,false);
@@ -54,13 +56,13 @@ await capture('output/playwright/info-desktop.png');
 await setViewport(390,844,true);
 await navigate('/privacy');
 const mobile=await evaluate(`(()=>{
-  const targets=[...document.querySelectorAll('.info-placeholder a,[data-info-language-trigger]')];
-  return {overflow:document.documentElement.scrollWidth>innerWidth,minTarget:Math.min(...targets.map(item=>item.getBoundingClientRect().height)),title:document.querySelector('[data-info-title]').textContent,back:document.querySelector('.info-placeholder a')?.textContent};
+  const targets=[...document.querySelectorAll('.info-shell-link,.info-footer-home,[data-info-language-trigger]')];
+  return {overflow:document.documentElement.scrollWidth>innerWidth,minTarget:Math.min(...targets.map(item=>item.getBoundingClientRect().height)),title:document.querySelector('[data-info-title]').textContent,back:document.querySelector('.info-footer-home')?.textContent};
 })()`);
 assert.equal(mobile.overflow,false);
 assert.ok(mobile.minTarget>=44);
 assert.equal(mobile.title,'隐私');
-assert.equal(mobile.back,'返回支持中心');
+assert.equal(mobile.back.replace(/\s+/g,' '),'← 返回首页');
 await capture('output/playwright/info-mobile.png');
 
 await setViewport(320,700,true);
@@ -68,10 +70,10 @@ await navigate('/feedback');
 assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
 await evaluate(`document.querySelector('[data-info-language-trigger]').click();document.querySelector('[data-language="fa"]').click();true`);
 await waitFor(`document.documentElement.lang==='fa'&&document.documentElement.dir==='rtl'`);
-const persian=await evaluate(`({title:document.querySelector('[data-info-title]').textContent,description:document.querySelector('[data-info-description]').textContent,back:document.querySelector('.info-placeholder a').textContent,overflow:document.documentElement.scrollWidth>innerWidth})`);
+const persian=await evaluate(`({title:document.querySelector('[data-info-title]').textContent,description:document.querySelector('[data-info-description]').textContent,back:document.querySelector('.info-footer-home').textContent,overflow:document.documentElement.scrollWidth>innerWidth})`);
 assert.equal(persian.title,'بازخورد');
 assert.ok(persian.description.length>10);
-assert.equal(persian.back,'بازگشت به مرکز پشتیبانی');
+assert.equal(persian.back.replace(/\s+/g,' '),'← بازگشت به صفحه اصلی');
 assert.equal(persian.overflow,false);
 
 await evaluate(`document.querySelector('[data-info-language-trigger]').click();document.querySelector('[data-language="en"]').click();true`);
@@ -81,10 +83,10 @@ await navigate('/support');
 const english=await evaluate(`({
   brand:document.querySelector('.info-brand b').textContent,
   firstTitle:document.querySelector('[data-info-key-title]').textContent,
-  firstDescription:document.querySelector('[data-info-key-description]').textContent,
+  section:document.querySelector('.info-section-label').textContent,
   social:document.querySelector('[data-social-name="xiaohongshu"]').textContent
 })`);
-assert.deepEqual(english,{brand:'Guanxiang',firstTitle:'Changelog',firstDescription:'See new features and changes to Guanxiang.',social:'Xiaohongshu'});
+assert.deepEqual(english,{brand:'Guanxiang',firstTitle:'Support Center',section:'Information and support',social:'Xiaohongshu'});
 
 socket.close();
 console.log(JSON.stringify({desktop,mobile,persian,english},null,2));
