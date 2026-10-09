@@ -17,6 +17,7 @@ assert.match(html,/data-auth-mode="register"/);
 assert.match(html,/data-guest/);
 assert.match(html,/data-guest href="\.\/\?entry=guest#home"/);
 assert.match(html,/data-account-id/);
+assert.match(html,/class="auth-support-link"[^>]*href="\.\/support"/);
 assert.match(html,/class="auth-emblem-core"/);
 assert.equal((html.match(/class="auth-trigrams"/g)||[]).length,1);
 assert.equal((html.match(/data-language="(?:zh-CN|en|fa)"/g)||[]).length,3);
@@ -54,6 +55,6 @@ assert.match(build,/'auth\.js'/);
 assert.match(worker,/'\.\/auth\.html'/);
 assert.match(worker,/'\.\/auth\.css'/);
 assert.match(worker,/'\.\/auth\.js'/);
-assert.match(worker,/guanxiang-shell-v52/);
+assert.match(worker,/guanxiang-shell-v53/);
 
 console.log('Standalone account page checks passed.');

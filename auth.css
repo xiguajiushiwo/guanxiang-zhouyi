@@ -94,3 +94,5 @@ button,a{touch-action:manipulation}
 @media(max-width:380px){.auth-masthead{gap:10px}.auth-brand small{display:none}.auth-language-trigger{padding:0 2px}.auth-main{padding-top:10px}.auth-panel-heading h1{font-size:29px}}
 @media(max-width:760px) and (max-height:700px){.auth-main{padding:5px 0 9px}.auth-emblem{min-height:100px;margin-bottom:4px}.auth-emblem-core{width:72px}.auth-emblem-core::before{inset:-5px}.auth-trigrams span{width:12px;height:12px}.auth-trigrams b{font-size:8px}.auth-hexagram{gap:3px}.auth-hexagram i{height:2px}.auth-emblem-copy{margin-top:8px}.auth-footer{display:none}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+.auth-support-link{min-height:36px;display:inline-flex;align-items:center;color:var(--muted);text-underline-offset:4px}.auth-support-link:hover{color:var(--accent)}.auth-support-link:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(max-width:760px){.auth-support-link{min-height:44px}}

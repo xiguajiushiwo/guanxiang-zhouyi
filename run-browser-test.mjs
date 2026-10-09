@@ -7,7 +7,7 @@ import { join } from 'node:path';
 
 const siteUrl = 'http://127.0.0.1:4175/';
 const browserTest = process.argv[2] || 'smoke-browser.mjs';
-if (!['smoke-browser.mjs', 'test-landing-browser.mjs'].includes(browserTest)) throw new Error('Unknown browser test script.');
+if (!['smoke-browser.mjs', 'test-landing-browser.mjs', 'test-info-browser.mjs'].includes(browserTest)) throw new Error('Unknown browser test script.');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function availablePort() {

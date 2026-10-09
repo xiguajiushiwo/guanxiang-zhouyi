@@ -268,6 +268,22 @@ Object.assign(DICTIONARY.fa, {
   'liuyao.unavailable':'جدول شش‌خطی در دسترس نیست','liuyao.unavailableHint':'تفسیر متون کلاسیک همچنان در دسترس است.','liuyao.history':'ناجیای شش‌خطی · جدول ذخیره‌شده','liuyao.historyTitle':'بازسازی‌شده از زمان فال','liuyao.legacyMissing':'این رکورد قدیمی پیش از افزوده‌شدن جدول شش‌خطی ساخته شده است؛ تفسیر کلاسیک آن کامل مانده است.'
 });
 
+Object.assign(DICTIONARY['zh-CN'], {
+  'info.support.title':'支持中心','info.changelog.title':'更新日志','info.pro.title':'专业版','info.disclaimer.title':'免责声明','info.privacy.title':'隐私','info.feedback.title':'反馈留言','info.report.title':'举报',
+  'info.support.browserTitle':'支持中心 · 观象','info.changelog.browserTitle':'更新日志 · 观象','info.pro.browserTitle':'专业版 · 观象','info.disclaimer.browserTitle':'免责声明 · 观象','info.privacy.browserTitle':'隐私 · 观象','info.feedback.browserTitle':'反馈留言 · 观象','info.report.browserTitle':'举报 · 观象',
+  'info.comingSoon':'页面正在准备中','info.backHome':'返回首页','info.allPages':'信息与支持','info.socials':'关注观象','info.unavailable':'即将开放','info.supportEntry':'支持与关于','info.githubLabel':'在 GitHub 查看观象项目','info.homeLabel':'返回观象首页','info.languageLabel':'选择语言'
+});
+Object.assign(DICTIONARY.en, {
+  'info.support.title':'Support Center','info.changelog.title':'Changelog','info.pro.title':'Pro Edition','info.disclaimer.title':'Disclaimer','info.privacy.title':'Privacy','info.feedback.title':'Feedback','info.report.title':'Report',
+  'info.support.browserTitle':'Support Center · Guanxiang','info.changelog.browserTitle':'Changelog · Guanxiang','info.pro.browserTitle':'Pro Edition · Guanxiang','info.disclaimer.browserTitle':'Disclaimer · Guanxiang','info.privacy.browserTitle':'Privacy · Guanxiang','info.feedback.browserTitle':'Feedback · Guanxiang','info.report.browserTitle':'Report · Guanxiang',
+  'info.comingSoon':'This page is being prepared','info.backHome':'Back to home','info.allPages':'Information & Support','info.socials':'Follow Guanxiang','info.unavailable':'Coming soon','info.supportEntry':'Support & About','info.githubLabel':'View Guanxiang on GitHub','info.homeLabel':'Back to Guanxiang home','info.languageLabel':'Choose language'
+});
+Object.assign(DICTIONARY.fa, {
+  'info.support.title':'مرکز پشتیبانی','info.changelog.title':'گزارش تغییرات','info.pro.title':'نسخه حرفه‌ای','info.disclaimer.title':'سلب مسئولیت','info.privacy.title':'حریم خصوصی','info.feedback.title':'بازخورد','info.report.title':'گزارش',
+  'info.support.browserTitle':'مرکز پشتیبانی · گوانشیانگ','info.changelog.browserTitle':'گزارش تغییرات · گوانشیانگ','info.pro.browserTitle':'نسخه حرفه‌ای · گوانشیانگ','info.disclaimer.browserTitle':'سلب مسئولیت · گوانشیانگ','info.privacy.browserTitle':'حریم خصوصی · گوانشیانگ','info.feedback.browserTitle':'بازخورد · گوانشیانگ','info.report.browserTitle':'گزارش · گوانشیانگ',
+  'info.comingSoon':'این صفحه در حال آماده‌سازی است','info.backHome':'بازگشت به صفحه اصلی','info.allPages':'اطلاعات و پشتیبانی','info.socials':'گوانشیانگ را دنبال کنید','info.unavailable':'به‌زودی','info.supportEntry':'پشتیبانی و درباره','info.githubLabel':'مشاهده پروژه گوانشیانگ در GitHub','info.homeLabel':'بازگشت به صفحه اصلی گوانشیانگ','info.languageLabel':'انتخاب زبان'
+});
+
 const TEXT_MAP = Object.fromEntries(Object.keys(DICTIONARY['zh-CN']).map(key => [DICTIONARY['zh-CN'][key], DICTIONARY.en[key]]));
 const PERSIAN_TEXT_MAP = Object.fromEntries(Object.keys(DICTIONARY['zh-CN']).map(key => [DICTIONARY['zh-CN'][key], DICTIONARY.fa[key] ?? DICTIONARY.en[key]]));
 let currentLanguage = 'zh-CN';

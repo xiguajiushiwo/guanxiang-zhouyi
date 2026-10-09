@@ -336,3 +336,13 @@ body.cover-active { overflow: hidden; }
   }
   .cover-line b { opacity: 1; transform: scaleX(1); }
 }
+
+.cover-footnote { justify-self: end; display: flex; align-items: center; gap: 18px; }
+.cover-support-link { min-height: 44px; display: inline-flex; align-items: center; color: var(--cover-muted); font: 10px/1.5 var(--sans); text-underline-offset: 4px; }
+.cover-support-link:hover { color: var(--cover-accent); }
+.cover-support-link:focus-visible { outline: 2px solid var(--cover-accent); outline-offset: 3px; }
+@media (max-width: 680px) {
+  .cover-footnote { justify-self: center; gap: 0; }
+  .cover-footnote small { display: none; }
+  .cover-support-link { min-height: 32px; margin-top: -2px; font-size: 10px; }
+}

@@ -9,6 +9,7 @@ import { MAX_BODY_BYTES } from './functions/_shared/reading-proxy.mjs';
 const root=await mkdtemp(join(tmpdir(),'zhouyi-liara-'));
 await writeFile(join(root,'index.html'),'<h1>INDEX</h1>');
 await writeFile(join(root,'auth.html'),'<h1>AUTH</h1>');
+await writeFile(join(root,'support.html'),'<h1>SUPPORT</h1>');
 await writeFile(join(root,'app.js'),'console.log("asset")');
 
 let forwarded;
@@ -40,6 +41,11 @@ try{
   assert.equal(auth.status,200);
   assert.equal(await auth.text(),'<h1>AUTH</h1>');
   assert.match(auth.headers.get('content-type'),/text\/html/);
+
+  const support=await fetch(`${origin}/support`);
+  assert.equal(support.status,200);
+  assert.equal(await support.text(),'<h1>SUPPORT</h1>');
+  assert.match(support.headers.get('content-type'),/text\/html/);
 
   const asset=await fetch(`${origin}/app.js`);
   assert.equal(asset.status,200);

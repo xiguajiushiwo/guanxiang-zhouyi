@@ -42,4 +42,18 @@ cachedResponse=response('cached');
 handlers.fetch({request,respondWith:value=>{pending=value}});
 assert.equal((await pending).source,'cached','offline navigation should fall back to cache');
 
+cachedResponse=null;
+const routeLookups=[];
+caches.match=async request=>{
+  routeLookups.push(request);
+  return typeof request==='string'?response(request):null;
+};
+for(const [path,fallback] of [['/privacy','./privacy.html'],['/support','./support.html'],['/auth','./auth.html'],['/unknown','./index.html']]){
+  routeLookups.length=0;
+  const routeRequest={method:'GET',mode:'navigate',url:`https://example.com${path}`};
+  handlers.fetch({request:routeRequest,respondWith:value=>{pending=value}});
+  assert.equal((await pending).source,fallback,`${path} should use its own offline document`);
+  assert.equal(routeLookups.at(-1),fallback);
+}
+
 console.log('Service worker navigation cache strategy passed.');

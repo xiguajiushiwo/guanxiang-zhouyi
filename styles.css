@@ -570,3 +570,5 @@
 .sync-status.failed::before{background:var(--accent)}
 .sync-status .text-button{margin-left:auto}
 @keyframes syncPulse{50%{opacity:.35;transform:scale(.75)}}
+.sidebar-support-link{min-height:36px;display:inline-flex;align-items:center;margin:0 7px 5px;color:var(--muted);font-size:10px;text-underline-offset:4px}.sidebar-support-link:hover{color:var(--accent)}.mobile-support-link{display:none}
+@media(max-width:680px){.sidebar>.compact .mobile-support-link{display:flex;text-decoration:none}}
