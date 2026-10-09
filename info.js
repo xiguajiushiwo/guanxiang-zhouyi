@@ -10,12 +10,14 @@ function renderInfoPage(){
   document.documentElement.dir=language==='fa'?'rtl':'ltr';
   document.title=t(`info.${page.key}.browserTitle`);
   $('[data-info-title]').textContent=t(`info.${page.key}.title`);
+  $('[data-info-description]').textContent=t(`info.${page.key}.description`);
   $('[data-language-label]').textContent=languageLabel(language);
   translateDom(document);
   document.querySelectorAll('[data-info-key]').forEach(link=>{
-    link.querySelector('b').textContent=t(`info.${link.dataset.infoKey}.title`);
-    link.toggleAttribute('aria-current',link.dataset.infoKey===page.key);
+    link.querySelector('[data-info-key-title]').textContent=t(`info.${link.dataset.infoKey}.title`);
+    link.querySelector('[data-info-key-description]').textContent=t(`info.${link.dataset.infoKey}.description`);
   });
+  document.querySelectorAll('[data-social-name]').forEach(label=>{label.textContent=t(`info.${label.dataset.socialName}`)});
   document.querySelectorAll('[data-social-unavailable] small').forEach(label=>{label.textContent=t('info.unavailable')});
   document.querySelectorAll('[data-language]').forEach(button=>button.setAttribute('aria-checked',String(button.dataset.language===language)));
 }

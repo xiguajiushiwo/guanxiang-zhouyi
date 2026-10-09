@@ -1,11 +1,11 @@
 export const INFO_PAGES=Object.freeze([
-  {slug:'support',key:'support',path:'./support',mark:'?'},
-  {slug:'changelog',key:'changelog',path:'./changelog',mark:'变'},
-  {slug:'pro',key:'pro',path:'./pro',mark:'专'},
-  {slug:'disclaimer',key:'disclaimer',path:'./disclaimer',mark:'界'},
-  {slug:'privacy',key:'privacy',path:'./privacy',mark:'隐'},
-  {slug:'feedback',key:'feedback',path:'./feedback',mark:'言'},
-  {slug:'report',key:'report',path:'./report',mark:'举'},
+  {slug:'support',key:'support',path:'./support'},
+  {slug:'changelog',key:'changelog',path:'./changelog'},
+  {slug:'pro',key:'pro',path:'./pro'},
+  {slug:'disclaimer',key:'disclaimer',path:'./disclaimer'},
+  {slug:'privacy',key:'privacy',path:'./privacy'},
+  {slug:'feedback',key:'feedback',path:'./feedback'},
+  {slug:'report',key:'report',path:'./report'},
 ]);
 
 export const INFO_SOCIALS=Object.freeze([

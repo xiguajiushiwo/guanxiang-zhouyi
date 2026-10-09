@@ -27,8 +27,9 @@ for(const language of ['zh-CN','en','fa']){
   for(const page of INFO_PAGES){
     assert.ok(dictionary[language][`info.${page.key}.title`]);
     assert.ok(dictionary[language][`info.${page.key}.browserTitle`]);
+    assert.ok(dictionary[language][`info.${page.key}.description`]);
   }
-  for(const key of ['info.comingSoon','info.backHome','info.allPages','info.socials','info.unavailable','info.supportEntry','info.githubLabel']){
+  for(const key of ['info.comingSoon','info.comingSoonHint','info.backHome','info.backSupport','info.allPages','info.socials','info.unavailable','info.supportEntry','info.githubLabel','info.openPage','info.brandName','info.xiaohongshu','info.douyin']){
     assert.ok(dictionary[language][key]);
   }
 }
@@ -39,15 +40,21 @@ for(const slug of expected){
   assert.match(html,/href="\.\/info\.css/);
   assert.match(html,/src="\.\/info\.js/);
   assert.match(html,/data-info-title/);
-  assert.match(html,/data-info-nav/);
   assert.match(html,/data-info-socials/);
-  assert.equal((html.match(/class="info-nav-link"/g)||[]).length,7);
-  assert.equal((html.match(/aria-current="page"/g)||[]).length,1);
   assert.match(html,/href="https:\/\/github\.com\/xiguajiushiwo\/guanxiang-zhouyi"/);
   assert.match(html,/target="_blank" rel="noopener noreferrer"/);
   assert.equal((html.match(/data-social-unavailable=/g)||[]).length,3);
-  assert.match(html,/页面正在准备中/);
   assert.match(html,/href="\.\/"/);
+  assert.doesNotMatch(html,/<span>[变专界隐言举?]<\/span>/);
+  if(slug==='support'){
+    assert.match(html,/data-info-directory/);
+    assert.equal((html.match(/class="info-directory-link"/g)||[]).length,6);
+    assert.doesNotMatch(html,/页面正在准备中/);
+  }else{
+    assert.match(html,/class="info-placeholder"/);
+    assert.match(html,/即将开放/);
+    assert.match(html,/href="\.\/support"/);
+  }
 }
 
 const [infoScript,infoStyles,buildSource,workerSource]=await Promise.all([
@@ -57,7 +64,7 @@ const [infoScript,infoStyles,buildSource,workerSource]=await Promise.all([
   readFile(new URL('./service-worker.js',import.meta.url),'utf8'),
 ]);
 assert.match(infoScript,/INFO_PAGES/);
-assert.match(infoScript,/aria-current/);
+assert.match(infoScript,/data-info-description/);
 assert.match(infoScript,/document\.documentElement\.dir/);
 assert.match(infoStyles,/@media\(max-width:390px\)/);
 assert.match(infoStyles,/@media\(prefers-reduced-motion:reduce\)/);
@@ -66,7 +73,7 @@ for(const file of [...expected.map(slug=>`${slug}.html`),'info.css','info.js','i
   assert.ok(buildSource.includes(`'${file}'`),`build is missing ${file}`);
   assert.ok(workerSource.includes(`'./${file}'`),`service worker is missing ${file}`);
 }
-assert.match(workerSource,/guanxiang-shell-v53/);
+assert.match(workerSource,/guanxiang-shell-v54/);
 assert.match(workerSource,/STATIC_PAGE_FALLBACKS/);
 
 console.log('Information page metadata and translations passed.');
