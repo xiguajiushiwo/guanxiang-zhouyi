@@ -70,7 +70,7 @@ for(const file of [...expected.map(slug=>`${slug}.html`),'info.css','info.js','i
   assert.ok(buildSource.includes(`'${file}'`),`build is missing ${file}`);
   assert.ok(workerSource.includes(`'./${file}'`),`service worker is missing ${file}`);
 }
-assert.match(workerSource,/guanxiang-shell-v55/);
+assert.match(workerSource,/guanxiang-shell-v56/);
 assert.match(workerSource,/STATIC_PAGE_FALLBACKS/);
 
 console.log('Information page metadata and translations passed.');

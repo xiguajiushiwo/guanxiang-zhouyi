@@ -80,6 +80,7 @@ await evaluate(`document.querySelector('[data-info-language-trigger]').click();d
 await waitFor(`document.documentElement.lang==='en'&&document.documentElement.dir==='ltr'`);
 assert.equal(await evaluate(`document.title`),'Feedback · Guanxiang');
 await navigate('/support');
+await waitFor(`document.documentElement.lang==='en'`);
 const english=await evaluate(`({
   brand:document.querySelector('.info-brand b').textContent,
   firstTitle:document.querySelector('[data-info-key-title]').textContent,

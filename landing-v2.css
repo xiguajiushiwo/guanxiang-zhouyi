@@ -265,6 +265,39 @@ body.cover-active { overflow: hidden; }
   to { opacity: 1; transform: scaleX(1); }
 }
 
+.site-cover.is-leaving { pointer-events: none; }
+.site-cover.is-leaving .cover-masthead,
+.site-cover.is-leaving .cover-title-wrap,
+.site-cover.is-leaving .cover-footer {
+  animation: cover-copy-depart 760ms cubic-bezier(.4, 0, .7, .2) forwards;
+}
+.site-cover.is-leaving .cover-footer { animation-delay: 120ms; }
+.site-cover.is-leaving .cover-line b {
+  animation: cover-line-depart 580ms cubic-bezier(.4, 0, .7, .2) forwards;
+}
+.site-cover.is-leaving .cover-line:nth-child(6) b { animation-delay: 40ms; }
+.site-cover.is-leaving .cover-line:nth-child(5) b { animation-delay: 100ms; }
+.site-cover.is-leaving .cover-line:nth-child(4) b { animation-delay: 160ms; }
+.site-cover.is-leaving .cover-line:nth-child(3) b { animation-delay: 220ms; }
+.site-cover.is-leaving .cover-line:nth-child(2) b { animation-delay: 280ms; }
+.site-cover.is-leaving .cover-line:nth-child(1) b { animation-delay: 340ms; }
+.site-cover.is-leaving .cover-disc,
+.site-cover.is-leaving .cover-hexagram::before,
+.site-cover.is-leaving .cover-hexagram::after {
+  animation: cover-symbol-depart 900ms ease forwards;
+}
+
+@keyframes cover-line-depart {
+  from { opacity: 1; transform: scaleX(1); }
+  to { opacity: 0; transform: scaleX(0); }
+}
+@keyframes cover-copy-depart {
+  to { opacity: 0; transform: translateY(-12px); }
+}
+@keyframes cover-symbol-depart {
+  to { opacity: 0; }
+}
+
 @media (max-width: 900px) {
   .site-cover::before { right: 5vw; width: min(40vw, 410px); }
   .site-cover::after { right: calc(5vw + 34px); width: min(31vw, 332px); }

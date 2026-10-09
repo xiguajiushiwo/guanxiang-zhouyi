@@ -112,8 +112,21 @@ assert.equal(desktop.onboardingOpen, false);
 assert.equal(desktop.activeId, 'enterSite');
 await capture('output/playwright/landing-desktop.png');
 
+const exitStarted=Date.now();
 await evaluate(`document.querySelector('#enterSite').click(); true`);
+await sleep(180);
+const leaving=await evaluate(`({
+  path:location.pathname,
+  active:document.querySelector('#siteCover').classList.contains('is-leaving'),
+  disabled:document.querySelector('#enterSite').getAttribute('aria-disabled')==='true',
+  lineOpacity:Number(getComputedStyle(document.querySelector('.cover-line:last-child b')).opacity)
+})`);
+assert.equal(leaving.path,'/');
+assert.equal(leaving.active&&leaving.disabled,true);
+assert.ok(leaving.lineOpacity<1,'hexagram lines should be visibly leaving before navigation');
+await capture('output/playwright/landing-leaving.png');
 await waitFor(`location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html')`);
+assert.ok(Date.now()-exitStarted>=950,'cover exit animation should finish before navigation');
 const authDesktop = await evaluate(`({form:Boolean(document.querySelector('#authForm')),guest:Boolean(document.querySelector('[data-guest]')),appVisible:Boolean(document.querySelector('.app-shell'))})`);
 assert.equal(authDesktop.form && authDesktop.guest, true);
 assert.equal(authDesktop.appVisible, false, 'inner application must not flash before authentication');

@@ -33,6 +33,7 @@ let currentView='home', selectedHex=0, selectedWing=0, selectedPrinciple=0, sele
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const TRIGRAM_GLYPHS={'天':'☰','泽':'☱','火':'☲','雷':'☳','风':'☴','水':'☵','山':'☶','地':'☷'};
 const AUTH_ENTRY='./auth?v=20260922-auth7';
+const COVER_EXIT_DURATION=1100;
 let dailyCoverTimer=0;
 let authNavigationPending=false;
 
@@ -55,6 +56,13 @@ async function navigateToAuth(href=AUTH_ENTRY){
   if(authNavigationPending)return;
   authNavigationPending=true;
   void clearLegacyAuthNavigationState();
+  const cover=$('#siteCover'),enter=$('#enterSite');
+  const reduced=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if(cover&&!cover.hidden&&!reduced){
+    cover.classList.add('is-leaving');
+    enter?.setAttribute('aria-disabled','true');
+    await new Promise(resolve=>setTimeout(resolve,COVER_EXIT_DURATION));
+  }
   location.assign(href);
 }
 
