@@ -351,11 +351,14 @@ const complete = await evaluate(`({
   gateBefore:${gateBefore},
   splitReady:document.querySelector('#splitPreview').textContent.includes('分界已定'),
   left:Number(document.querySelector('#leftPile strong').textContent),
-  right:Number(document.querySelector('#rightPile strong').textContent)
+  right:Number(document.querySelector('#rightPile strong').textContent),
+  stalkTotal:['leftStalks','rightStalks','hangStalks','discardStalks']
+    .reduce((sum,id)=>sum+document.querySelectorAll('#'+id+' .stalk').length,0)
 })`);
 assert.equal(complete.defaultMode, true);
 assert.equal(complete.gateBefore, true);
 assert.equal(complete.splitReady, true);
-assert.equal(complete.left + complete.right, 49);
+assert.ok(complete.left > 0 && complete.right > 0);
+assert.equal(complete.stalkTotal, 49);
 socket.close();
 console.log(JSON.stringify({ homeLayout, homeMobile, result, localReading, streaming, interruptedAi, journal, responsive, complete }, null, 2));
