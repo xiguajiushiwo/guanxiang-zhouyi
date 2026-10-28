@@ -1,4 +1,4 @@
-export const MAX_ACCOUNT_BODY_BYTES=96*1024;
+export const MAX_ACCOUNT_BODY_BYTES=4*1024*1024;
 
 const jsonError=(code,status)=>new Response(JSON.stringify({error:{code,message:'The account service is temporarily unavailable.'}}),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'}});
 

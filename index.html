@@ -11,7 +11,10 @@
     <link rel="stylesheet" href="landing-v2.css?v=20260922-flash1" />
     <link rel="stylesheet" href="landing-rich.css?v=20260914-1" />
     <link rel="stylesheet" href="landing-details.css?v=20260917-labels1" />
-  </head>
+    <link rel="stylesheet" href="reading-flow.css?v=20261028-emblem1" />
+    <link rel="stylesheet" href="./journal.css?v=20261028-journal1">
+    <link rel="stylesheet" href="./case-review.css?v=20261028-case1">
+</head>
   <body>
     <section class="site-cover" id="siteCover" aria-labelledby="coverTitle">
       <div class="cover-orbit" aria-hidden="true">
@@ -77,7 +80,7 @@
             <div class="quiet-dot"></div>
             <div><strong>今日静观</strong><p>不疾不徐，观其象而玩其辞。</p></div>
           </div>
-          <div class="sidebar-meta"><span id="calendarMeta">今日 · 顺时而观</span><br />内容与占问仅存于本机</div>
+          <div class="sidebar-meta"><span id="calendarMeta">今日 · 顺时而观</span><br /><span data-i18n="flow.storage">记录在本机保存，登录后同步</span></div>
         </div>
       </aside>
 
@@ -88,26 +91,42 @@
         </header>
         <div class="app-notice hidden" id="appNotice" role="alert"></div>
 
-        <section class="view active home-overview" id="view-home">
-          <div class="hero-grid home-hero">
-            <div class="hero-copy">
-              <div class="eyebrow"><span class="eyebrow-line"></span>观象 · 玩辞 · 穷理</div>
-              <h1>在变化之中，<br /><em>见不变之理。</em></h1>
-              <p data-i18n="home.descriptionCompact">研读六十四卦、十翼与易理，也以大衍筮法郑重回应一问。</p>
-              <div class="hero-actions"><button class="primary-button home-primary-action" data-view="divination"><span class="home-primary-copy"><strong data-i18n="home.start">开始一卜</strong><small data-i18n="home.startNote">完整仪式或快速演蓍</small></span><span class="home-primary-icon" aria-hidden="true">→</span></button><button class="text-button" data-view="hexagrams">浏览六十四卦 <span>↗</span></button></div>
-            </div>
-            <div class="hero-symbol" aria-label="太极与八卦图示">
-              <div class="sun-ring ring-one"></div><div class="sun-ring ring-two"></div>
-              <div class="taiji"><div class="taiji-half dark-half"></div><div class="taiji-half light-half"></div><div class="taiji-dot dot-dark"></div><div class="taiji-dot dot-light"></div></div>
-              <div class="symbol-caption"><span>天行健</span><span>地势坤</span></div>
-              <div class="quote-strip home-symbol-quote"><span class="quote-mark">“</span><blockquote>易，无思也，无为也，寂然不动，感而遂通天下之故。</blockquote><cite>《系辞上》</cite></div>
-            </div>
-          </div>
-          <nav class="home-paths" aria-label="研读入口" data-i18n-aria-label="home.pathsLabel">
-            <button class="home-path" data-view="hexagrams"><span class="home-path-glyph">䷀</span><span><strong data-i18n="nav.hexagrams">六十四卦</strong><small data-i18n="home.hexShort">卦辞、爻辞与象传</small></span><span class="home-path-arrow" aria-hidden="true">↗</span></button>
-            <button class="home-path" data-view="classics"><span class="home-path-glyph home-path-text-glyph">翼</span><span><strong data-i18n="nav.classics">十翼与易传</strong><small data-i18n="home.wingsShort">循篇次读完整传文</small></span><span class="home-path-arrow" aria-hidden="true">↗</span></button>
-            <button class="home-path" data-view="principles"><span class="home-path-glyph home-path-text-glyph">理</span><span><strong data-i18n="nav.principles">易理体系</strong><small data-i18n="home.principlesShort">象数、时位与变化</small></span><span class="home-path-arrow" aria-hidden="true">↗</span></button>
+        <section class="view active study-overview" id="view-home">
+          <header class="study-intro">
+            <span class="panel-kicker" data-i18n="flow.studyKicker">研读 · 周易</span>
+            <h1 data-i18n="flow.studyTitle">读《周易》，从一卦开始。</h1>
+            <p data-i18n="flow.studyDescription">先读经文，再看传文，慢慢理解变化的道理。</p>
+            <svg class="study-emblem" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+              <circle class="study-emblem-ring" cx="100" cy="100" r="93" />
+              <circle class="study-emblem-ring" cx="100" cy="100" r="75" />
+              <circle class="study-emblem-ink" cx="100" cy="100" r="46" />
+              <path class="study-emblem-paper" d="M100 54a46 46 0 0 0 0 92Z" />
+              <circle class="study-emblem-paper" cx="100" cy="77" r="23" />
+              <circle class="study-emblem-ink" cx="100" cy="123" r="23" />
+              <circle class="study-emblem-ink" cx="100" cy="77" r="5" />
+              <circle class="study-emblem-paper" cx="100" cy="123" r="5" />
+              <circle class="study-emblem-mark" cx="100" cy="7" r="2.5" />
+              <circle class="study-emblem-mark" cx="100" cy="193" r="2.5" />
+            </svg>
+          </header>
+          <nav class="study-entries" aria-label="研读入口" data-i18n-aria-label="home.pathsLabel">
+            <button class="study-entry" data-view="hexagrams">
+              <span class="study-number" aria-hidden="true">01</span>
+              <span class="study-entry-copy"><strong data-i18n="nav.hexagrams">六十四卦</strong><small data-i18n="flow.hexDescription">从卦辞与爻辞入手，逐卦阅读。</small></span>
+              <span class="study-entry-end"><span data-i18n="flow.read">开始研读</span><b aria-hidden="true">→</b></span>
+            </button>
+            <button class="study-entry" data-view="classics">
+              <span class="study-number" aria-hidden="true">02</span>
+              <span class="study-entry-copy"><strong data-i18n="nav.classics">十翼与易传</strong><small data-i18n="flow.wingsDescription">循着传文，理解经文背后的思想。</small></span>
+              <span class="study-entry-end"><span data-i18n="flow.read">开始研读</span><b aria-hidden="true">→</b></span>
+            </button>
+            <button class="study-entry" data-view="principles">
+              <span class="study-number" aria-hidden="true">03</span>
+              <span class="study-entry-copy"><strong data-i18n="nav.principles">易理体系</strong><small data-i18n="flow.principlesDescription">梳理阴阳、时位与变化的联系。</small></span>
+              <span class="study-entry-end"><span data-i18n="flow.read">开始研读</span><b aria-hidden="true">→</b></span>
+            </button>
           </nav>
+          <footer class="study-footnote"><span data-i18n="flow.studyQuote">居则观其象而玩其辞。</span><cite>《系辞上》</cite></footer>
         </section>
 
         <section class="view" id="view-hexagrams">
@@ -117,11 +136,30 @@
         </section>
 
         <section class="view" id="view-divination">
-          <div class="page-intro divination-intro"><div><div class="eyebrow"><span class="eyebrow-line"></span>THE GREAT DERIVATION</div><h1>大衍筮法</h1><p>敬其事，正其心。“大衍之数五十，其用四十有九”。虚一策象太极，以四十九蓍草三变成一爻，六爻自下而上。</p></div><div class="method-seal">大衍之数<br /><b>五十</b></div></div>
-          <section class="consultation-guide" id="consultationGuide"><div class="guide-heading"><div><span class="panel-kicker">问卦之前</span><h2>先把问题问清楚</h2></div><span class="guide-time" id="guideTime">完整仪式 · 约 8–12 分钟</span></div><div class="cast-mode-switch" role="group" aria-label="占筮节奏"><button type="button" class="active" data-cast-mode="complete"><b>完整仪式</b><small>十八变逐营操作 · 默认</small></button><button type="button" data-cast-mode="quick"><b>快速演蓍</b><small>逐爻点击，自动演示三变</small></button></div><div class="guide-points"><div><b>一事</b><p>一次只问一件事，不把两个选择混在一起。</p></div><div><b>具体</b><p>写明情境与时间范围，避免只问“吉不吉”。</p></div><div><b>自问</b><p>关注自己可以如何行动，不代替他人作决定。</p></div></div><p class="use-boundary">本工具用于经典研读与自我反思，不提供确定预测，也不能代替医疗、法律、财务等专业判断。</p><div class="question-compose"><label for="questionInput">此次所问</label><textarea id="questionInput" rows="3" placeholder="例如：对于下周的面试，我最需要注意什么？"></textarea><div class="question-examples" aria-label="问题示例"><button type="button" data-question-example="对于下周的面试，我最需要注意什么？">面试准备</button><button type="button" data-question-example="未来三个月，我该如何推进目前的职业选择？">职业选择</button><button type="button" data-question-example="面对目前的合作分歧，我应当采取什么态度？">合作关系</button></div><div class="question-confirm"><p id="questionFeedback">请写下一个包含具体情境的问题。</p><button class="primary-button" id="confirmQuestion" disabled>确认问题，进入仪式 <span>→</span></button></div></div><div class="edition-status" id="editionStatus" aria-live="polite"></div></section>
-          <div class="divination-grid"><div class="ritual-panel"><div class="ritual-header"><div><span class="panel-kicker">起卦仪式</span><h2 id="ritualTitle">请先确认此次所问</h2><p class="locked-question hidden" id="lockedQuestion"></p></div><div class="line-count" id="lineCount">0 / 6 爻</div></div><div class="yarrow-stage"><div class="stage-hint" id="stageHint">问题确认后，完整仪式将在这里开始</div><div class="split-control hidden" id="splitControl"><div class="split-control-head"><span>按住蓍束，凭感觉松开</span><output id="splitPreview">尚未分开</output></div><button class="split-chooser" id="splitChooser" type="button" aria-label="按住蓍草束，凭感觉松开以完成分界"><span class="split-bundle" aria-hidden="true"></span><i class="split-mark" aria-hidden="true"></i></button><small>不显示位置与策数，分二时才揭开左右两堆</small></div><div class="operation-rail" id="operationRail" aria-label="三变四营步骤"><span data-operation="split">分二</span><span data-operation="hang">挂一</span><span data-operation="count">揲四</span><span data-operation="return">归奇</span></div><div class="stalk-board" id="stalkBoard" aria-live="polite"><div class="stalk-zone" id="leftStalks"><small>天 · 左</small><div class="stalks"></div></div><div class="stalk-center"><div class="stalk-total" id="stalkTotal"><strong>—</strong><small>策</small></div><div class="stalk-zone mini" id="taijiStalks"><small>太极 · 虚一</small><div class="stalks"></div></div><div class="stalk-zone mini" id="hangStalks"><small>人 · 挂一</small><div class="stalks"></div></div><div class="stalk-zone mini" id="discardStalks"><small>闰 · 归奇</small><div class="stalks"></div></div></div><div class="stalk-zone" id="rightStalks"><small>地 · 右</small><div class="stalks"></div></div></div><div class="procedure-visual" id="procedureVisual" aria-live="polite"><div class="pile-card" id="leftPile"><small>天 · 左</small><strong>—</strong><span>待分</span></div><div class="procedure-symbol">待问</div><div class="pile-card" id="rightPile"><small>地 · 右</small><strong>—</strong><span>待分</span></div></div><div class="yarrow-bundle" id="yarrowBundle"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="stage-result" id="stageResult"></div></div><div class="ritual-actions"><button class="primary-button" id="castButton" disabled>请先确认问题</button><button class="secondary-button" id="resetButton">重新开始</button></div></div><aside class="record-panel"><div class="panel-kicker">筮法记录</div><div class="record-empty" id="recordEmpty"><div class="empty-symbol">☷</div><p>三变成一爻<br />六爻自下而上</p></div><div class="line-records" id="lineRecords"></div><div class="result-card hidden" id="resultCard"><div class="result-label">本卦 · 变卦</div><div class="result-pair"><span id="resultPrimary">䷀</span><span class="result-arrow">→</span><span id="resultChanged">䷁</span></div><h3 id="resultName">乾为天</h3><p id="resultSummary"></p></div></aside></div>
-          <section class="reading-panel hidden" id="readingPanel"><div class="reading-head"><div><span class="panel-kicker">本次阅读</span><h2 id="readingTitle">卦象已成</h2></div><div class="reading-head-actions"><button class="primary-button" id="nextReadingButton">开始下一卦</button><button class="secondary-button" id="resultRead">打开六十四卦全文</button></div></div><div class="reading-question" id="readingQuestion"></div><div class="reading-focus" id="readingFocus"></div><section class="interpretation-band local-interpretation" id="localReading"><div class="interpretation-heading"><div><span class="panel-kicker">本地规则解读</span><h3>先看这次卦象在说什么</h3></div><span class="interpretation-source">离线可用 · 可复核</span></div><div class="interpretation-sections" id="localReadingContent"></div><div class="interpretation-evidence" id="localReadingEvidence"></div></section><section class="interpretation-band ai-interpretation" id="aiReading"><div class="interpretation-heading"><div><span class="panel-kicker">AI 深度解读</span><h3>结合此次所问继续展开</h3></div><button type="button" class="primary-button" id="generateAiReading">生成 AI 深度解读</button></div><p class="ai-privacy">此次所问与卦象资料会发送至 Cloudflare Workers AI；完整结果只保存在此浏览器。</p><div class="interpretation-sections ai-reading-content" id="aiReadingContent" aria-live="polite"></div><p class="ai-reading-error hidden" id="aiReadingError" role="alert"></p></section><div class="reading-columns" id="readingColumns"></div><section class="reading-related"><div class="reading-section-head"><span class="panel-kicker">经传互参</span><h3>与本卦相关的十翼原文</h3></div><div id="readingRelated"></div></section><section class="reading-note" id="resultNote"><label for="readingNote">我的札记</label><textarea id="readingNote" rows="5" maxlength="2000" placeholder="记下此刻对卦辞、动爻与所问的理解。"></textarea><div><small id="readingNoteStatus">仅保存在此浏览器</small><button type="button" class="primary-button" id="saveReadingNote">保存札记</button></div></section></section>
-          <div class="method-notes"><div class="notes-title"><span class="panel-kicker">古法小记</span><h2>四营成易，十有八变</h2></div><div class="note-list"><div><span>一</span><p><strong>分二</strong>任意分为左右两组，象天地。</p></div><div><span>二</span><p><strong>挂一</strong>从右组取一策挂于指间，象人。</p></div><div><span>三</span><p><strong>揲四</strong>两组分别以四数之，象四时。</p></div><div><span>四</span><p><strong>归奇</strong>余数合为一变，三变而成一爻。</p></div></div></div>
+          <div class="page-intro divination-intro"><div><span class="panel-kicker" data-i18n="nav.divination">大衍筮法</span><h1 data-i18n="flow.questionTitle">问一件在意的事。</h1><p data-i18n="flow.questionDescription">写下情境与疑问，让这一次占问有所指向。</p></div></div>
+          <section class="consultation-guide" id="consultationGuide">
+            <div class="question-compose">
+              <label for="questionInput" data-i18n="flow.yourQuestion">此次所问</label>
+              <textarea id="questionInput" rows="4" maxlength="100" aria-describedby="questionFeedback" placeholder="例如：对于下周的面试，我最需要注意什么？"></textarea>
+              <details class="flow-fold question-help"><summary data-i18n="flow.questionHelp">还没想好怎么问？</summary><p data-i18n="flow.questionTip">一次只问一件事，写明情境和时间，关注自己可以如何行动。</p><div class="question-examples" aria-label="问题示例"><button type="button" data-question-example="对于下周的面试，我最需要注意什么？">面试准备</button><button type="button" data-question-example="未来三个月，我该如何推进目前的职业选择？">职业选择</button><button type="button" data-question-example="面对目前的合作分歧，我应当采取什么态度？">合作关系</button></div></details>
+            </div>
+            <div class="mode-heading"><label data-i18n="flow.pace">选择节奏</label><span id="guideTime">完整仪式 · 约 8–12 分钟</span></div>
+            <div class="cast-mode-switch" role="group" aria-label="占筮节奏"><button type="button" class="active" data-cast-mode="complete"><b>完整仪式</b><small data-i18n="flow.completeDescription">亲手分蓍，逐步完成</small></button><button type="button" data-cast-mode="quick"><b>快速演蓍</b><small data-i18n="flow.quickDescription">每次点击，演算一爻</small></button></div>
+            <div class="question-confirm"><p id="questionFeedback">请写下一个包含具体情境的问题。</p><button class="primary-button" id="confirmQuestion" disabled>确认问题，进入仪式 <span>→</span></button></div>
+            <details class="flow-fold method-notes"><summary data-i18n="flow.method">了解大衍筮法与使用说明</summary><div class="note-list"><div><span>一</span><p><strong>分二</strong>任意分为左右两组，象天地。</p></div><div><span>二</span><p><strong>挂一</strong>从右组取一策挂于指间，象人。</p></div><div><span>三</span><p><strong>揲四</strong>两组分别以四数之，象四时。</p></div><div><span>四</span><p><strong>归奇</strong>余数合为一变，三变而成一爻。</p></div></div><p class="use-boundary">本工具用于经典研读与自我反思，不提供确定预测，也不能代替医疗、法律、财务等专业判断。</p><div class="edition-status" id="editionStatus" aria-live="polite"></div></details>
+          </section>
+
+        <div class="divination-grid"><div class="ritual-panel"><div class="ritual-header"><div><span class="panel-kicker">起卦仪式</span><h2 id="ritualTitle">请先确认此次所问</h2><p class="locked-question hidden" id="lockedQuestion"></p></div><div class="line-count" id="lineCount">0 / 6 爻</div></div><div class="yarrow-stage"><div class="stage-hint" id="stageHint">问题确认后，完整仪式将在这里开始</div><div class="split-control hidden" id="splitControl"><div class="split-control-head"><span>按住蓍束，凭感觉松开</span><output id="splitPreview">尚未分开</output></div><button class="split-chooser" id="splitChooser" type="button" aria-label="按住蓍草束，凭感觉松开以完成分界"><span class="split-bundle" aria-hidden="true"></span><i class="split-mark" aria-hidden="true"></i></button><small>不显示位置与策数，分二时才揭开左右两堆</small></div><div class="operation-rail" id="operationRail" aria-label="三变四营步骤"><span data-operation="split">分二</span><span data-operation="hang">挂一</span><span data-operation="count">揲四</span><span data-operation="return">归奇</span></div><div class="stalk-board" id="stalkBoard" aria-live="polite"><div class="stalk-zone" id="leftStalks"><small>天 · 左</small><div class="stalks"></div></div><div class="stalk-center"><div class="stalk-total" id="stalkTotal"><strong>—</strong><small>策</small></div><div class="stalk-zone mini" id="taijiStalks"><small>太极 · 虚一</small><div class="stalks"></div></div><div class="stalk-zone mini" id="hangStalks"><small>人 · 挂一</small><div class="stalks"></div></div><div class="stalk-zone mini" id="discardStalks"><small>闰 · 归奇</small><div class="stalks"></div></div></div><div class="stalk-zone" id="rightStalks"><small>地 · 右</small><div class="stalks"></div></div></div><div class="procedure-visual" id="procedureVisual" aria-live="polite"><div class="pile-card" id="leftPile"><small>天 · 左</small><strong>—</strong><span>待分</span></div><div class="procedure-symbol">待问</div><div class="pile-card" id="rightPile"><small>地 · 右</small><strong>—</strong><span>待分</span></div></div><div class="yarrow-bundle" id="yarrowBundle"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="stage-result" id="stageResult"></div></div><div class="ritual-actions"><button class="primary-button" id="castButton" disabled>请先确认问题</button><button class="secondary-button" id="resetButton">重新开始</button></div></div><aside class="record-panel"><details class="flow-fold cast-records"><summary data-i18n="flow.castRecords">查看已成爻与演算记录</summary><div class="record-empty" id="recordEmpty"><div class="empty-symbol">☷</div><p>三变成一爻<br />六爻自下而上</p></div><div class="line-records" id="lineRecords"></div></details></aside></div>
+          <section class="reading-panel hidden" id="readingPanel">
+            <header class="reading-head"><div><span class="panel-kicker" data-i18n="flow.resultKicker">本次占问</span><h2 id="readingTitle">卦象已成</h2></div></header>
+            <div class="reading-question" id="readingQuestion"></div>
+            <div class="result-card hidden" id="resultCard"><div class="result-label">本卦 · 变卦</div><div class="result-pair"><span id="resultPrimary">䷀</span><span class="result-arrow">→</span><span id="resultChanged">䷁</span></div><h3 id="resultName">乾为天</h3><p id="resultSummary"></p></div>
+            <section class="interpretation-band local-interpretation" id="localReading"><div class="interpretation-heading"><h3 data-i18n="flow.readingFocus">先看解读重点</h3></div><div class="interpretation-sections" id="localReadingContent"></div><details class="flow-fold"><summary data-i18n="flow.basis">查看取法依据</summary><div class="reading-focus" id="readingFocus"></div><div class="interpretation-evidence" id="localReadingEvidence"></div></details></section>
+            <details class="flow-fold result-fold" id="aiReadingFold"><summary data-i18n="flow.ai">结合所问，展开 AI 解读</summary><section class="interpretation-band ai-interpretation" id="aiReading"><div class="interpretation-heading"><h3 data-i18n="flow.aiTitle">AI 深度解读</h3><button type="button" class="primary-button" id="generateAiReading">生成 AI 深度解读</button></div><p class="ai-privacy" data-i18n="flow.aiPrivacy">生成时会将此次所问与卦象资料发送至 AI 服务。</p><div class="interpretation-sections ai-reading-content" id="aiReadingContent" aria-live="polite"></div><p class="ai-reading-error hidden" id="aiReadingError" role="alert"></p></section></details>
+            <details class="flow-fold result-fold"><summary data-i18n="flow.original">阅读经文、变爻与卦象结构</summary><div class="reading-columns" id="readingColumns"></div><section class="reading-related"><div class="reading-section-head"><h3 data-i18n="flow.related">相关十翼原文</h3></div><div id="readingRelated"></div></section><button class="secondary-button" id="resultRead">打开六十四卦全文</button></details>
+            <details class="flow-fold result-fold"><summary data-i18n="flow.note">留下我的札记</summary><section class="reading-note" id="resultNote"><label for="readingNote">我的札记</label><textarea id="readingNote" rows="4" maxlength="2000" placeholder="记下此刻对卦辞、动爻与所问的理解。"></textarea><div><small id="readingNoteStatus">仅保存在此浏览器</small><button type="button" class="primary-button" id="saveReadingNote">保存札记</button></div></section></details>
+            <footer class="reading-footer"><button class="primary-button" data-view="history" data-i18n="flow.journal">查看占问记录</button><button class="text-button" id="nextReadingButton">开始下一卦</button></footer>
+          </section>
         </section>
 
           <section class="view text-view" id="view-classics"><div class="page-intro"><div><div class="eyebrow"><span class="eyebrow-line"></span>THE TEN WINGS</div><h1>易传十翼</h1><p>依古籍卷次，从右向左读十翼。选择篇次，可直接定位。<small class="edition-note source-metadata" id="editionNote"></small><small class="edition-note">录文状态：依所选底本录入；当前数据未另列异文校勘。<a class="edition-source" href="https://raw.githubusercontent.com/bollwarm/ZHOUYI/master/lib/ZHOUYI.pm" target="_blank" rel="noreferrer">查看电子转录来源</a></small></p></div></div><div class="classics-tools"><div class="reading-mode" aria-label="十翼排版方式"><button type="button" class="active" data-reading-mode="ancient">古籍次序</button><button type="button" data-reading-mode="modern">现代纵读</button></div><label class="wing-search"><span>⌕</span><input id="wingSearch" type="search" placeholder="搜索十翼原文" /></label><button type="button" class="bookmark-button" id="bookmarkWing">收藏本篇</button><span class="wing-progress" id="wingProgress"></span></div><div class="wing-order" id="wingOrder" aria-label="十翼篇次"></div><div class="classics-grid" id="classicsGrid"></div></section>
@@ -135,6 +173,6 @@
     <dialog class="confirm-dialog import-dialog" id="importDialog"><form method="dialog"><span class="panel-kicker" data-i18n="dialog.importKicker">导入记录</span><h2 data-i18n="dialog.importTitle">确认合并本地记录？</h2><p id="importSummary" data-i18n="dialog.importLoading">正在读取记录。</p><div><button class="secondary-button" value="cancel" id="cancelImport" data-i18n="dialog.cancel">取消</button><button class="primary-button" value="confirm" id="confirmImport" data-i18n="dialog.confirmImport">确认合并</button></div></form></dialog>
     <dialog class="confirm-dialog account-merge-dialog" id="accountMergeDialog"><form method="dialog"><span class="panel-kicker">合并此设备的记录？</span><h2>合并此设备的记录？</h2><p data-merge-body></p><div><button type="button" class="secondary-button" data-merge-choice="cloud">只保留云端记录</button><button type="button" class="primary-button" data-merge-choice="merge">合并记录</button></div></form></dialog>
     <script>window.GUANXIANG_AI_ENDPOINT=window.GUANXIANG_AI_ENDPOINT||(['.pages.dev','.netlify.app','.liara.run'].some(suffix=>location.hostname.endsWith(suffix))?'/api/reading':'');</script>
-    <script type="module" src="app.js?v=20260922-account-scope1"></script>
+    <script type="module" src="app.js?v=20261028-journal1"></script>
   </body>
 </html>

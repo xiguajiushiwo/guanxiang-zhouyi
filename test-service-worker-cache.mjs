@@ -42,4 +42,13 @@ cachedResponse=response('cached');
 handlers.fetch({request,respondWith:value=>{pending=value}});
 assert.equal((await pending).source,'cached','offline navigation should fall back to cache');
 
+// A stale empty reading list or previous user's identity must never be returned.
+for(const path of ['/api/account/me','/api/account/readings','/api/reading']){
+  let intercepted=false;
+  const before=writes.length;
+  handlers.fetch({request:{method:'GET',mode:'cors',url:`https://example.com${path}`},respondWith:()=>{intercepted=true}});
+  assert.equal(intercepted,false,`${path} must go directly to the network`);
+  assert.equal(writes.length,before,'account data must not be stored in the shell cache');
+}
+
 console.log('Service worker navigation cache strategy passed.');

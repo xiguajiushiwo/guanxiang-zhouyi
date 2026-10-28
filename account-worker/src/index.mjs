@@ -1,5 +1,6 @@
 import { createSessionToken, hashPassword, hashSessionToken, verifyPassword } from './crypto.mjs';
 import { MAX_BODY_BYTES, normalizeCredentials, normalizeRecord, normalizeRecords, readJson } from './validation.mjs';
+import { mergeJournalRecords } from '../../storage.mjs';
 
 const SESSION_MAX_AGE=30*24*60*60;
 const json=(body,status=200,headers={})=>new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff',...headers}});
@@ -52,15 +53,16 @@ async function requireSession(request,env){const session=await sessionFor(reques
 function userResponse(session){return {email:session.user.email,preferredLanguage:session.user.preferred_language}}
 
 async function listReadings(session,env){
-  const rows=await env.DB.prepare('/* readings-for-user */ SELECT id,payload_json,language,created_at,updated_at FROM readings WHERE user_id = ? ORDER BY updated_at DESC LIMIT 100').bind(session.user_id).all();
+  const rows=await env.DB.prepare('/* readings-for-user */ SELECT id,payload_json,language,created_at,updated_at FROM readings WHERE user_id = ? ORDER BY updated_at DESC').bind(session.user_id).all();
   return json({records:rows.results.map(recordFromRow).filter(Boolean)});
 }
 
 async function upsertRecord(request,session,env,id=null){
   const parsed=await readJson(request);if(!parsed.ok)return error(parsed.code,parsed.code==='PAYLOAD_TOO_LARGE'?413:400);
   const normalized=normalizeRecord(parsed.value);if(!normalized.ok)return error(normalized.code,400);
-  const record=normalized.value;if(id&&record.id!==id)return error('INVALID_RECORDS',400);
+  let record=normalized.value;if(id&&record.id!==id)return error('INVALID_RECORDS',400);
   const existing=await env.DB.prepare('/* reading-by-user */ SELECT id,payload_json,language,created_at,updated_at FROM readings WHERE id = ? AND user_id = ?').bind(record.id,session.user_id).first();
+  if(existing)record=mergeJournalRecords([recordFromRow(existing)],[record])[0];
   const now=new Date().toISOString(),language=record.aiReading?.language||'zh-CN',serialized=JSON.stringify(record);
   if(existing)await env.DB.prepare('/* update-reading */ UPDATE readings SET payload_json=?,language=?,updated_at=? WHERE id=? AND user_id=?').bind(serialized,language,record.updatedAt||now,record.id,session.user_id).run();
   else await env.DB.prepare('/* insert-reading */ INSERT INTO readings(id,user_id,payload_json,language,created_at,updated_at) VALUES(?,?,?,?,?,?)').bind(record.id,session.user_id,serialized,language,record.createdAt||now,record.updatedAt||now).run();
@@ -103,5 +105,5 @@ export default {async fetch(request,env){
     if(route==='readings'&&segments[1]&&request.method==='DELETE')return await deleteRecord(session,env,segments[1]);
     if(route==='readings'&&segments.length===1&&request.method==='PUT')return await upsertRecord(request,session,env);
     return error('INVALID_REQUEST',405,language);
-  }catch(error){return error('SERVICE_ERROR',503,language)}
+  }catch(cause){return error('SERVICE_ERROR',503,language)}
 }};

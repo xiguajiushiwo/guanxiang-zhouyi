@@ -1,0 +1,47 @@
+.case-review-panel { margin: 30px 0; padding: 26px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper-deep); }
+.case-heading { margin-bottom: 18px; }
+.case-heading h2 { margin: 8px 0; font: 23px/1.5 var(--serif); }
+.case-heading p, .case-privacy, .case-status, .case-review-panel small { color: var(--muted); font-size: 12px; line-height: 1.8; }
+.case-actions, .case-review-action { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 18px 0; }
+.case-actions button, .case-review-action button { min-height: 44px; }
+.case-review-action small { margin-inline-start: auto; }
+.case-timeline { margin-top: 26px; }
+.case-timeline h3 { margin: 0 0 14px; font-size: 16px; }
+.case-reading { position: relative; padding: 17px 0; border-top: 1px solid var(--line); }
+.case-reading.is-current { padding-inline-start: 13px; border-inline-start: 2px solid var(--accent); }
+.case-reading-date { display: flex; justify-content: space-between; gap: 14px; color: var(--muted); font: 11px var(--sans); }
+.case-reading-date span { color: var(--accent); }
+.case-reading > b { display: block; margin: 7px 0; font: 16px/1.7 var(--serif); overflow-wrap: anywhere; }
+.case-reading > p { margin: 0 0 5px; color: var(--muted); font-size: 12px; }
+.case-reading > small { display: block; margin-bottom: 7px; }
+.case-reading > div:last-child { display: flex; gap: 12px; flex-wrap: wrap; }
+.case-review-panel .text-button { min-height: 34px; }
+.case-empty { color: var(--muted); font-size: 13px; }
+.case-manual { margin: 25px 0; padding-top: 18px; border-top: 1px solid var(--line); }
+.case-manual summary { cursor: pointer; font-weight: 600; line-height: 1.8; }
+.case-manual label { display: block; margin: 13px 0 7px; font-size: 13px; }
+.case-manual select { width: 100%; min-height: 44px; padding: 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); color: var(--ink); font: inherit; }
+.case-manual button { margin-top: 12px; min-height: 42px; }
+.case-report { margin-top: 28px; padding-top: 22px; border-top: 2px solid var(--accent); }
+.case-report-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.case-report h3 { margin: 0; font-size: 18px; }
+.case-report time { color: var(--muted); font-size: 11px; }
+.case-report article { padding: 15px 0; border-top: 1px solid var(--line); }
+.case-report article:first-of-type { margin-top: 15px; }
+.case-report h4 { margin: 0 0 7px; font-size: 13px; }
+.case-report p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 15px/1.9 var(--serif); }
+.case-stale { color: var(--accent) !important; font-size: 12px !important; margin: 12px 0 !important; }
+.case-archives { margin-top: 25px; border-top: 1px solid var(--line); }
+.case-archives summary { cursor: pointer; padding: 13px 0; font-size: 13px; }
+.case-archives details { padding-inline-start: 13px; }
+.followup-context { margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--line); }
+.followup-context label { display: block; margin-bottom: 7px; font-size: 13px; }
+.followup-context textarea { box-sizing: border-box; width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); color: var(--ink); font: 16px/1.8 inherit; resize: vertical; }
+@media (max-width: 680px) {
+  .case-review-panel { padding: 18px 14px; }
+  .case-heading h2 { font-size: 20px; }
+  .case-actions, .case-review-action { display: grid; grid-template-columns: 1fr; }
+  .case-actions button, .case-review-action button { width: 100%; }
+  .case-review-action small { margin: 0; }
+  .case-report p { font-size: 14px; }
+}

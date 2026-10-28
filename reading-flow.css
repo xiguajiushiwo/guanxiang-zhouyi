@@ -1,0 +1,229 @@
+/* Study and consultation each have a single purpose. */
+#view-home.study-overview {
+  max-width: 1040px;
+  padding: clamp(36px, 7vh, 72px) clamp(22px, 5vw, 70px) 36px;
+}
+.study-intro { display: grid; grid-template-columns: minmax(0, 1fr) 180px; column-gap: 36px; align-content: center; margin-bottom: 44px; }
+.study-intro .panel-kicker { grid-column: 1; align-self: end; margin-bottom: 20px; }
+.study-intro h1, .study-intro p { grid-column: 1; }
+.study-intro h1 { margin: 0 0 16px; font: 700 clamp(28px, 3.1vw, 42px)/1.4 var(--serif); text-wrap: balance; }
+.study-intro p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.9; }
+.study-emblem { grid-column: 2; grid-row: 1 / 4; width: 180px; height: 180px; align-self: center; }
+.study-emblem-ring { fill: none; stroke: var(--line); stroke-width: 1; }
+.study-emblem-ink { fill: var(--ink); }
+.study-emblem-paper { fill: var(--paper-deep); }
+.study-emblem-mark { fill: var(--accent); }
+.study-entries { border-top: 1px solid var(--ink); }
+.study-entry {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  min-height: 112px;
+  padding: 24px 10px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  text-align: start;
+  cursor: pointer;
+}
+.study-entry:hover { background: var(--paper-deep); }
+.study-entry:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.study-number { align-self: start; padding-top: 3px; color: var(--accent); font: 14px/1.8 var(--serif); }
+.study-entry-copy { display: grid; gap: 10px; }
+.study-entry-copy strong { font: 600 23px/1.3 var(--serif); }
+.study-entry-copy small { color: var(--muted); font: 12px/1.8 var(--sans); }
+.study-entry-end { display: flex; align-items: center; gap: 22px; color: var(--muted); font: 11px var(--sans); }
+.study-entry-end b { color: var(--accent); font: 23px var(--serif); }
+.study-footnote { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; color: var(--muted); font: 12px/1.8 var(--serif); }
+.study-footnote cite { font-style: normal; opacity: .7; }
+
+#view-divination, #view-divination.phase-cast {
+  max-width: 880px;
+  padding: 36px 36px 54px;
+}
+#view-divination .divination-intro { margin-bottom: 26px; }
+#view-divination .divination-intro h1 { margin: 12px 0; font-size: 34px; }
+#view-divination .divination-intro > div > p { display: block; line-height: 1.8; }
+#view-divination .divination-phases { margin: 0 0 28px; border-top: 0; }
+#view-divination .divination-phases button {
+  grid-template-columns: auto auto;
+  grid-template-rows: auto;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 12px 8px;
+  background: transparent;
+}
+#view-divination .divination-phases button.active { border-bottom-color: var(--accent); }
+#view-divination .divination-phases button.active > span,
+#view-divination .divination-phases button.active > b { color: var(--accent); }
+#view-divination .divination-phases button > span { display: block; grid-row: auto; font-size: 13px; }
+#view-divination .divination-phases button > b { font-size: 13px; }
+#view-divination .divination-phases button:disabled { opacity: .5; cursor: default; }
+#view-divination .divination-phases button.active:disabled { opacity: 1; }
+#view-divination .consultation-guide { margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
+#view-divination .question-compose label, .mode-heading label { display: block; margin: 0 0 12px; font: 600 14px var(--serif); }
+#view-divination .question-compose textarea {
+  width: 100%;
+  min-height: 128px;
+  padding: 17px 18px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.8 var(--sans);
+  resize: vertical;
+}
+#view-divination textarea:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+.flow-fold { min-width: 0; border: 0; }
+.flow-fold > summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 48px;
+  padding: 12px 0;
+  color: var(--muted);
+  font: 13px/1.6 var(--sans);
+  list-style: none;
+  cursor: pointer;
+}
+.flow-fold > summary::-webkit-details-marker { display: none; }
+.flow-fold > summary::after { content: "+"; flex: none; font: 20px/1 var(--sans); }
+.flow-fold[open] > summary::after { content: "−"; }
+.flow-fold > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.flow-fold > p { color: var(--muted); font: 12px/1.8 var(--sans); }
+.mode-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 25px; }
+.mode-heading span { color: var(--muted); font-size: 11px; }
+#view-divination .cast-mode-switch { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin: 0; padding: 0; border: 0; }
+#view-divination .cast-mode-switch button { min-width: 0; min-height: 76px; padding: 15px; border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 4px; }
+#view-divination .cast-mode-switch button.active { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--paper-deep); }
+#view-divination .cast-mode-switch small { font-size: 11px; line-height: 1.6; }
+#view-divination .question-confirm { display: flex; flex-direction: column; align-items: stretch; gap: 12px; margin: 16px 0 22px; }
+#view-divination .question-confirm p { min-height: 20px; margin: 0; font-size: 12px; line-height: 1.7; }
+#view-divination .question-confirm button { min-height: 50px; font-size: 14px; }
+#view-divination .question-confirm button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+#view-divination .method-notes { display: block; margin: 0; border-top: 1px solid var(--line); padding: 0; }
+#view-divination .method-notes .note-list { padding: 12px 0; }
+
+/* One live visualization, one next action; the calculations remain available. */
+#view-divination .divination-grid { display: block; }
+#view-divination.phase-prepare .divination-grid,
+#view-divination.phase-result .divination-grid { display: none; }
+#view-divination .ritual-panel { padding: 0; overflow: visible; border: 0; background: transparent; box-shadow: none; }
+#view-divination .ritual-panel::before { display: none; }
+#view-divination .ritual-header { padding: 0 0 18px; align-items: flex-start; }
+#view-divination .ritual-header .panel-kicker { display: none; }
+#view-divination .ritual-header h2 { font-size: 24px; line-height: 1.5; }
+#view-divination .locked-question { max-width: none; margin: 8px 0 0; white-space: normal; line-height: 1.7; }
+#view-divination .line-count { flex: none; padding: 8px 10px; border: 1px solid var(--line); font-size: 12px; }
+#view-divination .yarrow-stage { min-height: 0; padding: 22px 0 12px; gap: 14px; border-top: 1px solid var(--line); background: transparent; }
+#view-divination .stage-hint { margin: 0; font-size: 14px; }
+#view-divination .operation-rail { width: 100%; margin: 0; }
+#view-divination .operation-rail span { font-size: 11px; padding: 6px; }
+#view-divination .stalk-board { width: 100%; min-height: 170px; margin: 10px 0; grid-template-columns: minmax(0,1fr) 74px minmax(0,1fr); gap: 9px; }
+#view-divination .stalk-zone { min-height: 150px; background: var(--paper-deep); border: 1px solid var(--line); box-shadow: none; }
+#view-divination .stalk-zone.mini { min-height: 35px; }
+#view-divination .stalk-board.counting-muted,
+#view-divination .yarrow-stage:has(.split-control:not(.hidden)) > .stalk-board { display: none; }
+#view-divination .procedure-visual, #view-divination .yarrow-bundle { display: none; }
+#view-divination .split-control { width: 100%; margin: 0; padding: 16px; background: var(--paper-deep); border: 1px solid var(--line); }
+#view-divination .split-chooser { min-height: 118px; touch-action: none; }
+#view-divination .split-control-head { flex-wrap: wrap; gap: 8px; }
+#view-divination .split-control > small { line-height: 1.8; }
+#view-divination .stage-result { min-height: 0; margin: 0; font-size: 12px; line-height: 1.8; }
+#view-divination .counting-board { width: 100%; margin: 0; }
+#view-divination .cast-calculations { width: 100%; border-top: 1px solid var(--line); order: 10; }
+#view-divination .cast-calculations .ritual-progress { margin: 15px 0; width: 100%; }
+#view-divination .cast-calculations .method-audit { width: 100%; }
+#view-divination .ritual-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+  box-shadow: none;
+}
+#view-divination .ritual-actions .primary-button { flex: 1; width: auto; min-height: 52px; height: auto; padding: 14px; box-shadow: none; font-size: 13px; line-height: 1.6; }
+#view-divination .ritual-actions .secondary-button { width: auto; min-height: 44px; padding: 8px; font-size: 12px; }
+#view-divination .record-panel { position: static; margin: 12px 0 0; padding: 0; min-height: 0; border: 0; border-top: 1px solid var(--line); background: transparent; box-shadow: none; }
+#view-divination .cast-records > summary { color: var(--muted); }
+
+/* Result first; original texts and optional reading tools open on demand. */
+#view-divination .reading-panel { margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
+#view-divination .reading-head { margin: 0; padding: 0; border: 0; }
+#view-divination .reading-head h2 { font-size: 28px; line-height: 1.5; }
+#view-divination .reading-question { margin: 12px 0 22px; padding: 0; border: 0; background: transparent; font-size: 14px; line-height: 1.8; }
+#view-divination .result-card { margin: 0 0 24px; padding: 24px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper-deep); box-shadow: none; }
+#view-divination .result-pair { justify-content: center; font-size: 48px; margin: 14px 0; }
+#view-divination .result-card h3 { font-size: 20px; line-height: 1.6; }
+#view-divination .result-card p { margin-bottom: 0; }
+#view-divination .result-label { text-align: center; }
+#view-divination .reading-focus { margin: 0 0 22px; padding: 0; border: 0; background: transparent; font-size: 13px; line-height: 1.8; }
+#view-divination .interpretation-band { margin: 0; padding: 0 0 14px; background: transparent; border: 0; }
+#view-divination .interpretation-heading { align-items: center; justify-content: flex-start; gap: 14px; margin-bottom: 15px; }
+#view-divination .interpretation-heading .primary-button { margin-inline-start: auto; }
+#view-divination .interpretation-heading h3 { margin: 0; font-size: 20px; }
+#view-divination .local-interpretation > .interpretation-sections { display: block; }
+#view-divination .interpretation-lead { padding: 0; border: 0; background: transparent; }
+#view-divination .interpretation-lead > span { display: none; }
+#view-divination .interpretation-lead p { font: 16px/2 var(--serif); }
+#view-divination .reading-expansion .interpretation-sections { grid-template-columns: 1fr; }
+#view-divination .result-fold { border-top: 1px solid var(--line); }
+#view-divination .result-fold > summary { min-height: 60px; color: var(--ink); }
+#view-divination .result-fold > section, #view-divination .result-fold > .reading-columns { margin: 10px 0 24px; }
+#view-divination .reading-columns { display: grid; grid-template-columns: 1fr; gap: 20px; }
+#view-divination .result-layer { padding: 18px; min-width: 0; background: var(--paper-deep); }
+#view-divination .reading-related { padding-top: 12px; }
+#view-divination .reading-note { padding: 0; border: 0; background: transparent; }
+#view-divination .reading-note textarea { font-size: 16px; }
+.reading-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 26px; border-top: 1px solid var(--line); }
+.reading-footer button { min-height: 44px; }
+
+@media (max-width: 680px) {
+  #view-home.study-overview { padding: 34px 22px 30px; }
+  .study-intro { grid-template-columns: minmax(0, 1fr) 100px; column-gap: 18px; margin-bottom: 30px; }
+  .study-intro h1 { max-width: 12em; font-size: 26px; }
+  .study-intro p { grid-column: 1 / -1; font-size: 13px; }
+  .study-emblem { grid-row: 1 / 3; width: 100px; height: 100px; }
+  .study-entry { grid-template-columns: 25px minmax(0,1fr) 20px; gap: 12px; min-height: 108px; padding: 23px 0; }
+  .study-number { font-size: 12px; }
+  .study-entry-copy strong { font-size: 21px; }
+  .study-entry-copy small { font-size: 12px; }
+  .study-entry-end > span { display: none; }
+  .study-footnote { margin-top: 24px; font-size: 11px; }
+  #view-divination, #view-divination.phase-cast { padding: 26px 18px 32px; }
+  #view-divination .divination-intro h1 { font-size: 28px; }
+  #view-divination .divination-phases { margin-bottom: 22px; }
+  .mode-heading { flex-wrap: wrap; margin-top: 20px; gap: 0; }
+  .mode-heading span { margin-bottom: 12px; }
+  #view-divination .cast-mode-switch { gap: 9px; }
+  #view-divination .cast-mode-switch button { padding: 12px 9px; }
+  #view-divination .ritual-header { gap: 12px; }
+  #view-divination .ritual-header h2 { font-size: 21px; }
+  #view-divination .line-count { padding: 6px; font-size: 11px; }
+  #view-divination .ritual-actions { bottom: calc(66px + env(safe-area-inset-bottom)); padding: 12px 0; gap: 10px; }
+  #view-divination .ritual-actions .primary-button { min-height: 50px; padding: 12px 8px; }
+  #view-divination .reading-head h2 { font-size: 24px; }
+  #view-divination .result-card { padding: 20px 15px; }
+  #view-divination .interpretation-heading { flex-wrap: wrap; }
+  #view-divination .interpretation-heading .primary-button { width: 100%; }
+  #view-divination .reading-note > div { flex-wrap: wrap; gap: 12px; }
+  .reading-footer { gap: 14px; }
+  .reading-footer button { font-size: 12px; }
+}
+
+@media (max-width: 360px) {
+  .study-intro { grid-template-columns: minmax(0, 1fr) 76px; column-gap: 14px; }
+  .study-emblem { width: 76px; height: 76px; }
+}

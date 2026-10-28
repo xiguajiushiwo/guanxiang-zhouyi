@@ -1,8 +1,15 @@
-const CACHE_NAME='guanxiang-shell-v49';
-const SHELL=['./','./index.html','./auth.html','./styles.css','./auth.css','./landing-v2.css','./landing-rich.css','./landing-details.css','./app.js','./auth.js','./i18n.mjs','./hexagram-i18n.mjs','./hexagram-catalog.mjs','./daily-hexagram.mjs','./yarrow-core.mjs','./reading-rules.mjs','./interpretation.mjs','./ai-reading.mjs','./ai-sources.mjs','./derived-hexagrams.mjs','./study-storage.mjs','./storage.mjs','./account-sync.mjs','./ten-wings.json','./hexagram-texts.json','./principles.json','./principles-en.json','./relations.json','./manifest.webmanifest','./app-icon.svg','./html-safety.mjs','./service-worker-update.mjs'];
+const CACHE_NAME='guanxiang-shell-v52';
+const SHELL=['./journal.css','./journal.mjs','./journal-ui.mjs','./library-loader.mjs','./case-review.css','./case-review.mjs','./case-review-ui.mjs','./reading-flow.css','./','./index.html','./auth.html','./styles.css','./auth.css','./landing-v2.css','./landing-rich.css','./landing-details.css','./app.js','./auth.js','./i18n.mjs','./hexagram-i18n.mjs','./hexagram-catalog.mjs','./daily-hexagram.mjs','./yarrow-core.mjs','./reading-rules.mjs','./interpretation.mjs','./ai-reading.mjs','./ai-sources.mjs','./derived-hexagrams.mjs','./study-storage.mjs','./storage.mjs','./account-sync.mjs','./ten-wings.json','./hexagram-texts.json','./principles.json','./principles-en.json','./relations.json','./manifest.webmanifest','./app-icon.svg','./html-safety.mjs','./service-worker-update.mjs'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()))});
 async function fetchAndCache(request){const response=await fetch(request);if(response.ok&&new URL(request.url).origin===self.location.origin){const copy=response.clone();caches.open(CACHE_NAME).then(cache=>cache.put(request,copy))}return response}
 async function navigationResponse(request){try{return await fetchAndCache(request)}catch{const cached=await caches.match(request);if(cached)return cached;const path=new URL(request.url).pathname,fallback=path.endsWith('/auth')||path.endsWith('/auth.html')?'./auth.html':'./index.html';return await caches.match(fallback)||Response.error()}}
-self.addEventListener('fetch',event=>{if(event.request.method!=='GET')return;if(event.request.mode==='navigate'){event.respondWith(navigationResponse(event.request));return}event.respondWith(caches.match(event.request).then(cached=>cached||fetchAndCache(event.request).catch(()=>Response.error())))});
+self.addEventListener('fetch',event=>{
+  const url=new URL(event.request.url);
+  // Account identity and readings must never come from the offline shell cache.
+  if(url.origin!==self.location.origin||url.pathname==='/api'||url.pathname.startsWith('/api/'))return;
+  if(event.request.method!=='GET')return;
+  if(event.request.mode==='navigate'){event.respondWith(navigationResponse(event.request));return}
+  event.respondWith(caches.match(event.request).then(cached=>cached||fetchAndCache(event.request).catch(()=>Response.error())));
+});
 self.addEventListener('message',event=>{if(event.data==='SKIP_WAITING')self.skipWaiting()});

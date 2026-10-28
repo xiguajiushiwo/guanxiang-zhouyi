@@ -4,15 +4,24 @@ import { readingRule } from './reading-rules.mjs';
 import { catalogLines, hexagramRelations } from './derived-hexagrams.mjs';
 import { dailyHexagramIndex, millisecondsUntilNextLocalDay } from './daily-hexagram.mjs';
 import { loadAnnotations, loadStudyState, saveAnnotation, saveStudyState, deleteAnnotation } from './study-storage.mjs';
-import { backupStatus, mergeJournalRecords, migrateJournalPayload, normalizeHistoryRecords, readJson, writeJson } from './storage.mjs?v=20260916-history2';
+import { appendAiReading, readingVersions, backupStatus, mergeJournalRecords, migrateJournalPayload, normalizeHistoryRecords, readJson, writeJson } from './storage.mjs?v=20261028-journal1';
 import { buildLocalInterpretation, buildEnglishInterpretation } from './interpretation.mjs';
 import { AiReadingError, requestAiReading, splitAiReadingSections, splitAiReadingSectionsLocalized } from './ai-reading.mjs';
 import { attributeHtml, textHtml } from './html-safety.mjs';
 import { createServiceWorkerActivator } from './service-worker-update.mjs';
-import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20260922-account-scope1';
+import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20261028-flow1';
 import { displayHexagramName, HEXAGRAM_EN, TRIGRAM_EN } from './hexagram-i18n.mjs';
 import { selectTenWingSources } from './ai-sources.mjs';
-import { AccountApiError, createAccountClient, synchronizeHistory } from './account-sync.mjs';
+import { AccountApiError, createAccountClient } from './account-sync.mjs?v=20261027-sync1';
+
+import { fetchLibraryJson } from './library-loader.mjs';
+import { journalStatus, MAX_AI_VERSIONS } from './journal.mjs';
+import { journalCopy, journalBadgeHtml, journalFilterHtml, mountJournal } from './journal-ui.mjs';
+import { buildCaseReviewPayload, buildConnectionPayload, caseSignature, normalizeConnections, normalizeCaseReviews, relatedReadings, requestCaseAi } from './case-review.mjs';
+import { mountCaseReview, caseCopy } from './case-review-ui.mjs';
+
+let historyFilter='all', libraryState='loading', libraryPromise=null;
+const jc=key=>journalCopy(key,getLanguage());
 
 const yaoTexts=['初九：潜龙勿用。','九二：见龙在田，利见大人。','九三：君子终日乾乾，夕惕若厉，无咎。','九四：或跃在渊，无咎。','九五：飞龙在天，利见大人。','上九：亢龙有悔。'];
 const canonicalClassicSummaries=['逐卦断义，说明卦名、卦辞与上下体之大旨。','承接上经，论三十卦之时位与吉凶。','取卦象明君子之用，列上经三十卦大象。','逐卦取象明德，列下经三十四卦大象。','总论天地之道、象数之源与易学体用。','论圣人设卦、观象玩辞与卜筮之道。','专释乾坤，申说元亨利贞与君子之德。','说明八卦取象、方位、性情与万物类象。','说明六十四卦相承的次序与变化的链条。','以错综互杂比较诸卦，见相反相成之理。'];
@@ -27,32 +36,16 @@ const AI_REFERENCE_NOTES={
     山天大畜:['Great Taming line 1: danger lies ahead, so stopping for now is beneficial; it does not mean self-improvement.','Great Taming line 2: the axle fastening comes loose and the vehicle stops; this means knowing when to stop, not smooth motion or organizational adjustment.','Great Taming line 3: the good horse pursues, but daily training in driving and defense is required; proceed only after preparation.','Great Taming line 4: restraining a young bull before its horns grow means preventing trouble early and setting constraints in advance.','Great Taming line 5: dangerous force is tamed at its root rather than suppressed only at the surface.','Great Taming line 6: reaching the highway of heaven means the road opens after accumulation is complete.']
   }
 };
-let currentView='home', selectedHex=0, selectedWing=0, selectedPrinciple=0, selectedClassicSection=null, historySelectedId='', historyQuery='', filter='all', readingMode='ancient', pendingImport=null, currentReading=null, aiReadingAbort=null, accountClient=null, accountUser=null, castState={lines:[],working:false,runId:0,ritual:null,confirmed:false,prepared:false,question:'',sessionId:'',mode:'complete'}, tenWings=null, hexagramTexts=null, principleLibrary=null, principleLibraryEn=null, relationsLibrary=null;
+let currentView='home', selectedHex=0, selectedWing=0, selectedPrinciple=0, selectedClassicSection=null, historySelectedId='', historyQuery='', filter='all', readingMode='ancient', pendingImport=null, currentReading=null, aiReadingAbort=null, caseAiAbort=null, caseReviewState={}, accountClient=null, accountUser=null, castState={lines:[],working:false,runId:0,ritual:null,confirmed:false,prepared:false,question:'',sessionId:'',mode:'complete',followupOf:'',followupContext:''}, tenWings=null, hexagramTexts=null, principleLibrary=null, principleLibraryEn=null, relationsLibrary=null;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const TRIGRAM_GLYPHS={'天':'☰','泽':'☱','火':'☲','雷':'☳','风':'☴','水':'☵','山':'☶','地':'☷'};
 const AUTH_ENTRY='./auth?v=20260922-auth7';
 let dailyCoverTimer=0;
 let authNavigationPending=false;
 
-async function clearLegacyAuthNavigationState(){
-  if('serviceWorker' in navigator){
-    try{
-      const registrations=await navigator.serviceWorker.getRegistrations();
-      await Promise.allSettled(registrations.map(registration=>registration.unregister()));
-    }catch(error){console.warn('旧版离线服务未能移除',error)}
-  }
-  if('caches' in globalThis){
-    try{
-      const names=await caches.keys();
-      await Promise.allSettled(names.filter(name=>name.startsWith('guanxiang-shell-')).map(name=>caches.delete(name)));
-    }catch(error){console.warn('旧版页面缓存未能清理',error)}
-  }
-}
-
-async function navigateToAuth(href=AUTH_ENTRY){
+function navigateToAuth(href=AUTH_ENTRY){
   if(authNavigationPending)return;
   authNavigationPending=true;
-  await clearLegacyAuthNavigationState();
   location.assign(href);
 }
 
@@ -101,7 +94,7 @@ function initLandingCover(){
     $('.main-content')?.focus({preventScroll:true});
     requestAnimationFrame(()=>document.dispatchEvent(new Event('guanxiang:entered')));
   };
-  if(new URLSearchParams(location.search).get('entry')==='account'){
+  if(new URLSearchParams(location.search).get('entry')==='account'||/^#history(?:\/|$)/.test(location.hash)){
     revealApp();
     history.replaceState(null,'',`${location.pathname}${location.hash||'#home'}`);
     return;
@@ -183,7 +176,37 @@ function renderCalendarMeta(){const target=$('#calendarMeta');if(!target)return;
 function applyTheme(theme,persist=false){const dark=theme==='dark';document.body.classList.toggle('dark-mode',dark);const button=$('#themeToggle');if(button){button.setAttribute('aria-pressed',String(dark));button.title=dark?'切换为浅色阅读':'切换为深色阅读'}if(persist)try{localStorage.setItem('guanxiang-theme',theme)}catch(error){console.warn('主题未能保存',error)}}
 function initTheme(){let theme='';try{theme=localStorage.getItem('guanxiang-theme')||''}catch{}if(!['light','dark'].includes(theme))theme=globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches?'dark':'light';applyTheme(theme)}
 async function registerServiceWorker(){if(!('serviceWorker' in navigator)||location.protocol==='file:')return;try{const registration=await navigator.serviceWorker.register('./service-worker.js');const announce=worker=>{if(!worker)return;const activate=createServiceWorkerActivator({container:navigator.serviceWorker,reload:()=>location.reload()});showNotice('观象已有更新，可立即启用。',{label:'立即更新',onClick:()=>activate(worker)})};if(registration.waiting)announce(registration.waiting);registration.addEventListener('updatefound',()=>{const worker=registration.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)announce(worker)})})}catch(error){console.warn('离线缓存未能注册',error)}}
-async function loadTenWings(){try{const [wingsResponse,textsResponse,principlesResponse,principlesEnResponse,relationsResponse]=await Promise.all([fetch('ten-wings.json'),fetch('hexagram-texts.json'),fetch('principles.json'),fetch('principles-en.json'),fetch('relations.json')]);if(!wingsResponse.ok||!textsResponse.ok||!principlesResponse.ok||!principlesEnResponse.ok||!relationsResponse.ok)throw new Error('library response failed');[tenWings,hexagramTexts,principleLibrary,principleLibraryEn,relationsLibrary]=await Promise.all([wingsResponse.json(),textsResponse.json(),principlesResponse.json(),principlesEnResponse.json(),relationsResponse.json()]);$('#appNotice')?.classList.add('hidden');renderEditionStatus();renderClassics();renderAnnotationPanel($('#classicsGrid'),'classic',String(selectedWing));renderHexList();renderHexDetail();renderPrinciples();renderStudyPath();applyRoute();if(castState.lines.length===6)showResult()}catch(error){showNotice('经典数据未能完整载入，请检查本地服务后刷新页面。当前不会以摘要冒充完整原文。');$('#hexDetail').innerHTML='<div class="library-loading">六十四卦原文载入失败。</div>';$('#classicsGrid').innerHTML='<div class="library-loading">十翼原文载入失败。</div>';$('#principleDetail').innerHTML='<div class="library-loading">易理纲要载入失败。</div>';console.error(error)}}
+function historySourceStatus(){
+  if(libraryState==='ready')return '';
+  return '<div class="history-source-status" role="status">'+jc(libraryState==='loading'?'loading':'unavailable')+(libraryState==='failed'?'<button type="button" class="text-button" data-library-retry>'+jc('retry')+'</button>':'')+'</div>';
+}
+function bindLibraryRetry(root=document){root.querySelectorAll('[data-library-retry]').forEach(button=>button.addEventListener('click',()=>loadTenWings()))}
+function loadTenWings(){
+  if(libraryPromise)return libraryPromise;
+  libraryState='loading';
+  libraryPromise=(async()=>{
+    const sources=[
+      ['ten-wings.json',value=>{if(!Array.isArray(value.wings)||value.wings.length!==10)throw new Error('Invalid wings');tenWings=value}],
+      ['hexagram-texts.json',value=>{if(!Array.isArray(value.hexagrams)||value.hexagrams.length!==64)throw new Error('Invalid hexagrams');hexagramTexts=value}],
+      ['principles.json',value=>{if(!Array.isArray(value.sections)||!value.sections.length)throw new Error('Invalid principles');principleLibrary=value}],
+      ['principles-en.json',value=>{if(!Array.isArray(value.sections)||!value.sections.length)throw new Error('Invalid principles');principleLibraryEn=value}],
+      ['relations.json',value=>{if(!value.hexagrams)throw new Error('Invalid relations');relationsLibrary=value}]
+    ];
+    const results=await Promise.allSettled(sources.map(async([url,assign])=>assign(await fetchLibraryJson(url))));
+    libraryState=results.some(result=>result.status==='rejected')?'failed':'ready';
+    if(libraryState==='failed')showNotice(jc('unavailable'),{label:jc('retry'),onClick:()=>loadTenWings()});
+    else $('#appNotice')?.classList.add('hidden');
+    renderEditionStatus();renderHexList();renderHexDetail();renderClassics();renderPrinciples();renderStudyPath();
+    if(tenWings)renderAnnotationPanel($('#classicsGrid'),'classic',String(selectedWing));
+    for(const [selector,ready] of [['#hexDetail',hexagramTexts],['#classicsGrid',tenWings],['#principleDetail',activePrincipleLibrary()]]){
+      if(!ready){const target=$(selector);target.innerHTML=historySourceStatus();bindLibraryRetry(target)}
+    }
+    renderHistory();
+    if(castState.lines.length===6)showResult();
+  })().finally(()=>{libraryPromise=null});
+  renderHistory();
+  return libraryPromise;
+}
 function renderPrinciples(){const sections=activePrincipleLibrary()?.sections||[],principleNav=$('#principleNav'),detail=$('#principleDetail');if(!principleNav||!detail)return;if(!sections.length){principleNav.innerHTML='';detail.innerHTML=`<div class="library-loading">${t('principles.loading')}</div>`;return}selectedPrinciple=Math.min(selectedPrinciple,sections.length-1);principleNav.innerHTML=sections.map((section,index)=>`<button type="button" class="principle-nav-item ${index===selectedPrinciple?'active':''}" data-principle="${index}"><span>${String(index+1).padStart(2,'0')}</span><b>${textHtml(section.title)}</b><small>${textHtml(section.subtitle)}</small></button>`).join('');const section=sections[selectedPrinciple];detail.innerHTML=`<header><div><span class="panel-kicker">${String(selectedPrinciple+1).padStart(2,'0')} · ${t('principles.kicker')}</span><h2>${textHtml(section.title)}</h2><p>${textHtml(section.subtitle)}</p></div><blockquote>${textHtml(section.quote)}<cite>——${textHtml(section.source)}</cite></blockquote></header><p class="principle-overview">${textHtml(section.overview)}</p><div class="principle-concepts">${section.concepts.map((concept,index)=>`<section><span>${String(index+1).padStart(2,'0')}</span><div><h3>${textHtml(concept.name)}</h3><p>${textHtml(concept.text)}</p></div></section>`).join('')}</div>`;$$('[data-principle]').forEach(button=>button.addEventListener('click',()=>{selectedPrinciple=+button.dataset.principle;nav('principles');renderPrinciples();detail.scrollIntoView({behavior:'smooth',block:'start'})}))}
 function lineName(value){if(getLanguage()==='en')return value===6?'Old yin · changing':value===9?'Old yang · changing':value===8?'Young yin':'Young yang';return value===6?'老阴 · 变':value===9?'老阳 · 变':value===8?'少阴':'少阳'}
 function renderRecords(){const rec=$('#lineRecords');$('#recordEmpty').classList.toggle('hidden',castState.lines.length>0);rec.innerHTML=castState.lines.map((line,i)=>{const path=line.changes?.length?`<em>${line.changes.map(change=>change.remaining).join(' → ')} ÷ 4</em>`:'';return `<div class="line-record"><strong>${line.value===6?'⚋ ×':line.value===9?'⚊ ○':line.value===8?'⚋':'⚊'}</strong><span>第${i+1}爻 · ${lineName(line.value)}${path}</span><small>${line.value}</small></div>`}).join('')}
@@ -194,9 +217,9 @@ function paintStalks(id,count,kind=''){const box=stalkBox(id);if(!box)return;box
 function moveStalks(fromId,toId,count,kind=''){const from=stalkBox(fromId),to=stalkBox(toId);if(!from||!to)return;const moving=[...from.children].slice(-count);moving.forEach(stalk=>{stalk.className=`stalk ${kind}`;stalk.style.setProperty('--i',to.children.length);to.appendChild(stalk)})}
 function markOperation(step){const board=$('#stalkBoard');board.className=`stalk-board ${step?`step-${step}`:''}`;const order=['split','hang','count','return'];$$('#operationRail span').forEach(item=>{const current=item.dataset.operation;item.classList.toggle('active',current===step);item.classList.toggle('done',order.indexOf(current)>=0&&order.indexOf(current)<order.indexOf(step))});if(!step)hideCountingBoard();renderRitualProgress();renderChangeLedger();if(castState.lines.length>=6)setDivinationPhase('result',false)}
 function setTotal(value,label='策'){const total=$('#stalkTotal strong');if(!total)return;total.textContent=value;$('#stalkTotal small').textContent=label;total.classList.remove('bump');void total.offsetWidth;total.classList.add('bump')}
-function ensureDivinationPhases(){if($('#divinationPhases'))return;const phases=document.createElement('nav');phases.id='divinationPhases';phases.className='divination-phases';phases.setAttribute('aria-label','大衍筮法阶段');phases.innerHTML='<button type="button" data-cast-phase="prepare"><span>壹</span><b>正问与准备</b><small>定其所问</small></button><button type="button" data-cast-phase="cast"><span>贰</span><b>演蓍成卦</b><small>十八变</small></button><button type="button" data-cast-phase="result"><span>叁</span><b>观卦研读</b><small>本卦与之卦</small></button>';$('.divination-intro').after(phases)}
-function setDivinationPhase(requested,scroll=true,updateRoute=true){const view=$('#view-divination');if(!view)return;let phase=['prepare','cast','result'].includes(requested)?requested:'prepare';if(phase==='cast'&&!castState.confirmed)phase='prepare';if(phase==='result'&&castState.lines.length<6)phase=castState.confirmed?'cast':'prepare';view.classList.remove('phase-prepare','phase-cast','phase-result');view.classList.add(`phase-${phase}`);view.dataset.phase=phase;$$('[data-cast-phase]').forEach(button=>{const name=button.dataset.castPhase;button.classList.toggle('active',name===phase);button.disabled=(name==='cast'&&!castState.confirmed)||(name==='result'&&castState.lines.length<6);button.setAttribute('aria-current',name===phase?'step':'false')});if(updateRoute&&currentView==='divination'&&location.hash!==routeForView('divination'))history.pushState(null,'',routeForView('divination'));if(scroll)window.scrollTo({top:0,behavior:'smooth'})}
-function ensureRitualEnhancements(){if($('#ritualProgress'))return;const progress=document.createElement('div');progress.id='ritualProgress';progress.className='ritual-progress';progress.setAttribute('aria-live','polite');$('#operationRail').after(progress);const counting=document.createElement('div');counting.id='countingBoard';counting.className='counting-board hidden';counting.innerHTML='<section class="count-side"><header><span>天 · 左</span><strong id="leftGroupCount">—</strong></header><div class="quartet-track" id="leftGroups"></div><div class="remainder-row"><span>余</span><div id="leftRemainder"></div></div></section><div class="count-formula" id="countFormula">揲之以四</div><section class="count-side"><header><span>地 · 右</span><strong id="rightGroupCount">—</strong></header><div class="quartet-track" id="rightGroups"></div><div class="remainder-row"><span>余</span><div id="rightRemainder"></div></div></section>';$('#stalkBoard').after(counting);const ledger=document.createElement('div');ledger.id='changeLedger';ledger.className='change-ledger';ledger.setAttribute('aria-label','本爻三变记录');ledger.innerHTML='<div class="ledger-label">本爻三变</div><div class="ledger-slot" data-ledger="0"><b>一变</b><span>待行</span></div><div class="ledger-slot" data-ledger="1"><b>二变</b><span>待行</span></div><div class="ledger-slot" data-ledger="2"><b>三变</b><span>待行</span></div>';counting.after(ledger);const audit=document.createElement('details');audit.id='methodAudit';audit.className='method-audit';audit.innerHTML='<summary>展开本爻策数复核</summary><div class="method-audit-intro">每一行都来自本次实际演算记录，不从展示文字反推。</div><div id="methodAuditRows"></div>';ledger.after(audit)}
+function ensureDivinationPhases(){if($('#divinationPhases'))return;const phases=document.createElement('nav');phases.id='divinationPhases';phases.className='divination-phases';phases.setAttribute('aria-label','大衍筮法阶段');phases.innerHTML='<button type="button" data-cast-phase="prepare"><span>壹</span><b data-i18n="flow.prepare">提问</b></button><button type="button" data-cast-phase="cast"><span>贰</span><b data-i18n="flow.cast">起卦</b></button><button type="button" data-cast-phase="result"><span>叁</span><b data-i18n="flow.result">解读</b></button>';$('.divination-intro').after(phases)}
+function setDivinationPhase(requested,scroll=true,updateRoute=true){const view=$('#view-divination');if(!view)return;let phase=['prepare','cast','result'].includes(requested)?requested:'prepare';if(phase==='prepare'&&castState.confirmed)phase=castState.lines.length>=6?'result':'cast';if(phase==='cast'&&castState.lines.length>=6)phase='result';if(phase==='cast'&&!castState.confirmed)phase='prepare';if(phase==='result'&&castState.lines.length<6)phase=castState.confirmed?'cast':'prepare';view.classList.remove('phase-prepare','phase-cast','phase-result');view.classList.add(`phase-${phase}`);view.dataset.phase=phase;$$('[data-cast-phase]').forEach(button=>{const name=button.dataset.castPhase;button.classList.toggle('active',name===phase);button.disabled=(name==='prepare'&&castState.confirmed)||(name==='cast'&&(!castState.confirmed||castState.lines.length>=6))||(name==='result'&&castState.lines.length<6);button.setAttribute('aria-current',name===phase?'step':'false')});if(updateRoute&&currentView==='divination'&&location.hash!==routeForView('divination'))history.pushState(null,'',routeForView('divination'));if(scroll)window.scrollTo({top:0,behavior:'smooth'})}
+function ensureRitualEnhancements(){if($('#ritualProgress'))return;const progress=document.createElement('div');progress.id='ritualProgress';progress.className='ritual-progress';progress.setAttribute('aria-live','polite');$('#operationRail').after(progress);const counting=document.createElement('div');counting.id='countingBoard';counting.className='counting-board hidden';counting.innerHTML='<section class="count-side"><header><span>天 · 左</span><strong id="leftGroupCount">—</strong></header><div class="quartet-track" id="leftGroups"></div><div class="remainder-row"><span>余</span><div id="leftRemainder"></div></div></section><div class="count-formula" id="countFormula">揲之以四</div><section class="count-side"><header><span>地 · 右</span><strong id="rightGroupCount">—</strong></header><div class="quartet-track" id="rightGroups"></div><div class="remainder-row"><span>余</span><div id="rightRemainder"></div></div></section>';$('#stalkBoard').after(counting);const ledger=document.createElement('div');ledger.id='changeLedger';ledger.className='change-ledger';ledger.setAttribute('aria-label','本爻三变记录');ledger.innerHTML='<div class="ledger-label">本爻三变</div><div class="ledger-slot" data-ledger="0"><b>一变</b><span>待行</span></div><div class="ledger-slot" data-ledger="1"><b>二变</b><span>待行</span></div><div class="ledger-slot" data-ledger="2"><b>三变</b><span>待行</span></div>';counting.after(ledger);const audit=document.createElement('details');audit.id='methodAudit';audit.className='method-audit';audit.innerHTML='<summary>展开本爻策数复核</summary><div class="method-audit-intro">每一行都来自本次实际演算记录，不从展示文字反推。</div><div id="methodAuditRows"></div>';ledger.after(audit);const calculations=document.createElement('details');calculations.className='flow-fold cast-calculations';calculations.innerHTML='<summary data-i18n="flow.calculations">查看本爻三变与策数</summary>';audit.after(calculations);calculations.append(progress,ledger,audit)}
 function renderMethodAudit(line=castState.lines.at(-1)){const rows=$('#methodAuditRows'),audit=$('#methodAudit');if(!rows||!audit)return;const changes=line?.changes||castState.ritual?.history||[];if(!changes.length){audit.classList.add('hidden');rows.innerHTML='';return}audit.classList.remove('hidden');rows.innerHTML=changes.map((change,index)=>`<div class="method-audit-row"><b>第${index+1}变 · ${change.before} − ${change.removed} = ${change.remaining}</b><span>分二：左 ${change.left}，右 ${change.right}</span><span>挂一后右余 ${change.rightAfter} · 左余 ${change.leftR} · 右余 ${change.rightR}</span><small>挂一 1 + 左余 ${change.leftR} + 右余 ${change.rightR} = ${change.removed} 策</small></div>`).join('');const final=changes.at(-1)?.remaining;if(final)rows.insertAdjacentHTML('beforeend',`<div class="method-audit-final"><b>得爻：${final} ÷ 4 = ${final/4}</b><span>${lineName(final/4)}</span></div>`)}
 function renderRitualProgress(){const progress=$('#ritualProgress');if(!progress)return;progress.classList.toggle('hidden',!castState.confirmed);progress.innerHTML='';const completed=castState.lines.length,ritual=castState.ritual;for(let line=0;line<6;line++){const group=document.createElement('div');group.className='progress-line';group.setAttribute('aria-label',`第${line+1}爻`);for(let change=0;change<3;change++){const dot=document.createElement('i'),done=line<completed||(line===completed&&ritual&&change<ritual.history.length),active=line===completed&&ritual&&change===ritual.changeNumber-1;dot.className=`${done?'done ':''}${active?'active':''}`.trim();group.appendChild(dot)}progress.appendChild(group)}const label=document.createElement('span');label.textContent=ritual?`第 ${ritual.lineNumber} 爻 · 第 ${ritual.changeNumber} 变 / 共十八变`:completed===6?'十八变已毕':`已成 ${completed} 爻`;progress.appendChild(label)}
 function renderChangeLedger(ritual=castState.ritual,draft=null){const ledger=$('#changeLedger');if(!ledger)return;ledger.classList.toggle('hidden',!castState.prepared);const history=ritual?.history||castState.lines.at(-1)?.changes||[],currentIndex=ritual?ritual.changeNumber-1:-1;$$('#changeLedger .ledger-slot').forEach((slot,index)=>{const item=history[index]||(draft&&index===currentIndex?draft:null);slot.classList.toggle('done',Boolean(history[index]));slot.classList.toggle('current',Boolean(draft&&index===currentIndex&&!history[index]));slot.querySelector('span').textContent=item?`${item.before} − ${item.removed} = ${item.remaining}`:index===currentIndex?'进行中':'待行'})}
@@ -216,14 +239,14 @@ function newSessionId(){if(globalThis.crypto?.randomUUID)return crypto.randomUUI
 function validChange(change){return change&&[change.before,change.left,change.right,change.rightAfter,change.leftR,change.rightR,change.removed,change.remaining].every(Number.isFinite)&&change.before-change.removed===change.remaining}
 function validLine(line){return line&&[6,7,8,9].includes(line.value)&&Array.isArray(line.changes)&&line.changes.length===3&&line.changes.every(validChange)}
 function validRitual(ritual,lineCount){if(ritual===null)return true;if(!ritual||ritual.lineNumber!==lineCount+1||ritual.changeNumber<1||ritual.changeNumber>3||ritual.stepIndex<0||ritual.stepIndex>3||!Number.isFinite(ritual.stalks)||!Array.isArray(ritual.history)||!ritual.history.every(validChange))return false;return ritual.change===null||validChange(ritual.change)}
-function saveCast(){try{writeJson(localStorage,'guanxiang-cast-v3',{version:3,savedAt:new Date().toISOString(),sessionId:castState.sessionId,question:castState.question,confirmed:castState.confirmed,prepared:castState.prepared,mode:castState.mode,lines:castState.lines,ritual:castState.ritual})}catch(error){console.warn('起卦进度未能保存',error)}}
+function saveCast(){try{writeJson(localStorage,'guanxiang-cast-v3',{version:3,savedAt:new Date().toISOString(),sessionId:castState.sessionId,question:castState.question,confirmed:castState.confirmed,prepared:castState.prepared,mode:castState.mode,lines:castState.lines,ritual:castState.ritual,followupOf:castState.followupOf,followupContext:castState.followupContext})}catch(error){console.warn('起卦进度未能保存',error)}}
 const HISTORY_KEY='guanxiang-history-v1';
 const ACCOUNT_MODE_KEY='guanxiang-account-mode-v1';
 const GUEST_HISTORY_KEY='guanxiang-history-guest-v1';
 const ACCOUNT_HISTORY_PREFIX='guanxiang-history-account-v1:';
 const LEGACY_MIGRATION_KEY='guanxiang-history-legacy-owner-v1';
 const SYNC_QUEUE_PREFIX='guanxiang-sync-queue-v1:';
-let syncState='idle',syncError='',syncInFlight=false,accountSessionResolved=false;
+let syncState='idle',syncError='',syncInFlight=false,accountSessionResolved=false,accountRestoreInFlight=false;
 function isGuestAccountMode(){try{return localStorage.getItem(ACCOUNT_MODE_KEY)==='guest'}catch{return false}}
 function namespaceHash(value){let hash=2166136261;for(const char of String(value||'').trim().toLowerCase()){hash^=char.charCodeAt(0);hash=Math.imul(hash,16777619)}return (hash>>>0).toString(36)}
 function accountHistoryKey(email){return `${ACCOUNT_HISTORY_PREFIX}${namespaceHash(email)}`}
@@ -247,9 +270,8 @@ function loadSyncQueue(){const value=syncQueueKey()?readJson(localStorage,syncQu
 function persistSyncQueue(queue){const key=syncQueueKey();if(!key)return;const clean={upserts:queue.upserts||{},deletes:[...new Set(queue.deletes||[])]};if(Object.keys(clean.upserts).length||clean.deletes.length)writeJson(localStorage,key,clean);else localStorage.removeItem(key)}
 function queueUpsert(record){const queue=loadSyncQueue();queue.upserts[record.id]=record;queue.deletes=queue.deletes.filter(id=>id!==record.id);persistSyncQueue(queue)}
 function queueDelete(id){const queue=loadSyncQueue();delete queue.upserts[id];if(!queue.deletes.includes(id))queue.deletes.push(id);persistSyncQueue(queue)}
-function clearQueueUpserts(){const queue=loadSyncQueue();queue.upserts={};persistSyncQueue(queue)}
 function syncCopy(key){const copy={
-  zh:{guest:'游客模式 · 仅保存在本机',loading:'正在读取账户…',syncing:'正在同步到云端…',synced:'云端同步正常',failed:'云端同步失败',retry:'重试同步'},
+  'zh-CN':{guest:'游客模式 · 仅保存在本机',loading:'正在读取账户…',syncing:'正在同步到云端…',synced:'云端同步正常',failed:'云端同步失败',retry:'重试同步'},
   en:{guest:'Guest mode · saved on this device',loading:'Loading account…',syncing:'Syncing to the cloud…',synced:'Cloud sync is up to date',failed:'Cloud sync failed',retry:'Retry sync'},
   fa:{guest:'حالت مهمان · فقط روی این دستگاه ذخیره می‌شود',loading:'در حال بارگذاری حساب…',syncing:'در حال همگام‌سازی با ابر…',synced:'همگام‌سازی ابری برقرار است',failed:'همگام‌سازی ابری ناموفق بود',retry:'تلاش دوباره'}
 }[accountLanguage()]||{};return copy[key]||key}
@@ -271,14 +293,41 @@ function renderSyncStatus(){
 function setSyncState(state,error=''){syncState=state;syncError=error?String(error).slice(0,120):'';renderSyncStatus()}
 async function flushSyncQueue(){
   if(!accountUser||!accountClient||syncInFlight)return;
-  const queue=loadSyncQueue();if(!Object.keys(queue.upserts).length&&!queue.deletes.length){setSyncState('synced');return}
   syncInFlight=true;setSyncState('syncing');
   try{
-    for(const id of queue.deletes){await accountClient.deleteReading(id);const current=loadSyncQueue();current.deletes=current.deletes.filter(item=>item!==id);persistSyncQueue(current)}
-    for(const record of Object.values(loadSyncQueue().upserts)){await accountClient.upsertReading(record);const current=loadSyncQueue();delete current.upserts[record.id];persistSyncQueue(current)}
+    // Older clients may have saved a record without ever putting it on the upload queue.
+    let remote=(await accountClient.listReadings()).records||[];
+    const remoteById=new Map(remote.map(record=>[record.id,record]));
+    const initialQueue=loadSyncQueue(),deletedInitially=new Set(initialQueue.deletes);
+    for(const record of loadHistory()){
+      const cloud=remoteById.get(record.id);
+      if(!deletedInitially.has(record.id)&&!initialQueue.upserts[record.id]&&(!cloud||new Date(record.updatedAt)>new Date(cloud.updatedAt)))queueUpsert(record);
+    }
+    let wrote=false;
+    let queue=loadSyncQueue();
+    while(queue.deletes.length||Object.keys(queue.upserts).length){
+      for(const id of queue.deletes){
+        try{await accountClient.deleteReading(id)}catch(error){if(error.status!==404)throw error}
+        wrote=true;
+        const current=loadSyncQueue();current.deletes=current.deletes.filter(item=>item!==id);persistSyncQueue(current);
+      }
+      for(const record of Object.values(loadSyncQueue().upserts)){
+        await accountClient.upsertReading(record);
+        wrote=true;
+        const current=loadSyncQueue();
+        if(JSON.stringify(current.upserts[record.id])===JSON.stringify(record))delete current.upserts[record.id];
+        persistSyncQueue(current);
+      }
+      queue=loadSyncQueue();
+    }
+    if(wrote)remote=(await accountClient.listReadings()).records||[];
+    const pending=loadSyncQueue(),deleted=new Set(pending.deletes);
+    persistHistory(mergeJournalRecords(loadHistory(),mergeJournalRecords(remote,Object.values(pending.upserts))).filter(record=>!deleted.has(record.id)));
     setSyncState('synced');
   }catch(error){setSyncState('failed',error instanceof AccountApiError?error.message:'Network error')}
-  finally{syncInFlight=false;renderHistory()}
+  finally{syncInFlight=false;renderHistory();renderBackupReminder()}
+  const pending=loadSyncQueue();
+  if(syncState==='synced'&&(pending.deletes.length||Object.keys(pending.upserts).length))return flushSyncQueue();
 }
 function accountLanguage(){return getLanguage()==='fa'?'fa':getLanguage()==='en'?'en':'zh-CN'}
 const ACCOUNT_COPY={'zh-CN':{'auth.title':'观象账户','auth.login':'登录','auth.register':'注册','auth.email':'邮箱','auth.password':'密码','auth.submitLogin':'登录账户','auth.submitRegister':'创建账户','auth.logout':'退出登录','auth.guest':'游客模式','auth.accountDescription':'记录会在不同设备间同步。','auth.mergeTitle':'合并此设备的记录？','auth.mergeBody':'旧的本机记录会保留并添加到你的账户。','auth.merge':'合并记录','auth.keepCloud':'只保留云端记录','auth.invalid':'邮箱或密码无效。','auth.network':'账户服务暂时不可用。','auth.loggedIn':'已登录'},en:{'auth.title':'Guanxiang account','auth.login':'Log in','auth.register':'Create account','auth.email':'Email','auth.password':'Password','auth.submitLogin':'Log in','auth.submitRegister':'Create account','auth.logout':'Log out','auth.guest':'Guest mode','auth.accountDescription':'Records sync across your devices.','auth.mergeTitle':'Merge this device’s records?','auth.mergeBody':'Your existing local records will be kept and added to your account.','auth.merge':'Merge records','auth.keepCloud':'Keep cloud records only','auth.invalid':'The email or password is not valid.','auth.network':'The account service is temporarily unavailable.','auth.loggedIn':'Signed in'},fa:{'auth.title':'حساب گوانشیانگ','auth.login':'ورود','auth.register':'ثبت‌نام','auth.email':'ایمیل','auth.password':'رمز عبور','auth.submitLogin':'ورود به حساب','auth.submitRegister':'ساخت حساب','auth.logout':'خروج','auth.guest':'حالت مهمان','auth.accountDescription':'رکوردهای شما در دستگاه‌های مختلف همگام می‌شوند.','auth.mergeTitle':'رکوردهای این دستگاه ادغام شوند؟','auth.mergeBody':'رکوردهای محلی قدیمی حفظ می‌شوند و به حساب شما اضافه خواهند شد.','auth.merge':'ادغام رکوردها','auth.keepCloud':'فقط رکوردهای ابری','auth.invalid':'ایمیل یا رمز عبور معتبر نیست.','auth.network':'خدمت حساب موقتاً در دسترس نیست.','auth.loggedIn':'وارد شده‌اید'}};
@@ -306,27 +355,51 @@ function openMergeDialog(remoteRecords,localCountOverride=null){
   dialog.querySelector('[data-merge-choice="merge"]').textContent=accountCopy('auth.merge');
   if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
   return new Promise(resolve=>{
-    const finish=choice=>{dialog.close?.();dialog.removeAttribute('open');dialog.removeEventListener('click',onClick);resolve(choice)};
+    const finish=choice=>{dialog.close?.();dialog.removeAttribute('open');dialog.removeEventListener('click',onClick);dialog.removeEventListener('cancel',onCancel);resolve(choice)};
     const onClick=event=>{const choice=event.target.closest('[data-merge-choice]')?.dataset.mergeChoice;if(choice)finish(choice)};
+    const onCancel=event=>{event.preventDefault();finish('cloud')};
     dialog.addEventListener('click',onClick);
+    dialog.addEventListener('cancel',onCancel);
   });
 }
 async function syncAccountAfterLogin(){
-  const migration=legacyMigration(),localAccount=loadHistory(),guest=!localAccount.length?readHistoryAt(GUEST_HISTORY_KEY):[],legacy=!migration.owner&&!guest.length?readHistoryAt(HISTORY_KEY):[],local=mergeJournalRecords(localAccount,mergeJournalRecords(guest,legacy));
-  const pending=loadSyncQueue(),pendingDeletes=new Set(pending.deletes);
-  const remote=((await accountClient.listReadings()).records||[]).filter(record=>!pendingDeletes.has(record.id));
-  const choice=local.length?await openMergeDialog(remote,local.length):'merge';
-  if(choice==='cloud'){persistHistory(remote);persistSyncQueue({upserts:{},deletes:[]})}
-  else {const result=await synchronizeHistory({client:accountClient,localRecords:local,strategy:'merge'});persistHistory(mergeJournalRecords(local,result.records));if(guest.length)localStorage.removeItem(GUEST_HISTORY_KEY);if(legacy.length)persistLegacyMigration({owner:`account:${namespaceHash(accountUser.email)}`});clearQueueUpserts()}
-  setSyncState('synced');renderHistory();renderBackupReminder();await flushSyncQueue();
+  if(!accountUser||syncInFlight)return;
+  const migration=legacyMigration(),localAccount=loadHistory(),guest=!localAccount.length?readHistoryAt(GUEST_HISTORY_KEY):[],legacy=!migration.owner&&!guest.length?readHistoryAt(HISTORY_KEY):[],local=mergeJournalRecords(guest,legacy);
+  // Existing account records are already owned; only unclaimed device records need consent.
+  if(local.length){
+    syncInFlight=true;setSyncState('syncing');
+    try{
+      const remote=(await accountClient.listReadings()).records||[];
+      const choice=await openMergeDialog(remote,local.length);
+      if(choice==='merge'){
+        for(const record of mergeJournalRecords(local,localAccount))queueUpsert(record);
+        persistHistory(mergeJournalRecords(localAccount,local));
+        if(guest.length)localStorage.removeItem(GUEST_HISTORY_KEY);
+        if(legacy.length)persistLegacyMigration({owner:`account:${namespaceHash(accountUser.email)}`});
+      }
+    }catch(error){setSyncState('failed',error instanceof AccountApiError?error.message:'Network error');return}
+    finally{syncInFlight=false}
+  }
+  await flushSyncQueue();
 }
 async function restoreAccountSession(){
+  if(accountRestoreInFlight||syncInFlight)return;
+  accountRestoreInFlight=true;
   accountSessionResolved=false;
   accountClient=createAccountClient({language:accountLanguage()});
-  if(isGuestAccountMode()){accountUser=null;accountSessionResolved=true;migrateLegacyToGuest();setSyncState('idle');renderAccountStatus();renderHistory();return}
-  try{const result=await accountClient.me();accountUser=result.user||null;await syncAccountAfterLogin()}
-  catch(error){if(error instanceof AccountApiError&&[401,403].includes(error.status)){setAccountMode('guest');migrateLegacyToGuest()}else{console.warn('账户状态未能读取',error);setSyncState('failed',accountCopy('auth.network'))}accountUser=null}
-  accountSessionResolved=true;renderAccountStatus();
+  try{
+    if(isGuestAccountMode()){accountUser=null;migrateLegacyToGuest();setSyncState('idle');return}
+    try{
+      const result=await accountClient.me();accountUser=result.user||null;
+      if(!accountUser)throw new AccountApiError('UNAUTHORIZED','Please sign in first.',401);
+    }catch(error){
+      if(error instanceof AccountApiError&&[401,403].includes(error.status)){accountUser=null;setAccountMode('guest');migrateLegacyToGuest();setSyncState('idle')}
+      else{console.warn('账户状态未能读取',error);setSyncState('failed',accountCopy('auth.network'))}
+      return;
+    }
+    accountSessionResolved=true;setSyncState('syncing');renderAccountStatus();renderHistory();
+    await syncAccountAfterLogin();
+  }finally{accountSessionResolved=true;accountRestoreInFlight=false;renderAccountStatus();renderHistory()}
 }
 function syncCloudRecord(record){
   if(!accountUser||!accountClient){renderSyncStatus();return}
@@ -339,16 +412,76 @@ function syncCloudDelete(id){
 function journalMeta(){return readJson(localStorage,'guanxiang-journal-meta-v1',{})||{}}
 function persistJournalMeta(meta){writeJson(localStorage,'guanxiang-journal-meta-v1',meta)}
 function renderBackupReminder(){const target=$('#backupReminder');if(!target)return;const status=backupStatus(loadHistory(),journalMeta());const dismissed=readJson(localStorage,'guanxiang-backup-dismissed-v1',false);if(!status.due||dismissed){target.classList.add('hidden');return}target.classList.remove('hidden');target.innerHTML=`<span>本地已有 ${status.count} 条记录，建议导出一份备份。</span><button type="button" class="text-button" id="dismissBackup">稍后提醒</button>`;$('#dismissBackup').onclick=()=>{writeJson(localStorage,'guanxiang-backup-dismissed-v1',true);target.classList.add('hidden')}}
-function saveReadingHistory(originalIndex,changedIndex,moving){if(!castState.sessionId||castState.lines.length!==6||!castState.lines.every(validLine))return;try{const records=loadHistory(),stamp=new Date().toISOString(),record={id:castState.sessionId,completedAt:stamp,createdAt:stamp,updatedAt:stamp,question:castState.question,lines:castState.lines,originalIndex,changedIndex,moving,mode:castState.mode,tags:[],reviewState:'未开始'};const existing=records.findIndex(item=>item.id===record.id);if(existing>=0)records[existing]={...records[existing],...record,note:records[existing].note||'',createdAt:records[existing].createdAt||record.createdAt};else records.unshift({...record,note:''});const saved=records.find(item=>item.id===record.id);persistHistory(records);syncCloudRecord(saved);renderBackupReminder();if(currentView==='history')renderHistory()}catch(error){console.warn('占问记录未能保存',error)}}
+function ensureFollowupContextField(show=false){
+  const compose=$('.question-compose');if(!compose)return;
+  let field=$('#followupContext');
+  if(!show){field?.closest('.followup-context')?.remove();return}
+  if(!field){const wrap=document.createElement('div');wrap.className='followup-context';wrap.innerHTML='<label for="followupContext">补充这段时间发生了什么（选填）</label><textarea id="followupContext" rows="3" maxlength="1200" placeholder="例如：收到面试反馈，想再看看下一步应如何准备。"></textarea>';compose.appendChild(wrap);field=wrap.querySelector('#followupContext')}
+  field.value=castState.followupContext||'';
+  field.addEventListener('input',()=>{castState.followupContext=field.value.slice(0,1200);saveCast()},{once:true});
+}
+function startFollowupReading(id){
+  const record=loadHistory().find(item=>item.id===id);if(!record)return;
+  resetCast();castState.followupOf=record.id;castState.question=record.question;castState.followupContext='';
+  ensureFollowupContextField(true);$('#questionInput').value=record.question;validateQuestion();setDivinationPhase('prepare');nav('divination');requestAnimationFrame(()=>$('#questionInput')?.focus());saveCast();
+}
+function saveCaseRecord(record){
+  const records=loadHistory(),index=records.findIndex(item=>item.id===record.id);if(index<0)return false;
+  records[index]={...record,updatedAt:new Date().toISOString()};persistHistory(records);syncCloudRecord(records[index]);return true;
+}
+function updateCaseConnection(id,connection,remove=false){
+  const records=loadHistory(),record=records.find(item=>item.id===historySelectedId);if(!record||!records.some(item=>item.id===id))return;
+  const existing=normalizeConnections(record.connections,record.id).filter(item=>item.id!==id);
+  record.connections=[...existing,{id,kind:connection?.kind||'manual',reason:String(connection?.reason||'').slice(0,500),updatedAt:new Date().toISOString(),removed:remove}];
+  saveCaseRecord(record);renderHistoryDetail(record);
+}
+function openCaseRecord(id){historySelectedId=id;nav('history');renderHistory()}
+async function analyzeCaseLinks(){
+  const record=loadHistory().find(item=>item.id===historySelectedId),endpoint=String(globalThis.GUANXIANG_AI_ENDPOINT||'').trim();if(!record||!endpoint||caseAiAbort)return;
+  const payload=buildConnectionPayload(record,loadHistory(),getLanguage()),controller=new AbortController();caseAiAbort=controller;caseReviewState={phase:'finding'};renderHistoryDetail(record);
+  try{const related=await requestCaseAi({endpoint,payload});const records=loadHistory(),current=records.find(item=>item.id===record.id);if(!current)return;const stamp=new Date().toISOString();const existing=normalizeConnections(current.connections,current.id).filter(item=>!related.some(link=>link.id===item.id));current.connections=[...existing,...related.map(link=>({...link,kind:'ai',updatedAt:stamp,removed:false}))];current.caseReviewSearchAt=stamp;saveCaseRecord(current);caseReviewState=related.length?{}:{noMatches:true};renderHistoryDetail(current)}catch(error){caseReviewState={error:error.message==='AI_TIMEOUT'?'timeout':error.message==='RATE_LIMITED'?'quota':'failed'};renderHistoryDetail(record)}finally{caseAiAbort=null}
+}
+async function reviewCase(){
+  const records=loadHistory(),record=records.find(item=>item.id===historySelectedId),endpoint=String(globalThis.GUANXIANG_AI_ENDPOINT||'').trim();if(!record||!endpoint||caseAiAbort)return;
+  const payload=buildCaseReviewPayload(record,records,getLanguage());if(payload.readings.length<2)return;
+  const controller=new AbortController();caseAiAbort=controller;caseReviewState={phase:'reviewing'};renderHistoryDetail(record);
+  try{const result=await requestCaseAi({endpoint,payload}),current=loadHistory().find(item=>item.id===record.id);if(!current)return;const reviews=normalizeCaseReviews(current.caseReviews),next={id:crypto.randomUUID(),generatedAt:new Date().toISOString(),language:getLanguage(),signature:caseSignature(payload),readingIds:result.readingIds,...result};current.caseReviews=[...reviews,next];saveCaseRecord(current);caseReviewState={};renderHistoryDetail(current)}catch(error){caseReviewState={error:error.message==='AI_TIMEOUT'?'timeout':error.message==='RATE_LIMITED'?'quota':'failed'};renderHistoryDetail(record)}finally{caseAiAbort=null}
+}
+function addManualCaseLink(id){updateCaseConnection(id,{kind:'manual',reason:'用户手动关联'})}
+function renderCasePanel(detail,record){
+  const panel=detail.querySelector('.case-review-panel');if(!panel)return;
+  mountCaseReview(panel,record,loadHistory(),{language:getLanguage(),endpoint:String(globalThis.GUANXIANG_AI_ENDPOINT||'').trim(),state:caseReviewState,onAnalyze:analyzeCaseLinks,onReview:reviewCase,onFollowup:()=>startFollowupReading(record.id),onOpen:openCaseRecord,onRemove:id=>updateCaseConnection(id,null,true),onLink:addManualCaseLink});
+}
+function saveReadingHistory(originalIndex,changedIndex,moving){
+  if(!castState.sessionId||castState.lines.length!==6||!castState.lines.every(validLine))return;
+  try{
+    const records=loadHistory(),stamp=new Date().toISOString(),existing=records.find(item=>item.id===castState.sessionId);
+    if(existing?.localReadingSnapshot||existing&&!hexagramTexts)return;
+    const record=existing||{id:castState.sessionId,completedAt:stamp,createdAt:stamp,updatedAt:stamp,question:castState.question,lines:castState.lines,originalIndex,changedIndex,moving,mode:castState.mode,tags:[],reviewState:'未开始',note:'',connections:castState.followupOf?[{id:castState.followupOf,kind:'followup',reason:castState.followupContext,updatedAt:stamp,removed:false}]:[]};
+    if(hexagramTexts)record.localReadingSnapshot={reading:currentReading.local,language:getLanguage(),capturedAt:stamp};
+    if(!existing)records.unshift(record);
+    persistHistory(records);syncCloudRecord(record);renderBackupReminder();if(currentView==='history')renderHistory();
+  }catch(error){showNotice(jc('error'));console.warn('占问记录未能保存',error)}
+}
 function updateHistoryNote(id,note){const records=loadHistory(),record=records.find(item=>item.id===id);if(!record)return false;record.note=String(note||'').trim().slice(0,2000);record.updatedAt=new Date().toISOString();persistHistory(records);syncCloudRecord(record);return true}
 function renderHistory(){
   const list=$('#historyList'),detail=$('#historyDetail'),indexPage=$('#historyIndexPage'),recordPage=$('#historyRecordPage');
   if(!list||!detail||!indexPage||!recordPage)return;
   renderSyncStatus();
   const records=loadHistory(),selected=historySelectedId?records.find(record=>record.id===historySelectedId):null;
+  let filters=$('#journalFilters');
+  if(!filters){filters=document.createElement('nav');filters.id='journalFilters';filters.className='journal-filters';filters.setAttribute('aria-label',jc('title'));$('.history-tools').after(filters)}
+  filters.innerHTML=journalFilterHtml(records,historyFilter,getLanguage());
+  filters.querySelectorAll('[data-journal-filter]').forEach(button=>button.addEventListener('click',()=>{historyFilter=button.dataset.journalFilter;renderHistory()}));
   if(historySelectedId&&!selected){
-    historySelectedId='';
-    if(currentView==='history')history.replaceState(null,'','#history');
+    if(accountSessionResolved&&syncState!=='syncing'&&syncState!=='failed'){
+      historySelectedId='';if(currentView==='history')history.replaceState(null,'','#history');renderHistory();return;
+    }
+    indexPage.hidden=true;recordPage.hidden=false;
+    const pending=!accountSessionResolved||syncState==='syncing';
+    detail.innerHTML='<button type="button" class="history-back-button" data-history-back>'+t('history.back')+'</button><p role="status">'+(pending?jc('accountLoading'):jc('missing'))+'</p>';
+    detail.querySelector('[data-history-back]').onclick=()=>{historySelectedId='';nav('history');renderHistory()};
+    return;
   }
   if(selected){
     indexPage.hidden=true;
@@ -360,38 +493,55 @@ function renderHistory(){
   recordPage.hidden=true;
   detail.replaceChildren();
   $('#historyCount').textContent=records.length;
-  const query=normalizeSearchText(historyQuery),visible=query?records.filter(record=>normalizeSearchText(`${record.question} ${record.note||''} ${hexagrams[record.originalIndex]?.[2]||''} ${hexagrams[record.changedIndex]?.[2]||''}`).includes(query)):records;
+  const query=normalizeSearchText(historyQuery),visible=records.filter(record=>(historyFilter==='all'||journalStatus(record)===historyFilter)&&(!query||normalizeSearchText([record.question,record.note,record.journal?.intention,record.journal?.action,...(record.journal?.entries||[]).flatMap(entry=>[entry.facts,entry.actions,entry.assessment,entry.nextStep]),hexagrams[record.originalIndex]?.[2],hexagrams[record.changedIndex]?.[2]].join(' ')).includes(query)));
   if(!records.length){list.innerHTML=`<div class="history-empty"><span>☷</span><b>${t('history.none')}</b><p>${t('history.emptyDescription')}</p></div>`;return}
+  if(!visible.length&&historyFilter!=='all'&&!query){list.innerHTML='<div class="history-empty"><p>'+jc(historyFilter==='due'?'noDue':'noReviewed')+'</p></div>';return}
   if(!visible.length){list.innerHTML=`<div class="history-empty"><b>${t('history.noMatch')}</b><p>${t('history.noMatchDescription')}</p></div>`;return}
   const english=getLanguage()==='en',dateLocale=english?'en-US':'zh-CN';
-  list.innerHTML=visible.map(record=>{const original=hexagrams[record.originalIndex],changed=hexagrams[record.changedIndex],date=new Date(record.completedAt),dateText=Number.isNaN(date.getTime())?t('history.timeMissing'):date.toLocaleString(dateLocale,{year:'numeric',month:english?'short':'long',day:'numeric',hour:'2-digit',minute:'2-digit'}),name=english?`${displayHexagramName(record.originalIndex,'en',original?.[0])} → ${displayHexagramName(record.changedIndex,'en',changed?.[0])}`:`${original?.[2]||'本卦'}之${changed?.[2]||'变卦'}`;return `<div class="history-item" data-history-id="${attributeHtml(record.id)}"><button type="button" class="history-item-open" aria-label="${attributeHtml(record.question)}"><span class="history-glyph">${original?.[1]||'—'}<i>→</i>${changed?.[1]||'—'}</span><span class="history-item-copy"><b data-user-content>${textHtml(record.question)}</b><small>${textHtml(name)}${record.note?` · ${t('history.hasNote')}`:''}</small></span><time>${textHtml(dateText)}</time><span class="history-item-arrow" aria-hidden="true">→</span></button><button type="button" class="history-item-delete" data-history-delete="${attributeHtml(record.id)}" aria-label="${attributeHtml(t('history.delete'))}" title="${attributeHtml(t('history.delete'))}">×</button></div>`}).join('');
+  list.innerHTML=visible.map(record=>{const original=hexagrams[record.originalIndex],changed=hexagrams[record.changedIndex],date=new Date(record.completedAt),dateText=Number.isNaN(date.getTime())?t('history.timeMissing'):date.toLocaleString(dateLocale,{year:'numeric',month:english?'short':'long',day:'numeric',hour:'2-digit',minute:'2-digit'}),name=english?`${displayHexagramName(record.originalIndex,'en',original?.[0])} → ${displayHexagramName(record.changedIndex,'en',changed?.[0])}`:`${original?.[2]||'本卦'}之${changed?.[2]||'变卦'}`;return `<div class="history-item" data-history-id="${attributeHtml(record.id)}"><button type="button" class="history-item-open" aria-label="${attributeHtml(record.question)}"><span class="history-glyph">${original?.[1]||'—'}<i>→</i>${changed?.[1]||'—'}</span><span class="history-item-copy"><b data-user-content>${textHtml(record.question)}</b><small>${textHtml(name)}${record.note?` · ${t('history.hasNote')}`:''}</small>${journalBadgeHtml(record,getLanguage())}</span><time>${textHtml(dateText)}</time><span class="history-item-arrow" aria-hidden="true">→</span></button><button type="button" class="history-item-delete" data-history-delete="${attributeHtml(record.id)}" aria-label="${attributeHtml(t('history.delete'))}" title="${attributeHtml(t('history.delete'))}">×</button></div>`}).join('');
   list.querySelectorAll('.history-item').forEach(item=>item.addEventListener('click',event=>{if(event.target.closest('[data-history-delete]'))return;historySelectedId=item.dataset.historyId;nav('history');renderHistory()}));
   list.querySelectorAll('[data-history-delete]').forEach(button=>button.addEventListener('click',event=>{event.stopPropagation();const id=button.dataset.historyDelete;if(!confirm(t('history.deleteConfirm')))return;persistHistory(loadHistory().filter(item=>item.id!==id));syncCloudDelete(id);if(historySelectedId===id){historySelectedId='';history.replaceState(null,'','#history')}renderHistory();renderBackupReminder();showNotice(t('history.deleted'))}));
 }
 function renderHistoryDetail(record){
   const detail=$('#historyDetail');
   if(!detail||!record)return;
+  const drafts=detail.dataset.recordId===record.id?[...detail.querySelectorAll('[data-dirty]')].map(input=>({id:input.id,value:input.value})):[];
+  const reviewOpen=detail.dataset.recordId===record.id&&detail.querySelector('.journal-review')?.open;
+  const activeId=detail.contains(document.activeElement)?document.activeElement.id:'';
+  const selection=document.activeElement?.selectionStart;
+  detail.dataset.recordId=record.id;
   const original=hexagrams[record.originalIndex],changed=hexagrams[record.changedIndex];
   const moving=Array.isArray(record.moving)?record.moving:record.lines.map((line,index)=>line.value===6||line.value===9?index:-1).filter(index=>index>=0);
   const date=new Date(record.completedAt),english=getLanguage()==='en';
   const positions=english?['Line 1','Line 2','Line 3','Line 4','Line 5','Line 6']:['初','二','三','四','五','上'];
   const title=english?`${displayHexagramName(record.originalIndex,'en',original?.[0])} → ${displayHexagramName(record.changedIndex,'en',changed?.[0])}`:`${original?.[2]||'本卦'}之${changed?.[2]||'变卦'}`;
   const movingText=moving.length?t('reading.moving',{lines:moving.map(index=>english?index+1:positions[index]).join(english?', ':'、')}):t('reading.still');
-  detail.innerHTML=`<button type="button" class="history-back-button" data-history-back><span aria-hidden="true">←</span>${t('history.back')}</button><header><span class="panel-kicker">${t('history.stored')} · ${record.mode==='quick'?t('history.quick'):t('history.complete')}</span><time>${Number.isNaN(date.getTime())?'':date.toLocaleString(english?'en-US':'zh-CN')}</time></header><section class="history-detail-hero"><div><span class="history-question-label">${t('history.questionLabel')}</span><blockquote data-user-content>${textHtml(record.question)}</blockquote></div><div class="history-result-block"><div class="history-result"><span>${original?.[1]||'—'}</span><i>→</i><span>${changed?.[1]||'—'}</span></div><h1>${title}</h1><p>${movingText}</p></div></section><section class="history-line-section"><div class="history-section-heading"><span>${t('history.linesLabel')}</span><small>${t('history.linesHint')}</small></div><div class="history-lines">${record.lines.map((line,index)=>`<div><b>${positions[index]}</b><span>${line.value===6?'⚋ ×':line.value===9?'⚊ ○':line.value===8?'⚋':'⚊'}</span><small>${lineName(line.value)}</small></div>`).reverse().join('')}</div></section><div class="history-interpretation-anchor"></div><section class="history-note"><label for="historyNote">${t('history.noteLabel')}</label><textarea id="historyNote" rows="5" maxlength="2000" placeholder="${t('history.notePlaceholder')}">${textHtml(record.note||'')}</textarea><small id="historyNoteStatus">${t('history.localOnly')}</small></section><div class="history-detail-actions"><button type="button" class="secondary-button" data-history-hex="${record.originalIndex}">${t('history.openHex')}</button><button type="button" class="primary-button" id="saveHistoryNote">${t('history.saveNote')}</button><button type="button" class="danger-button" id="deleteHistory">${t('history.delete')}</button></div>`;
+  detail.innerHTML=`<button type="button" class="history-back-button" data-history-back><span aria-hidden="true">←</span>${t('history.back')}</button><header><span class="panel-kicker">${t('history.stored')} · ${record.mode==='quick'?t('history.quick'):t('history.complete')}</span><time>${Number.isNaN(date.getTime())?'':date.toLocaleString(english?'en-US':'zh-CN')}</time></header><section class="history-detail-hero"><div><span class="history-question-label">${t('history.questionLabel')}</span><blockquote data-user-content>${textHtml(record.question)}</blockquote></div><div class="history-result-block"><div class="history-result"><span>${original?.[1]||'—'}</span><i>→</i><span>${changed?.[1]||'—'}</span></div><h1>${title}</h1><p>${movingText}</p></div></section><section class="history-line-section"><div class="history-section-heading"><span>${t('history.linesLabel')}</span><small>${t('history.linesHint')}</small></div><div class="history-lines">${record.lines.map((line,index)=>`<div><b>${positions[index]}</b><span>${line.value===6?'⚋ ×':line.value===9?'⚊ ○':line.value===8?'⚋':'⚊'}</span><small>${lineName(line.value)}</small></div>`).reverse().join('')}</div></section><div class="history-interpretation-anchor"></div><section class="case-review-panel"></section><section class="journal-panel"></section><section class="history-note"><label for="historyNote">${t('history.noteLabel')}</label><textarea id="historyNote" rows="5" maxlength="2000" placeholder="${t('history.notePlaceholder')}">${textHtml(record.note||'')}</textarea><small id="historyNoteStatus">${t('history.localOnly')}</small></section><div class="history-detail-actions"><button type="button" class="secondary-button" data-history-hex="${record.originalIndex}">${t('history.openHex')}</button><button type="button" class="primary-button" id="saveHistoryNote">${t('history.saveNote')}</button><button type="button" class="danger-button" id="deleteHistory">${t('history.delete')}</button></div>`;
   detail.querySelector('[data-history-back]')?.addEventListener('click',()=>{historySelectedId='';history.replaceState(null,'','#history');renderHistory();window.scrollTo({top:0,behavior:'smooth'})});
   detail.querySelector('[data-history-hex]')?.addEventListener('click',event=>{selectedHex=Number(event.currentTarget.dataset.historyHex)||0;setMobileDetail('hexagrams',true);nav('hexagrams');renderHexList();renderHexDetail()});
   $('#saveHistoryNote')?.addEventListener('click',()=>{if(updateHistoryNote(record.id,$('#historyNote').value))$('#historyNoteStatus').textContent=t('common.saved')});
   $('#deleteHistory')?.addEventListener('click',()=>{if(!confirm(t('history.deleteConfirm')))return;persistHistory(loadHistory().filter(item=>item.id!==record.id));syncCloudDelete(record.id);historySelectedId='';history.replaceState(null,'','#history');renderHistory();renderBackupReminder();showNotice(t('history.deleted'))});
-  const reading=createReadingContext({question:record.question,originalIndex:record.originalIndex,changedIndex:record.changedIndex,moving}).local;
+  const reading=record.localReadingSnapshot?.reading||createReadingContext({question:record.question,originalIndex:record.originalIndex,changedIndex:record.changedIndex,moving}).local;
   const cached=record.aiReading&&(!record.aiReading.language||record.aiReading.language===getLanguage())?record.aiReading:null;
-  renderHistoryInterpretation(detail,reading,cached);
+  renderHistoryInterpretation(detail,reading,cached,record);
+  renderCasePanel(detail,record);
+  mountJournal(detail.querySelector('.journal-panel'),record,{language:getLanguage(),save:transform=>{
+    const records=loadHistory(),current=records.find(item=>item.id===record.id);if(!current)throw new Error('Missing record');
+    current.journal=transform(current.journal);current.updatedAt=new Date().toISOString();persistHistory(records);syncCloudRecord(current);
+  }});
+  detail.querySelector('.journal-panel').addEventListener('journal:saved',()=>{const saved=loadHistory().find(item=>item.id===record.id);if(saved){renderHistoryDetail(saved);detail.querySelector('.journal-save-status').textContent=jc('saved')}});
+  detail.querySelectorAll('textarea,input').forEach(input=>input.addEventListener('input',()=>{input.dataset.dirty='true'}));
+  for(const draft of drafts){const input=document.getElementById(draft.id);if(input&&detail.contains(input)){input.value=draft.value;input.dataset.dirty='true'}}
+  if(reviewOpen)detail.querySelector('.journal-review').open=true;
+  const focused=document.getElementById(activeId);if(focused&&detail.contains(focused)){focused.focus({preventScroll:true});if(typeof selection==='number'&&focused.tagName==='TEXTAREA')focused.setSelectionRange(selection,selection)}
   detail.querySelector('[data-history-ai]')?.addEventListener('click',()=>generateHistoryAiReading(record.id));
+  bindLibraryRetry(detail);
 }
 function exportHistory(){const exportedAt=new Date().toISOString(),payload={type:'guanxiang-history',...migrateJournalPayload({records:loadHistory(),exportedAt})},blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`观象占问记录-${exportedAt.slice(0,10)}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);persistJournalMeta({...journalMeta(),lastExportAt:exportedAt});try{localStorage.removeItem('guanxiang-backup-dismissed-v1')}catch{}renderBackupReminder()}
 	async function importHistoryFile(file){if(!file)return;try{const parsed=JSON.parse(await file.text()),raw=Array.isArray(parsed)?parsed:parsed?.records;if(!Array.isArray(raw))throw new Error('invalid format');const incoming=migrateJournalPayload(parsed).records;if(incoming.length!==raw.length||!incoming.every(record=>record.lines.every(validLine)))throw new Error('invalid records');const local=loadHistory(),localById=new Map(local.map(record=>[record.id,record])),added=incoming.filter(record=>!localById.has(record.id)).length,updated=incoming.filter(record=>localById.has(record.id)&&new Date(record.updatedAt)>new Date(localById.get(record.id).updatedAt)).length,conflicts=incoming.filter(record=>localById.has(record.id)&&new Date(record.updatedAt).getTime()===new Date(localById.get(record.id).updatedAt).getTime()&&JSON.stringify(record)!==JSON.stringify(localById.get(record.id))).length;pendingImport={records:mergeJournalRecords(local,incoming),firstId:incoming[0]?.id||'',count:incoming.length};$('#importSummary').textContent=t('history.importSummary',{count:incoming.length,added,updated,conflicts});const dialog=$('#importDialog');if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','')}catch(error){pendingImport=null;showNotice(t('history.importInvalid'));console.warn(error)}finally{$('#historyFile').value=''}}
 	function confirmHistoryImport(){if(!pendingImport)return;persistHistory(pendingImport.records);pendingImport.records.forEach(syncCloudRecord);historySelectedId=pendingImport.firstId;const count=pendingImport.count;pendingImport=null;nav('history');renderHistory();renderBackupReminder();showNotice(t('history.imported',{count}))}
 function setCastMode(mode,force=false){if((castState.confirmed&&!force)||!['complete','quick'].includes(mode))return;castState.mode=mode;$$('[data-cast-mode]').forEach(button=>{button.classList.toggle('active',button.dataset.castMode===mode);button.setAttribute('aria-pressed',String(button.dataset.castMode===mode));button.disabled=castState.confirmed});$('#guideTime').textContent=mode==='quick'?'快速演蓍 · 约 1–2 分钟':'完整仪式 · 约 8–12 分钟';$('#view-divination').classList.toggle('quick-mode',mode==='quick');if(!castState.confirmed)setProcedure('问题确认后，占筮仪式将在这里开始',mode==='quick'?'每次点击演示一爻的完整三变':'每一营由你亲手推进','')}
-function updateCastButton(){const button=$('#castButton'),resetButton=$('#resetButton'),nextButton=$('#nextReadingButton'),ritual=castState.ritual,nextTranslation=t('divination.next'),nextLabel=nextTranslation==='divination.next'?(getLanguage()==='en'?'Start next reading':'开始下一卦'):nextTranslation;if(resetButton)resetButton.textContent=castState.lines.length>=6?nextLabel:t('divination.reset');if(nextButton)nextButton.textContent=nextLabel;if(!castState.confirmed){button.innerHTML='请先确认问题';button.disabled=true;return}if(!castState.prepared){button.innerHTML='亲手虚一策 · 象太极 <span>→</span>';button.disabled=false;return}if(castState.lines.length>=6){button.innerHTML='六爻已成';button.disabled=true;return}button.disabled=castState.working;if(castState.mode==='quick'&&!ritual){button.innerHTML=`演蓍成第${castState.lines.length+1}爻 <span>→</span>`;return}if(!ritual){button.innerHTML=`准备第${castState.lines.length+1}爻 <span>→</span>`;return}if(ritual.stepIndex===0&&!ritual.splitReady){button.innerHTML=`请先按住蓍束再松开 · 第${ritual.lineNumber}爻`;button.disabled=true;return}const labels=['分二','挂一','揲四','归奇'];button.innerHTML=`执行${labels[ritual.stepIndex]} · 第${ritual.lineNumber}爻 <span>→</span>`}
+function updateCastButton(){if(castState.confirmed&&castState.lines.length<6)$("#ritualTitle").textContent=castState.prepared?t("flow.lineTitle",{n:castState.lines.length+1}):t("flow.readyTitle");const button=$('#castButton'),resetButton=$('#resetButton'),nextButton=$('#nextReadingButton'),ritual=castState.ritual,nextTranslation=t('divination.next'),nextLabel=nextTranslation==='divination.next'?(getLanguage()==='en'?'Start next reading':'开始下一卦'):nextTranslation;if(resetButton)resetButton.textContent=castState.lines.length>=6?nextLabel:t('divination.reset');if(nextButton)nextButton.textContent=nextLabel;if(!castState.confirmed){button.innerHTML='请先确认问题';button.disabled=true;return}if(!castState.prepared){button.innerHTML='亲手虚一策 · 象太极 <span>→</span>';button.disabled=false;return}if(castState.lines.length>=6){button.innerHTML='六爻已成';button.disabled=true;return}button.disabled=castState.working;if(castState.mode==='quick'&&!ritual){button.innerHTML=`演蓍成第${castState.lines.length+1}爻 <span>→</span>`;return}if(!ritual){button.innerHTML=`准备第${castState.lines.length+1}爻 <span>→</span>`;return}if(ritual.stepIndex===0&&!ritual.splitReady){button.innerHTML=`请先按住蓍束再松开 · 第${ritual.lineNumber}爻`;button.disabled=true;return}const labels=['分二','挂一','揲四','归奇'];button.innerHTML=`执行${labels[ritual.stepIndex]} · 第${ritual.lineNumber}爻 <span>→</span>`}
 function beginRitual(){castState.ritual={lineNumber:castState.lines.length+1,changeNumber:1,stepIndex:0,stalks:49,change:null,history:[]};$('#ritualTitle').textContent=`准备起第${castState.lines.length+1}爻 · 三变十二营`;setTotal(49);paintStalks('leftStalks',49);paintStalks('rightStalks',0);paintStalks('hangStalks',0);paintStalks('discardStalks',0);markOperation('split');setProcedure('第一变 · 按住蓍束，凭感觉松开','分界与策数暂不显露，执行分二时才揭开','');prepareSplitControl();saveCast()}
 async function animateCurrentOperation(ritual,operation){
   if(operation==='split')ritual.change=drawYarrowChange(ritual.stalks,ritual.proposedLeft);
@@ -468,22 +618,24 @@ function localReadingBodyHtml(reading){
   return `<article class="interpretation-lead"><span>${t('reading.core')}</span><p>${textHtml(reading.summary)}</p></article><article><span>${t('reading.situation')}</span><p>${textHtml(reading.situation)}</p></article><article><span>${t('reading.turningPoint')}</span><p>${textHtml(reading.turningPoint)}</p></article><article><span>${t('reading.trend')}</span><p>${textHtml(reading.trend)}</p></article><article class="interpretation-actions"><span>${t('reading.actions')}</span><ol>${reading.actions.map(action=>`<li>${textHtml(action)}</li>`).join('')}</ol></article><article class="interpretation-cautions"><span>${t('reading.cautions')}</span><p>${reading.cautions.map(textHtml).join('<br>')}</p></article>`;
 }
 function renderLocalReading(reading){
-  $('#localReadingContent').innerHTML=localReadingBodyHtml(reading);
+  const body=localReadingBodyHtml(reading),end=body.indexOf('</article>')+10;
+  $('#localReadingContent').innerHTML=body.slice(0,end)+'<details class="flow-fold reading-expansion"><summary>'+t('flow.moreReading')+'</summary><div class="interpretation-sections">'+body.slice(end)+'</div></details>';
   const labels=reading.evidence.primaryLabels.length?` · ${getLanguage()==='en'?'lines: ':'取 '}${reading.evidence.primaryLabels.map(textHtml).join(getLanguage()==='en'?', ':'、')}`:'';
   $('#localReadingEvidence').innerHTML=`${t('reading.basis')}：${textHtml(reading.evidence.originalName)} → ${textHtml(reading.evidence.changedName)}${labels} · ${textHtml(reading.evidence.ruleText)}`;
 }
 function aiReadingBodyHtml(text){return (getLanguage()==='en'?splitAiReadingSectionsLocalized(text,'en'):splitAiReadingSections(text)).map(section=>`<article data-ai-section="${section.id}"><span>${textHtml(section.title)}</span><p>${textHtml(section.text)}</p></article>`).join('')}
 function renderAiReadingText(text,target=$('#aiReadingContent')){if(target)target.innerHTML=aiReadingBodyHtml(text)}
-function renderHistoryInterpretation(detail,reading,cached){
+function renderHistoryInterpretation(detail,reading,cached,record={}){
   const anchor=detail.querySelector('.history-interpretation-anchor');if(!anchor)return;
-  anchor.replaceChildren();
-  const local=document.createElement('section');local.className='interpretation-band local-interpretation history-interpretation';local.innerHTML=`<div class="interpretation-heading"><div><span class="panel-kicker">${t('reading.local')}</span><h3>${t('reading.current')}</h3></div></div><div class="interpretation-sections">${localReadingBodyHtml(reading)}</div>`;anchor.appendChild(local);
-  const endpoint=String(globalThis.GUANXIANG_AI_ENDPOINT||'').trim(),ai=document.createElement('section');ai.className=`interpretation-band history-interpretation ${cached?.text?'ai-interpretation':'history-ai-prompt'}`;ai.innerHTML=`<div class="interpretation-heading"><div><span class="panel-kicker">${t('reading.ai')}</span><h3>${cached?.text?t('reading.aiSaved'):t('reading.ai')}</h3></div><div class="history-ai-heading-actions">${cached?.generatedAt?`<time>${textHtml(new Date(cached.generatedAt).toLocaleString(getLanguage()==='en'?'en-US':'zh-CN'))}</time>`:''}<button type="button" class="primary-button" data-history-ai ${endpoint?'':'disabled'}>${endpoint?(cached?.text?t('reading.regenerate'):t('reading.generate')):t('reading.unconfigured')}</button></div></div><p class="ai-privacy">${t('reading.aiPrivacy')}</p><div class="interpretation-sections ai-reading-content" data-history-ai-content>${cached?.text?aiReadingBodyHtml(cached.text):''}</div><p class="ai-reading-error hidden" data-history-ai-error role="alert"></p>`;anchor.appendChild(ai);
-}
-function observeHistoryInterpretation(){
-  const detail=$('#historyDetail');if(!detail)return;
-  const enhance=()=>{if(detail.querySelector('.history-interpretation')||!historySelectedId)return;const record=loadHistory().find(item=>item.id===historySelectedId);if(!record||!detail.querySelector('.history-interpretation-anchor'))return;const moving=Array.isArray(record.moving)?record.moving:record.lines.map((line,index)=>line.value===6||line.value===9?index:-1).filter(index=>index>=0),cached=record.aiReading&&(!record.aiReading.language||record.aiReading.language===getLanguage())?record.aiReading:null;renderHistoryInterpretation(detail,createReadingContext({question:record.question,originalIndex:record.originalIndex,changedIndex:record.changedIndex,moving}).local,cached)};
-  new MutationObserver(enhance).observe(detail,{childList:true});enhance();
+  const snapshot=record.localReadingSnapshot,versions=readingVersions(record);
+  anchor.innerHTML=historySourceStatus();
+  const local=document.createElement('section');local.className='interpretation-band local-interpretation history-interpretation';
+  local.innerHTML='<div class="interpretation-heading"><div><span class="panel-kicker">'+t('reading.local')+'</span><h3>'+jc(snapshot?'original':'current')+'</h3>'+(snapshot?'<time>'+textHtml(new Date(snapshot.capturedAt).toLocaleString())+'</time>':'')+'</div></div><div class="interpretation-sections">'+localReadingBodyHtml(reading)+'</div>';anchor.appendChild(local);
+  const endpoint=String(globalThis.GUANXIANG_AI_ENDPOINT||'').trim(),ready=Boolean(endpoint&&hexagramTexts&&relationsLibrary),limited=versions.length>=MAX_AI_VERSIONS;
+  const ai=document.createElement('section');ai.className='interpretation-band history-interpretation '+(cached?'ai-interpretation':'history-ai-prompt');
+  ai.innerHTML='<div class="interpretation-heading"><h3>'+t(cached?'reading.aiSaved':'reading.ai')+'</h3><button type="button" class="primary-button" data-history-ai '+(!ready||limited||aiReadingAbort?'disabled':'')+'>'+t(!endpoint?'reading.unconfigured':aiReadingAbort?'reading.generating':cached?'reading.regenerate':'reading.generate')+'</button></div><p class="ai-privacy">'+t('flow.aiPrivacy')+'</p><p class="ai-privacy">'+jc(limited?'versionLimit':'versionHint')+'</p><div class="interpretation-sections ai-reading-content" data-history-ai-content>'+(cached?.text?aiReadingBodyHtml(cached.text):'')+'</div><p class="ai-reading-error hidden" data-history-ai-error role="alert"></p>';anchor.appendChild(ai);
+  if(versions.length){const archive=document.createElement('details');archive.className='history-reading-versions';archive.innerHTML='<summary>'+jc('versions')+' · '+versions.length+'</summary>'+versions.map((version,index)=>'<details><summary>'+textHtml((index===0?jc('original'):'#'+(index+1))+' · '+new Date(version.generatedAt).toLocaleString()+' · '+(version.language||''))+'</summary><div class="interpretation-sections" data-user-content>'+aiReadingBodyHtml(version.text)+'</div></details>').join('');anchor.appendChild(archive)}
+  bindLibraryRetry(anchor);
 }
 function aiPayload(context){
   const details=(hexagram,source)=>({name:hexagram[2],upper:hexagram[6],lower:hexagram[7],theme:hexagram[5],imageText:hexagram[3],judgment:source?.text||hexagram[4],lines:(source?.lines||[]).map(line=>({label:line.label,text:line.text}))});
@@ -496,28 +648,39 @@ function aiPayload(context){
   return {version:1,language:getLanguage(),question:context.question,originalIndex:context.originalIndex,changedIndex:context.changedIndex,original,changed,moving:context.moving,movingLines,rule:{text:context.rule.text,fromChanged:Boolean(context.rule.fromChanged),primary:context.rule.primary},primaryLines:context.primaryLines.map(line=>({label:line.label,text:line.text})),tenWings,analysisPlan:{years,detailTarget:years.length>1?'long':'standard',originalLineLabels:original.lines.map(line=>line.label),relatingLineLabels:changed.lines.map(line=>line.label),movingLineLabels:movingLines.map(line=>line.label),sequence:years.length?['核心主线','本卦当前基础','动爻转折','变卦后续背景','逐年条件性落地']:['核心主线','本卦当前基础','动爻转折','变卦后续背景'],referenceNotes},localReading:{summary:local.summary,situation:local.situation,turningPoint:local.turningPoint,trend:local.trend,actions:local.actions,cautions:local.cautions}};
 }
 function updateHistoryAiReading(id,aiReading){
-  const records=loadHistory(),record=records.find(item=>item.id===id);if(!record)return false;
-  record.aiReading=aiReading;record.updatedAt=new Date().toISOString();persistHistory(records);return true;
+  const records=loadHistory(),index=records.findIndex(item=>item.id===id);if(index<0)return false;
+  records[index]=appendAiReading(records[index],aiReading);persistHistory(records);syncCloudRecord(records[index]);return true;
 }
 async function generateHistoryAiReading(id){
   const detail=$('#historyDetail'),record=loadHistory().find(item=>item.id===id),button=detail?.querySelector('[data-history-ai]'),content=detail?.querySelector('[data-history-ai-content]'),errorBox=detail?.querySelector('[data-history-ai-error]');
-  if(!detail||!record||!button||!content||!errorBox||aiReadingAbort)return;
+  if(!detail||!record||!button||!content||!errorBox||aiReadingAbort||!hexagramTexts||!relationsLibrary)return;
+  if(readingVersions(record).length>=MAX_AI_VERSIONS){showNotice(jc('versionLimit'));return}
   const endpoint=String(globalThis.GUANXIANG_AI_ENDPOINT||'').trim();if(!endpoint)return;
   const moving=Array.isArray(record.moving)?record.moving:record.lines.map((line,index)=>line.value===6||line.value===9?index:-1).filter(index=>index>=0),context=createReadingContext({question:record.question,originalIndex:record.originalIndex,changedIndex:record.changedIndex,moving});
-  aiReadingAbort=new AbortController();button.disabled=true;button.textContent=t('reading.generating');errorBox.textContent='';errorBox.classList.add('hidden');content.replaceChildren();
+  const controller=new AbortController();let failure=null;
+  aiReadingAbort=controller;button.disabled=true;button.textContent=t('reading.generating');errorBox.textContent='';errorBox.classList.add('hidden');
   try{
-    const text=await requestAiReading({endpoint,payload:aiPayload(context),signal:aiReadingAbort.signal,onChunk:(chunk,complete)=>renderAiReadingText(complete,content)}),cached={text,language:getLanguage(),generatedAt:new Date().toISOString(),modelLabel:'Workers AI',version:1};
-    updateHistoryAiReading(id,cached);renderHistoryInterpretation(detail,context.local,cached);detail.querySelector('[data-history-ai]')?.addEventListener('click',()=>generateHistoryAiReading(id));
+    const language=getLanguage();
+    const text=await requestAiReading({endpoint,payload:aiPayload(context),signal:controller.signal,onChunk:(chunk,complete)=>renderAiReadingText(complete,content)}),cached={text,language,generatedAt:new Date().toISOString(),modelLabel:'Workers AI',version:1};
+    updateHistoryAiReading(id,cached);
   }catch(error){
-    const failure=error instanceof AiReadingError?error:new AiReadingError('SERVICE_ERROR');if(failure.partialText)renderAiReadingText(failure.partialText,content);errorBox.textContent=failure.message;errorBox.classList.remove('hidden');button.disabled=false;button.textContent=t('reading.retry');
-  }finally{aiReadingAbort=null}
+    failure=error instanceof AiReadingError?error:new AiReadingError('SERVICE_ERROR');
+  }finally{
+    if(aiReadingAbort===controller)aiReadingAbort=null;
+    if(currentView==='history')renderHistory();
+    if(failure&&historySelectedId===id){
+      const error=$('#historyDetail [data-history-ai-error]');
+      if(error){error.textContent=failure.message;error.classList.remove('hidden')}
+    }
+  }
 }
 function prepareAiReading(stored){
   const endpoint=String(globalThis.GUANXIANG_AI_ENDPOINT||'').trim(),button=$('#generateAiReading'),error=$('#aiReadingError'),usable=stored&&(!stored.language||stored.language===getLanguage())?stored:null;
-  renderAiReadingText(usable?.text||'');error.textContent='';error.classList.add('hidden');button.disabled=!endpoint;button.textContent=endpoint?(usable?t('reading.regenerate'):t('reading.generate')):t('reading.unconfigured');
+  renderAiReadingText(usable?.text||'');error.textContent='';error.classList.add('hidden');button.disabled=!endpoint||!hexagramTexts||!relationsLibrary;button.textContent=endpoint?(usable?t('reading.regenerate'):t('reading.generate')):t('reading.unconfigured');
 }
 async function generateAiReading(){
   const endpoint=String(globalThis.GUANXIANG_AI_ENDPOINT||'').trim(),button=$('#generateAiReading'),errorBox=$('#aiReadingError');if(!endpoint||!currentReading||aiReadingAbort)return;
+  if(readingVersions(loadHistory().find(record=>record.id===castState.sessionId)||{}).length>=MAX_AI_VERSIONS){showNotice(jc('versionLimit'));return}
   aiReadingAbort=new AbortController();button.disabled=true;button.textContent=t('reading.generating');errorBox.textContent='';errorBox.classList.add('hidden');renderAiReadingText('');
   try{
     const text=await requestAiReading({endpoint,payload:aiPayload(currentReading),signal:aiReadingAbort.signal,onChunk:(chunk,complete)=>renderAiReadingText(complete)});
@@ -534,7 +697,7 @@ function showResult(){
   currentReading=createReadingContext({question:castState.question,originalIndex:idx,changedIndex,moving});
   const positions=['初','二','三','四','五','上'],originalLines=source?.lines||[],changedFocus=rule.fromChanged?rule.primary.map(index=>changedSource?.lines?.[index]).filter(Boolean):[],principleText=hexagram[3]||'先观其象，再察其时位，最后回到当下可以采取的行动。';
   const lineRows=castState.lines.map((line,index)=>`<div class="result-line-row"><b>${positions[index]}爻</b><span>${line.value===6?'⚋ ×':line.value===9?'⚊ ○':line.value===8?'⚋':'⚊'}</span><small>${lineName(line.value)}${line.changes?.length?` · ${line.changes.map(change=>change.remaining).join(' → ')} ÷ 4`:''}</small></div>`).join('');
-  $('#resultCard').classList.remove('hidden');$('#resultPrimary').textContent=hexagram[1];$('#resultChanged').textContent=changed[1];$('#resultName').textContent=`${displayHexagramName(idx,getLanguage(),hexagram[2])} → ${displayHexagramName(changedIndex,getLanguage(),changed[2])}`;$('#resultSummary').textContent=moving.length?t('reading.moving',{lines:moving.map(index=>positions[index]).join(getLanguage()==='en'?', ':'、')}):t('reading.still');$('#stageHint').textContent=t('reading.focus');$('#readingPanel').classList.remove('hidden');$('#readingTitle').textContent=`${displayHexagramName(idx,getLanguage(),hexagram[2])} → ${displayHexagramName(changedIndex,getLanguage(),changed[2])}`;$('#readingQuestion').textContent=t('reading.question',{question:castState.question});$('#readingFocus').textContent=t('reading.focus');
+  $('#resultCard').classList.remove('hidden');$('#resultPrimary').textContent=hexagram[1];$('#resultChanged').textContent=changed[1];$('#resultName').textContent=`${displayHexagramName(idx,getLanguage(),hexagram[2])} → ${displayHexagramName(changedIndex,getLanguage(),changed[2])}`;$('#resultSummary').textContent=moving.length?t('reading.moving',{lines:moving.map(index=>positions[index]).join(getLanguage()==='en'?', ':'、')}):t('reading.still');$('#stageHint').textContent=t('reading.focus');$('#readingPanel').classList.remove('hidden');$('#readingTitle').textContent=t('flow.resultTitle');$('#readingQuestion').textContent=t('reading.question',{question:castState.question});$('#readingFocus').textContent=t('reading.focus');
   renderLocalReading(currentReading.local);
   $('#readingColumns').innerHTML=`<article class="result-layer" id="resultOriginal"><div class="result-layer-kicker">一 · 经文原文</div><h3>${hexagram[1]} ${hexagram[2]} · 本卦</h3><p class="result-source-note">底本原文 · 卦辞</p><p class="wing-original">${textHtml(source?.text||hexagram[4])}</p><div class="reading-lines">${originalLines.map(line=>`<div class="reading-line"><b>${textHtml(line.label)}</b>${textHtml(line.text)}</div>`).join('')}</div>${changedIndex!==idx?`<h4>之卦 · ${changed[1]} ${changed[2]}</h4><p class="result-source-note">底本原文 · 变卦卦辞</p><p class="wing-original">${textHtml(changedSource?.text||changed[4])}</p>`:''}</article><article class="result-layer" id="resultRule"><div class="result-layer-kicker">二 · 变爻规则</div><h3>本次取法</h3><p>${textHtml(rule.text)}</p><p class="result-source-note">通行变爻取法说明 · 后世研读规则，不是《周易》经文原句。</p>${changedFocus.length?`<div class="reading-lines">${changedFocus.map(line=>`<div class="reading-line"><b>${textHtml(line.label)}</b>${textHtml(line.text)}</div>`).join('')}</div>`:''}</article><article class="result-layer" id="resultStructure"><div class="result-layer-kicker">三 · 卦象结构</div><h3>${hexagram[2]} → ${changed[2]}</h3><div class="structure-pair"><div><span>本卦</span><strong>${hexagram[1]}</strong><small>${hexagram[6]}上 · ${hexagram[7]}下</small></div><b>→</b><div><span>变卦</span><strong>${changed[1]}</strong><small>${changed[6]}上 · ${changed[7]}下</small></div></div><div class="result-line-grid">${lineRows}</div></article><article class="result-layer" id="resultPrinciple"><div class="result-layer-kicker">四 · 易理提示</div><h3>从象与时位开始观察</h3><p>${textHtml(principleText)}</p><p class="result-source-note">研读提示 · 由卦象资料生成，供自我反思，不是经文原句。</p></article>`;
   const originalRelations=relationCards(idx,6),changedRelations=changedIndex===idx?'':relationCards(changedIndex,4);
@@ -560,10 +723,11 @@ function restoreCast(){
   if(!saved?.confirmed||typeof saved.question!=='string'||!saved.question.trim())return;
   const lines=Array.isArray(saved.lines)?saved.lines:[];
   if(lines.length>6||!lines.every(validLine)||!validRitual(saved.ritual||null,lines.length)){showNotice('检测到一份损坏的起卦进度，已停止恢复；可以重新开始一次占问。');return}
-  castState={lines,working:false,runId:0,ritual:saved.ritual||null,confirmed:true,prepared:Boolean(saved.prepared),question:saved.question.trim(),sessionId:typeof saved.sessionId==='string'&&saved.sessionId?saved.sessionId:newSessionId(),mode:saved.mode==='quick'?'quick':'complete'};
+  castState={lines,working:false,runId:0,ritual:saved.ritual||null,confirmed:true,prepared:Boolean(saved.prepared),question:saved.question.trim(),sessionId:typeof saved.sessionId==='string'&&saved.sessionId?saved.sessionId:newSessionId(),mode:saved.mode==='quick'?'quick':'complete',followupOf:typeof saved.followupOf==='string'?saved.followupOf:'',followupContext:typeof saved.followupContext==='string'?saved.followupContext:''};
   setCastMode(castState.mode,true);
   if(source!=='guanxiang-cast-v3')saveCast();
   $('#questionInput').value=castState.question;$('#questionInput').readOnly=true;$('#consultationGuide').classList.add('confirmed');$('#confirmQuestion').disabled=true;$('#confirmQuestion').textContent='问题已确认';$('#lockedQuestion').textContent=`所问：${castState.question}`;$('#lockedQuestion').classList.remove('hidden');$('#lineCount').textContent=`${castState.lines.length} / 6 爻`;renderRecords();
+  ensureFollowupContextField(Boolean(castState.followupOf));
   if(castState.lines.length===6){$('#ritualTitle').textContent='六爻已成 · 可继续研读';updateCastButton();renderMethodAudit(castState.lines.at(-1));showResult();return}
   if(!castState.prepared){$('#ritualTitle').textContent='五十策已备 · 请亲手虚一';paintStalks('leftStalks',50);setTotal(50);setProcedure('继续本次仪式：先虚一策','进度已从本机恢复','');updateCastButton();return}
   if(!castState.ritual){$('#ritualTitle').textContent=castState.mode==='quick'?`继续演蓍第${castState.lines.length+1}爻`:`第${castState.lines.length}爻已成 · 请准备下一爻`;paintStalks('leftStalks',49);setTotal(49);setProcedure('本次进度已恢复',castState.mode==='quick'?'点击一次演示下一爻三变':'点击“准备下一爻”继续','');updateCastButton();return}
@@ -576,9 +740,9 @@ function restoreCast(){
 function resetCast(){
   aiReadingAbort?.abort();aiReadingAbort=null;currentReading=null;
   const mode=castState.mode;
-  castState={lines:[],working:false,runId:castState.runId+1,ritual:null,confirmed:false,prepared:false,question:'',sessionId:'',mode};
+  castState={lines:[],working:false,runId:castState.runId+1,ritual:null,confirmed:false,prepared:false,question:'',sessionId:'',mode,followupOf:'',followupContext:''};
   try{['guanxiang-cast','guanxiang-cast-v2','guanxiang-cast-v3'].forEach(key=>localStorage.removeItem(key))}catch(error){console.warn('起卦进度未能清除',error)}
-  $('#questionInput').value='';$('#questionInput').readOnly=false;$('#consultationGuide').classList.remove('confirmed');$('#confirmQuestion').textContent='确认问题，进入仪式';$('#lockedQuestion').classList.add('hidden');$('#readingPanel').classList.add('hidden');$('#lineCount').textContent='0 / 6 爻';$('#ritualTitle').textContent='请先确认此次所问';$('#castButton').innerHTML='请先确认问题';markOperation('');$('#splitControl').classList.add('hidden');['leftStalks','rightStalks','taijiStalks','hangStalks','discardStalks'].forEach(id=>paintStalks(id,0));setTotal('—');$('#leftPile strong').textContent='—';$('#rightPile strong').textContent='—';$('#leftPile span').textContent='待分';$('#rightPile span').textContent='待分';$('.yarrow-stage').classList.remove('is-calculating','quick-running');$('#resultCard').classList.add('hidden');renderRecords();renderMethodAudit(null);setCastMode(mode,true);validateQuestion();updateCastButton();
+  $$('#view-divination details').forEach(item=>item.open=false);ensureFollowupContextField(false);$('#questionInput').value='';$('#questionInput').readOnly=false;$('#consultationGuide').classList.remove('confirmed');$('#confirmQuestion').textContent='确认问题，进入仪式';$('#lockedQuestion').classList.add('hidden');$('#readingPanel').classList.add('hidden');$('#lineCount').textContent='0 / 6 爻';$('#ritualTitle').textContent='请先确认此次所问';$('#castButton').innerHTML='请先确认问题';markOperation('');$('#splitControl').classList.add('hidden');['leftStalks','rightStalks','taijiStalks','hangStalks','discardStalks'].forEach(id=>paintStalks(id,0));setTotal('—');$('#leftPile strong').textContent='—';$('#rightPile strong').textContent='—';$('#leftPile span').textContent='待分';$('#rightPile span').textContent='待分';$('.yarrow-stage').classList.remove('is-calculating','quick-running');$('#resultCard').classList.add('hidden');renderRecords();renderMethodAudit(null);setCastMode(mode,true);validateQuestion();updateCastButton();
 }
 function startNextReading(){resetCast();setDivinationPhase('prepare');requestAnimationFrame(()=>$('#questionInput')?.focus())}
 function localizeHexagramLabels(){
@@ -663,7 +827,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   initTheme();
   registerServiceWorker();
   renderCalendarMeta();
-  observeHistoryInterpretation();
+  $('#view-history').prepend($('#syncStatus'));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&currentView==='history')renderHistory()});
   try{const savedMode=localStorage.getItem('guanxiang-reading-mode');if(['ancient','modern'].includes(savedMode))readingMode=savedMode}catch(error){console.warn('阅读模式未能读取',error)}
   ensureDivinationPhases();
   ensureRitualEnhancements();
@@ -690,6 +855,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(button.dataset.view==='history'){historySelectedId='';setMobileDetail('history',false)}
     if(button.dataset.view==='hexagrams')setMobileDetail('hexagrams',false)
     nav(button.dataset.view)
+    if(button.dataset.view==='history')renderHistory();
+    if(button.dataset.view==='history'&&accountSessionResolved&&!accountRestoreInFlight&&accountUser)flushSyncQueue();
   }));
   $('#mobileMoreToggle')?.addEventListener('click',toggleMobileMore);
   $('#mobileMoreClose')?.addEventListener('click',()=>closeMobileMore(true));
@@ -715,7 +882,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('#resetButton')?.addEventListener('click',()=>{if(castState.lines.length>=6){startNextReading();return}if(castState.confirmed||castState.lines.length||castState.ritual){const dialog=$('#resetDialog');if(typeof dialog.showModal==='function')dialog.showModal();else if(confirm(t('dialog.resetTitle'))){resetCast();setDivinationPhase('prepare')}}else{resetCast();setDivinationPhase('prepare')}});
   $('#confirmReset')?.addEventListener('click',()=>{resetCast();setDivinationPhase('prepare')});
   $('#nextReadingButton')?.addEventListener('click',startNextReading);
-  $('#resultRead')?.addEventListener('click',()=>{nav('hexagrams');renderHexList();renderHexDetail()});
+  $('#resultRead')?.addEventListener('click',()=>{setMobileDetail('hexagrams',true);nav('hexagrams');renderHexList();renderHexDetail()});
   $('#generateAiReading')?.addEventListener('click',generateAiReading);
   $('#saveReadingNote')?.addEventListener('click',saveCurrentReadingNote);
   $('#historySearch')?.addEventListener('input',event=>{historyQuery=event.target.value;renderHistory()});
@@ -732,7 +899,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   restoreAccountSession();
 });
 window.addEventListener('hashchange',applyRoute);
-window.addEventListener('online',()=>{if(accountUser){setSyncState('idle');flushSyncQueue()}});
+window.addEventListener('online',()=>{if(accountUser)flushSyncQueue();else if(!isGuestAccountMode())restoreAccountSession()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&accountSessionResolved&&!accountRestoreInFlight&&accountUser)flushSyncQueue()});
 document.addEventListener('DOMContentLoaded',()=>{if(!castState.confirmed)return;$('#questionFeedback').textContent='问题已锁定，当前仪式进度已保存在本机。';$('#questionFeedback').className='valid';if(castState.prepared)paintStalks('taijiStalks',1,'discarded')});
 
 document.addEventListener('click',event=>{if(!event.target.closest('[data-language-menu]'))closeLanguageMenus()});

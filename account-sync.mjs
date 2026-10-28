@@ -9,20 +9,23 @@ export class AccountApiError extends Error {
   constructor(code,message,status){super(message||code);this.name='AccountApiError';this.code=code;this.status=status}
 }
 
-async function accountRequest(path,{method='GET',body,language='zh-CN',apiBase,fetchImpl=globalThis.fetch}={}){
+async function accountRequest(path,{method='GET',body,language='zh-CN',apiBase,fetchImpl=globalThis.fetch,timeoutMs=15000}={}){
   const headers={'accept-language':language==='fa'?'fa,en;q=0.8':language==='en'?'en,zh-CN;q=0.8':'zh-CN,en;q=0.8'};
   if(body!==undefined)headers['content-type']='application/json';
-  let response;
-  try{response=await fetchImpl(apiUrl(path,apiBase),{method,headers,credentials:'same-origin',body:body===undefined?undefined:JSON.stringify(body)})}
-  catch(error){throw new AccountApiError('NETWORK_ERROR','Account service is unavailable.',0)}
-  let payload=null;
-  try{payload=await response.json()}catch{}
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),timeoutMs);
+  let response,payload=null;
+  try{
+    response=await fetchImpl(apiUrl(path,apiBase),{method,headers,credentials:'same-origin',cache:'no-store',signal:controller.signal,body:body===undefined?undefined:JSON.stringify(body)});
+    if(response.status!==204)payload=await response.json();
+  }catch(error){throw new AccountApiError('NETWORK_ERROR','Account service is unavailable.',0)}
+  finally{clearTimeout(timeout)}
   if(!response.ok){const error=payload?.error||{};throw new AccountApiError(error.code||`HTTP_${response.status}`,error.message||'Account request failed.',response.status)}
   return payload;
 }
 
-export function createAccountClient({apiBase=DEFAULT_ACCOUNT_API,fetchImpl=globalThis.fetch,language='zh-CN'}={}){
-  const call=(path,options={})=>accountRequest(path,{...options,apiBase,fetchImpl,language:options.language||language});
+export function createAccountClient({apiBase=DEFAULT_ACCOUNT_API,fetchImpl=globalThis.fetch,language='zh-CN',timeoutMs=15000}={}){
+  const call=(path,options={})=>accountRequest(path,{...options,apiBase,fetchImpl,timeoutMs,language:options.language||language});
   return {
     me:()=>call('me'),
     register:(email,password)=>call('register',{method:'POST',body:{email,password,language}}),

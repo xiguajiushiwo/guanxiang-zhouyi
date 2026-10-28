@@ -1,10 +1,10 @@
-import { AccountApiError, createAccountClient } from './account-sync.mjs';
-import { getLanguage, setLanguage, t, translateDom } from './i18n.mjs?v=20260921-auth2';
+import { AccountApiError, createAccountClient } from './account-sync.mjs?v=20261027-sync1';
+import { getLanguage, setLanguage, t, translateDom } from './i18n.mjs?v=20261028-flow1';
 
 const $=selector=>document.querySelector(selector);
 const APP_ENTRY='./?entry=account#home';
 const ACCOUNT_MODE_KEY='guanxiang-account-mode-v1';
-let mode='login',user=null,busy=false,client=null;
+let mode='login',user=null,busy=false,client=null,sessionRevision=0;
 
 function language(){const value=getLanguage();return value==='fa'?'fa':value==='en'?'en':'zh-CN'}
 function createClient(){client=createAccountClient({language:language()});return client}
@@ -47,6 +47,7 @@ async function submit(event){
   if(busy)return;
   const form=event.currentTarget,email=String(form.elements.email.value||'').trim(),password=String(form.elements.password.value||'');
   $('#authError').textContent='';
+  sessionRevision++;
   setBusy(true);
   try{
     const result=mode==='register'?await createClient().register(email,password):await createClient().login(email,password);
@@ -57,6 +58,7 @@ async function submit(event){
 }
 async function enterAsGuest(){
   if(busy)return;
+  sessionRevision++;
   setBusy(true);
   setAccountMode('guest');
   try{await createClient().logout()}catch(error){if(!(error instanceof AccountApiError))console.warn('Guest session cleanup failed',error)}
@@ -64,6 +66,7 @@ async function enterAsGuest(){
 }
 async function logout(){
   if(busy)return;
+  sessionRevision++;
   setBusy(true);
   try{await createClient().logout()}catch(error){console.warn('Account logout failed',error)}
   user=null;
@@ -74,9 +77,11 @@ async function logout(){
 }
 async function restoreSession(){
   if(accountMode()==='guest'){user=null;render();return}
-  try{const result=await createClient().me();user=result.user||null}
-  catch(error){if(!(error instanceof AccountApiError&&[401,403].includes(error.status)))$('#authError').textContent=accountError(error)}
-  render();
+  const revision=++sessionRevision;
+  let message='';
+  try{const result=await createClient().me();if(revision!==sessionRevision)return;user=result.user||null}
+  catch(error){if(revision!==sessionRevision)return;if(!(error instanceof AccountApiError&&[401,403].includes(error.status)))message=accountError(error)}
+  render();$('#authError').textContent=message;
 }
 function toggleLanguageMenu(force){
   const root=$('[data-auth-language]'),options=root.querySelector('.auth-language-options'),trigger=root.querySelector('.auth-language-trigger');

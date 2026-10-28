@@ -1,7 +1,15 @@
 import { consumeLimits, parseAllowedOrigins, validateReadingPayload } from './guards.mjs';
 import { ReadingRateLimiter } from './rate-limiter.mjs';
+import { validateCasePayload } from '../../case-review.mjs';
 
 export { ReadingRateLimiter };
+
+function validateAnyPayload(value){
+  if(value?.task==='journal-links'||value?.task==='journal-review'){
+    try{return {ok:true,value:validateCasePayload(value)}}catch{return {ok:false,error:{code:'INVALID_REQUEST'}}}
+  }
+  return validateReadingPayload(value);
+}
 
 const messages={
   INVALID_REQUEST:'请求资料不完整。',ORIGIN_NOT_ALLOWED:'来源域名未授权。',RATE_LIMITED:'请求过于频繁。',DAILY_LIMIT_REACHED:'今日 AI 解读额度已用完。',MODEL_UNAVAILABLE:'模型暂时不可用。',SERVICE_ERROR:'服务暂时异常。'
@@ -11,6 +19,22 @@ const cors=origin=>({'access-control-allow-origin':origin,'access-control-allow-
 function errorResponse(code,status,origin='',language='zh-CN'){const translated={INVALID_REQUEST:'The reading data is incomplete.',ORIGIN_NOT_ALLOWED:'This website is not authorized for AI readings.',RATE_LIMITED:'Too many requests. Please try again later.',DAILY_LIMIT_REACHED:'Today’s AI reading limit has been reached.',MODEL_UNAVAILABLE:'The AI model is temporarily unavailable.',SERVICE_ERROR:'The reading service is temporarily unavailable.'};const persian={INVALID_REQUEST:'اطلاعات خوانش ناقص است.',ORIGIN_NOT_ALLOWED:'این سایت برای خوانش هوش مصنوعی مجاز نیست.',RATE_LIMITED:'درخواست‌ها بیش از حد مجاز است. بعداً تلاش کنید.',DAILY_LIMIT_REACHED:'سهمیه امروز تمام شده است.',MODEL_UNAVAILABLE:'مدل هوش مصنوعی موقتاً در دسترس نیست.',SERVICE_ERROR:'خدمت خوانش موقتاً دچار مشکل است.'};const dictionary=language==='en'?translated:language==='fa'?persian:messages;return new Response(JSON.stringify({error:{code,message:dictionary[code]||dictionary.SERVICE_ERROR}}),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff',...(origin?cors(origin):{})}})}
 
 export function promptFor(payload){
+  if(payload.task==='journal-links'){
+    const system=payload.language==='en'
+      ?'You identify related journal readings. Return JSON only: {"related":[{"id":"candidate id","reason":"one concise reason"}]}. Select only candidates that concern the same real-world matter, follow-up, decision, or situation. Similar wording alone is insufficient. Return an empty array when no clear relationship exists. Do not invent IDs.'
+      :payload.language==='fa'
+        ?'شما ارتباط خوانش‌های دفترچه را پیدا می‌کنید. فقط JSON برگردانید: {"related":[{"id":"شناسه نامزد","reason":"دلیل کوتاه"}]}. فقط وقتی یک موضوع واقعی، پیگیری، تصمیم یا موقعیت مشترک وجود دارد ارتباط دهید؛ شباهت واژه‌ها کافی نیست. اگر ارتباط روشن نیست آرایه خالی برگردانید. شناسه نسازید.'
+        :'你只负责查找占问记录之间是否属于同一件现实中的事。只能输出 JSON：{"related":[{"id":"候选记录id","reason":"简短关联原因"}]}。只有现实事项、后续跟进、同一决定或同一处境明确相同才关联，不能只因为措辞相似就关联。没有明确关联就返回空数组，不得编造记录 ID。';
+    return [{role:'system',content:system},{role:'user',content:JSON.stringify(payload)}];
+  }
+  if(payload.task==='journal-review'){
+    const system=payload.language==='en'
+      ?'You compare a chain of Zhouyi journal readings. Return JSON only with keys readingIds, summary, continuities, changes, uncertainties, nextStep. readingIds must contain every supplied ID exactly once. Compare questions, primary-to-relating hexagrams, changing-line positions, saved reading excerpts, and real-world updates. Do not claim the hexagrams prove prediction or causation. Distinguish changes in the question, the reading, and the real-world facts. State uncertainty when evidence is missing. Keep each text under 4000 characters. No Markdown.'
+      :payload.language==='fa'
+        ?'شما زنجیره‌ای از خوانش‌های ژوئی را مقایسه می‌کنید. فقط JSON با کلیدهای readingIds، summary، continuities، changes، uncertainties، nextStep برگردانید. همه شناسه‌ها را دقیقاً یک‌بار بیاورید. پرسش‌ها، هگزاگرام اصلی و پیوسته، خطوط متغیر، گزیده تفسیر و پیشرفت واقعی را مقایسه کنید. نگویید هگزاگرام‌ها پیش‌بینی یا علت را ثابت می‌کنند. تغییر پرسش، تفسیر و واقعیت را از هم جدا کنید و کمبود شواهد را صریح بنویسید. هر متن کمتر از ۴۰۰۰ نویسه و بدون Markdown باشد.'
+        :'你负责对照同一件事的历次周易占问。只能输出 JSON，键必须是 readingIds、summary、continuities、changes、uncertainties、nextStep。readingIds 必须把资料中的每个记录 ID 各写一次。对照问题、 本卦→变卦、动爻位置、保存的解读摘录和现实进展。不得说卦象证明了预测或因果，要分别说明问题变了什么、解读变了什么、现实事实变了什么；缺少证据时明确写出不确定。每个文本少于 4000 字，不要 Markdown。';
+    return [{role:'system',content:system},{role:'user',content:JSON.stringify(payload)}];
+  }
   const movingPositions=new Set((payload.movingLines||[]).map(line=>line.position));
   const movingLabels=(payload.movingLines||[]).map(line=>line.label);
   const unchangedLabels=(payload.original?.lines||[]).filter((line,index)=>!movingPositions.has(index+1)).map(line=>line.label);
@@ -50,7 +74,7 @@ export function clientIpForRequest(request,env){
 async function handle(request,env,origin){
   let raw;
   try{raw=await request.json()}catch{return errorResponse('INVALID_REQUEST',400,origin)}
-  const checked=validateReadingPayload(raw);if(!checked.ok)return errorResponse('INVALID_REQUEST',400,origin,raw?.language==='en'||raw?.language==='fa'?raw.language:'zh-CN');
+  const checked=validateAnyPayload(raw);if(!checked.ok)return errorResponse('INVALID_REQUEST',400,origin,raw?.language==='en'||raw?.language==='fa'?raw.language:'zh-CN');
   if(!env.RATE_LIMITER||!env.RATE_LIMIT_SALT||!env.AI)return errorResponse('SERVICE_ERROR',503,origin);
   const limits=await consumeLimits({namespace:env.RATE_LIMITER,ip:clientIpForRequest(request,env),salt:env.RATE_LIMIT_SALT,perIpLimit:bounded(env.PER_IP_HOURLY_LIMIT,5,1,100),dailyLimit:bounded(env.DAILY_LIMIT,50,1,10000)});
   if(!limits.ok)return errorResponse(limits.code,429,origin);

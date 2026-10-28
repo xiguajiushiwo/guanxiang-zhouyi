@@ -244,6 +244,49 @@ Object.assign(DICTIONARY.fa, {
   'auth.footerLeft': '۶۴ هگزاگرام · ده بال · اشتقاق بزرگ', 'auth.footerRight': 'رمز حساب به‌شکل امن ذخیره می‌شود',
 });
 
+const FLOW_COPY = {
+  studyKicker: ['研读 · 周易', 'STUDY · ZHOUYI', 'مطالعه · ژوئی'],
+  studyTitle: ['读《周易》，从一卦开始。', 'Begin with one hexagram.', 'با یک هگزاگرام آغاز کنید.'],
+  studyDescription: ['先读经文，再看传文，慢慢理解变化的道理。', 'Read the classic, explore its commentaries, and understand change at your own pace.', 'متن را بخوانید، تفسیرها را بررسی کنید و به‌آرامی تغییر را بشناسید.'],
+  hexDescription: ['从卦辞与爻辞入手，逐卦阅读。', 'Explore each hexagram and its changing lines.', 'هر هگزاگرام و خطوط آن را بخوانید.'],
+  wingsDescription: ['循着传文，理解经文背后的思想。', 'Discover the ideas behind the classic.', 'اندیشه‌های پشت متن کلاسیک را بشناسید.'],
+  principlesDescription: ['梳理阴阳、时位与变化的联系。', 'Connect yin and yang, timing, position, and change.', 'رابطه یین و یانگ، زمان، جایگاه و تغییر را بررسی کنید.'],
+  read: ['开始研读', 'Read', 'مطالعه'],
+  studyQuote: ['居则观其象而玩其辞。', 'In stillness, contemplate the images and ponder the words.', 'در سکون، تصاویر را بنگرید و در واژه‌ها تأمل کنید.'],
+  questionTitle: ['问一件在意的事。', 'What is on your mind?', 'چه چیزی ذهن شما را مشغول کرده؟'],
+  questionDescription: ['写下情境与疑问，让这一次占问有所指向。', 'Describe your situation and one question to reflect on.', 'موقعیت خود و یک پرسش برای تأمل را بنویسید.'],
+  yourQuestion: ['此次所问', 'Your question', 'پرسش شما'],
+  questionHelp: ['还没想好怎么问？', 'Need help framing your question?', 'برای طرح پرسش کمک می‌خواهید؟'],
+  questionTip: ['一次只问一件事，写明情境和时间，关注自己可以如何行动。', 'Focus on one situation, a time frame, and what you can do.', 'بر یک موقعیت، بازه زمانی و اقدام خود تمرکز کنید.'],
+  pace: ['选择节奏', 'Choose your pace', 'ریتم خود را انتخاب کنید'],
+  completeDescription: ['亲手分蓍，逐步完成', 'Divide the stalks and follow each step', 'ساقه‌ها را تقسیم کنید و هر گام را دنبال کنید'],
+  quickDescription: ['每次点击，演算一爻', 'One click completes one line', 'هر کلیک یک خط را کامل می‌کند'],
+  method: ['了解大衍筮法与使用说明', 'About the method and its use', 'درباره روش و کاربرد آن'],
+  prepare: ['提问', 'Question', 'پرسش'],
+  cast: ['起卦', 'Cast', 'ساخت هگزاگرام'],
+  readyTitle: ['静心，准备起卦。', 'Take a moment to begin.', 'برای آغاز لحظه‌ای آرام بگیرید.'],
+  lineTitle: ['正在起第 {n} 爻', 'Casting line {n}', 'ساخت خط {n}'],
+  storage: ['记录在本机保存，登录后同步', 'Saved locally; synced when signed in', 'ذخیره محلی؛ همگام‌سازی پس از ورود'],
+  result: ['解读', 'Reflect', 'تأمل'],
+  calculations: ['查看本爻三变与策数', 'View the three changes and stalk counts', 'نمایش سه تغییر و شمار ساقه‌ها'],
+  castRecords: ['查看已成爻与演算记录', 'View completed lines and calculations', 'نمایش خطوط کامل و محاسبات'],
+  resultKicker: ['本次占问', 'YOUR READING', 'خوانش شما'],
+  resultTitle: ['卦象已成，静观其变。', 'Your hexagram is ready.', 'هگزاگرام شما آماده است.'],
+  readingFocus: ['先看解读重点', 'A starting point for reflection', 'نقطه آغاز تأمل'],
+  moreReading: ['展开处境、变化与行动建议', 'Explore the situation, changes, and actions', 'بررسی موقعیت، تغییرات و اقدامات'],
+  basis: ['查看取法依据', 'View the reading basis', 'نمایش مبنای خوانش'],
+  ai: ['结合所问，展开 AI 解读', 'Explore your question with AI', 'بررسی پرسش با هوش مصنوعی'],
+  aiTitle: ['AI 深度解读', 'AI interpretation', 'تفسیر هوش مصنوعی'],
+  aiPrivacy: ['生成时会将此次所问与卦象资料发送至 AI 服务。', 'Generating a reading sends your question and hexagram information to the AI service.', 'برای تولید خوانش، پرسش و اطلاعات هگزاگرام به سرویس هوش مصنوعی ارسال می‌شود.'],
+  original: ['阅读经文、变爻与卦象结构', 'Read the source texts, changing lines, and structure', 'خواندن متن اصلی، خطوط متغیر و ساختار'],
+  related: ['相关十翼原文', 'Related Ten Wings passages', 'بخش‌های مرتبط ده بال'],
+  note: ['留下我的札记', 'Write a personal note', 'نوشتن یادداشت شخصی'],
+  journal: ['查看占问记录', 'Open journal', 'نمایش دفترچه'],
+};
+for (const [key, values] of Object.entries(FLOW_COPY)) {
+  ['zh-CN', 'en', 'fa'].forEach((language, index) => { DICTIONARY[language][`flow.${key}`] = values[index]; });
+}
+
 const TEXT_MAP = Object.fromEntries(Object.keys(DICTIONARY['zh-CN']).map(key => [DICTIONARY['zh-CN'][key], DICTIONARY.en[key]]));
 const PERSIAN_TEXT_MAP = Object.fromEntries(Object.keys(DICTIONARY['zh-CN']).map(key => [DICTIONARY['zh-CN'][key], DICTIONARY.fa[key] ?? DICTIONARY.en[key]]));
 let currentLanguage = 'zh-CN';

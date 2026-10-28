@@ -1,6 +1,6 @@
 import { normalizeHistoryRecords } from '../../storage.mjs';
 
-export const MAX_BODY_BYTES=96*1024;
+export const MAX_BODY_BYTES=4*1024*1024;
 const emailPattern=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function normalizeCredentials(value){

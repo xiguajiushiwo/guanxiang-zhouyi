@@ -17,4 +17,7 @@ assert.equal(calls.at(-1).init.credentials,'same-origin');
 assert.equal(JSON.parse(calls.at(-1).init.body).records[0].id,'local');
 const noSession=await getAccountSession({fetchImpl:async()=>new Response(JSON.stringify({error:{code:'UNAUTHORIZED'}}),{status:401,headers:{'content-type':'application/json'}})});
 assert.equal(noSession,null);
+assert.equal(calls[0].init.cache,'no-store');
+const stalledClient=createAccountClient({timeoutMs:10,fetchImpl:(_url,{signal})=>new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(new Error('aborted'))))});
+await assert.rejects(()=>stalledClient.me(),error=>error instanceof AccountApiError&&error.code==='NETWORK_ERROR');
 console.log('Account sync tests passed.');
