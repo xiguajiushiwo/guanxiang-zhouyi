@@ -46,7 +46,7 @@ try{
   `});
   await viewport(1366,900);
   await command('Page.navigate',{url:'http://127.0.0.1:4175/?entry=account#home'});
-  await waitFor(`document.querySelector('#siteCover')?.hidden&&document.querySelectorAll('#hexList .hex-row').length===64`);
+  await waitFor(`document.querySelector('#siteCover')?.hidden&&document.querySelector('#view-home.active')`);
   assert.deepEqual(await evaluate(`[...document.querySelectorAll('#view-home [data-view]')].map(el=>el.dataset.view)`),['hexagrams','classics','principles']);
   await fits();await capture('study-desktop');
   await viewport(390);await fits();await capture('study-mobile');

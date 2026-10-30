@@ -58,7 +58,7 @@ await evaluate(`(async()=>{
   localStorage.setItem('guanxiang-account-mode-v1','guest');
   if('serviceWorker' in navigator){const registrations=await navigator.serviceWorker.getRegistrations();await Promise.all(registrations.map(registration=>registration.unregister()))}
   if('caches' in window){const keys=await caches.keys();await Promise.all(keys.map(key=>caches.delete(key)))}
-  location.reload();return true;
+  location.assign('/');return true;
 })()`);
 await waitFor(`document.body?.classList.contains('cover-active') && document.querySelector('#enterSite') && document.querySelector('#siteCover') && !document.querySelector('#siteCover').hidden`);
 await evaluate(`document.querySelector('#enterSite').click();true`);
@@ -215,7 +215,7 @@ await waitFor(`location.hash.startsWith('#history/') && !document.querySelector(
 await evaluate(`document.querySelector('[data-history-back]').click();true`);
 await waitFor(`location.hash==='#history' && !document.querySelector('#historyIndexPage').hidden`);
 await evaluate(`location.hash='#history/not-a-real-record';true`);
-await waitFor(`location.hash==='#history' && !document.querySelector('#historyIndexPage').hidden && document.querySelectorAll('#historyList .history-item').length===1`);
+await waitFor(`location.hash==='#history/not-a-real-record' && !document.querySelector('#historyRecordPage').hidden && document.querySelector('#historyDetail [role="status"]')`);
 await evaluate(`location.hash='#history/${encodeURIComponent(journalIndex.recordId)}';true`);
 await waitFor(`!document.querySelector('#historyRecordPage').hidden && document.querySelector('#historyDetail #historyNote')`);
 const originalQuestion = await evaluate(`document.querySelector('.history-detail blockquote').textContent`);

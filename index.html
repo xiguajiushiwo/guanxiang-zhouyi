@@ -4,7 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f4f0e6" />
-    <link rel="canonical" href="./" />
+    <meta name="description" content="观象是一款周易研读与个人复盘工具。读经典，问一件事，记录行动，再借助 AI 对照历次占问与现实进展。" />
+    <link rel="canonical" href="https://guanxiang-zhouyi-evf.pages.dev/" />
+    <link rel="icon" type="image/svg+xml" href="app-icon.svg" />
+    <link rel="apple-touch-icon" href="app-icon-180.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="观象" />
+    <meta property="og:title" content="观象 · 看见变化，想清下一步" />
+    <meta property="og:description" content="用《周易》整理问题，用连续记录看见变化。研读经典、一事一问、持续复盘。" />
+    <meta property="og:url" content="https://guanxiang-zhouyi-evf.pages.dev/" />
+    <meta property="og:image" content="https://guanxiang-zhouyi-evf.pages.dev/brand-share.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="观象：看见变化，想清下一步。研读经典、一事一问、持续复盘。" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="manifest" href="manifest.webmanifest" />
     <title>观象 · 周易研读</title>
     <link rel="stylesheet" href="styles.css?v=20260922-account-scope1" />
@@ -14,6 +27,7 @@
     <link rel="stylesheet" href="reading-flow.css?v=20261028-emblem1" />
     <link rel="stylesheet" href="./journal.css?v=20261028-journal1">
     <link rel="stylesheet" href="./case-review.css?v=20261028-case1">
+    <link rel="stylesheet" href="./mobile-experience.css?v=20261030-nav1">
 </head>
   <body>
     <section class="site-cover" id="siteCover" aria-labelledby="coverTitle">
@@ -46,7 +60,7 @@
         <footer class="cover-footer">
           <p>六十四卦 · 十翼 · 易理 · 筮法</p>
           <a class="cover-enter" id="enterSite" href="./auth?v=20260922-auth7">进入观象</a>
-          <small>循象而入，因变而明</small>
+          <small class="cover-product-note" data-i18n="brand.promise">用《周易》整理问题，用连续记录看见变化。</small>
         </footer>
       </div>
       <noscript><p class="cover-noscript">浏览器未启用脚本，请向下浏览研读内容。</p></noscript>
@@ -54,7 +68,7 @@
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand">
-          <div class="brand-mark">觀</div>
+          <div class="brand-mark"><img src="app-icon.svg" width="38" height="38" alt="" /></div>
           <div>
             <div class="brand-name">观象</div>
             <div class="brand-sub">ZHOUYI STUDY</div>
@@ -173,6 +187,6 @@
     <dialog class="confirm-dialog import-dialog" id="importDialog"><form method="dialog"><span class="panel-kicker" data-i18n="dialog.importKicker">导入记录</span><h2 data-i18n="dialog.importTitle">确认合并本地记录？</h2><p id="importSummary" data-i18n="dialog.importLoading">正在读取记录。</p><div><button class="secondary-button" value="cancel" id="cancelImport" data-i18n="dialog.cancel">取消</button><button class="primary-button" value="confirm" id="confirmImport" data-i18n="dialog.confirmImport">确认合并</button></div></form></dialog>
     <dialog class="confirm-dialog account-merge-dialog" id="accountMergeDialog"><form method="dialog"><span class="panel-kicker">合并此设备的记录？</span><h2>合并此设备的记录？</h2><p data-merge-body></p><div><button type="button" class="secondary-button" data-merge-choice="cloud">只保留云端记录</button><button type="button" class="primary-button" data-merge-choice="merge">合并记录</button></div></form></dialog>
     <script>window.GUANXIANG_AI_ENDPOINT=window.GUANXIANG_AI_ENDPOINT||(['.pages.dev','.netlify.app','.liara.run'].some(suffix=>location.hostname.endsWith(suffix))?'/api/reading':'');</script>
-    <script type="module" src="app.js?v=20261028-journal1"></script>
+    <script type="module" src="app.js?v=20261030-nav1"></script>
   </body>
 </html>

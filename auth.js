@@ -1,5 +1,5 @@
 import { AccountApiError, createAccountClient } from './account-sync.mjs?v=20261027-sync1';
-import { getLanguage, setLanguage, t, translateDom } from './i18n.mjs?v=20261028-flow1';
+import { getLanguage, setLanguage, t, translateDom } from './i18n.mjs?v=20261030-brand1';
 
 const $=selector=>document.querySelector(selector);
 const APP_ENTRY='./?entry=account#home';
@@ -83,6 +83,11 @@ async function restoreSession(){
   catch(error){if(revision!==sessionRevision)return;if(!(error instanceof AccountApiError&&[401,403].includes(error.status)))message=accountError(error)}
   render();$('#authError').textContent=message;
 }
+window.addEventListener('pageshow',event=>{
+  if(!event.persisted)return;
+  setBusy(false);
+  restoreSession();
+});
 function toggleLanguageMenu(force){
   const root=$('[data-auth-language]'),options=root.querySelector('.auth-language-options'),trigger=root.querySelector('.auth-language-trigger');
   const open=force??options.hidden;

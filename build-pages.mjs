@@ -6,6 +6,7 @@ const output=path.resolve(root,'dist');
 if(path.dirname(output)!==root||path.basename(output)!=='dist')throw new Error('Refusing to clean an unexpected output path.');
 
 const files=[
+  'mobile-experience.css','app-icon-180.png','app-icon-192.png','app-icon-512.png','brand-share.png','brand-share.svg',
   'journal.css','journal.mjs','journal-ui.mjs','library-loader.mjs','case-review.css','case-review.mjs','case-review-ui.mjs','reading-flow.css','index.html','auth.html','styles.css','auth.css','landing-v2.css','landing-rich.css','landing-details.css',
   'app.js','auth.js','i18n.mjs','hexagram-i18n.mjs','hexagram-catalog.mjs','daily-hexagram.mjs','yarrow-core.mjs',
   'reading-rules.mjs','interpretation.mjs','ai-reading.mjs','ai-sources.mjs','derived-hexagrams.mjs',

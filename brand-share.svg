@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f4f0e6"/>
+  <path d="M64 64H1136M64 566H1136" stroke="#d8d1c2"/>
+  <text x="66" y="105" fill="#b55238" font-family="Microsoft YaHei, sans-serif" font-size="15" letter-spacing="5">GUANXIANG · 观象</text>
+  <text x="60" y="240" fill="#24231f" font-family="Noto Serif SC, SimSun, serif" font-size="96" font-weight="700">观象</text>
+  <text x="64" y="326" fill="#24231f" font-family="Noto Serif SC, SimSun, serif" font-size="40">看见变化，想清下一步。</text>
+  <text x="66" y="385" fill="#7d786c" font-family="Microsoft YaHei, sans-serif" font-size="23">用《周易》整理问题，用连续记录看见变化。</text>
+  <rect x="64" y="446" width="400" height="50" rx="3" fill="#2e302c"/>
+  <text x="264" y="479" text-anchor="middle" fill="#f4f0e6" font-family="Microsoft YaHei, sans-serif" font-size="19" letter-spacing="3">研读经典 · 一事一问 · 持续复盘</text>
+  <circle cx="934" cy="307" r="170" fill="none" stroke="#d8d1c2"/>
+  <circle cx="934" cy="307" r="193" fill="none" stroke="#d8d1c2"/>
+  <circle cx="934" cy="114" r="5" fill="#b55238"/>
+  <g transform="translate(806 179) scale(.5)">
+    <circle cx="256" cy="256" r="236" fill="#2e302c"/>
+    <path d="M256 20a236 236 0 0 1 0 472c-65 0-118-53-118-118s53-118 118-118 118-53 118-118S321 20 256 20z" fill="#e9e3d5"/>
+    <circle cx="256" cy="138" r="28" fill="#e9e3d5"/><circle cx="256" cy="374" r="28" fill="#2e302c"/>
+  </g>
+  <text x="66" y="601" fill="#7d786c" font-family="Microsoft YaHei, sans-serif" font-size="16" letter-spacing="2">周易研读与个人复盘工具</text>
+  <text x="1136" y="601" text-anchor="end" fill="#b55238" font-family="Microsoft YaHei, sans-serif" font-size="16">从一件具体的事开始</text>
+</svg>

@@ -287,6 +287,9 @@ for (const [key, values] of Object.entries(FLOW_COPY)) {
   ['zh-CN', 'en', 'fa'].forEach((language, index) => { DICTIONARY[language][`flow.${key}`] = values[index]; });
 }
 
+DICTIONARY['zh-CN']['brand.promise']='用《周易》整理问题，用连续记录看见变化。';
+DICTIONARY.en['brand.promise']='Explore your questions with the Zhouyi. Follow change through your own journal.';
+DICTIONARY.fa['brand.promise']='با ژوئی پرسش‌هایتان را روشن کنید و با ثبت پیوسته، تغییر را ببینید.';
 const TEXT_MAP = Object.fromEntries(Object.keys(DICTIONARY['zh-CN']).map(key => [DICTIONARY['zh-CN'][key], DICTIONARY.en[key]]));
 const PERSIAN_TEXT_MAP = Object.fromEntries(Object.keys(DICTIONARY['zh-CN']).map(key => [DICTIONARY['zh-CN'][key], DICTIONARY.fa[key] ?? DICTIONARY.en[key]]));
 let currentLanguage = 'zh-CN';
