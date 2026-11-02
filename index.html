@@ -21,7 +21,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <title>观象 · 周易研读</title>
     <link rel="stylesheet" href="styles.css?v=20260922-account-scope1" />
-    <link rel="stylesheet" href="reading-flow.css?v=20261028-emblem1" />
+    <link rel="stylesheet" href="reading-flow.css?v=20261102-home1" />
     <link rel="stylesheet" href="./journal.css?v=20261028-journal1">
     <link rel="stylesheet" href="./case-review.css?v=20261028-case1">
     <link rel="stylesheet" href="./mobile-experience.css?v=20261030-nav1">
@@ -154,6 +154,10 @@
             <span class="panel-kicker" data-i18n="flow.studyKicker">研读 · 周易</span>
             <h1 data-i18n="flow.studyTitle">读《周易》，从一卦开始。</h1>
             <p data-i18n="flow.studyDescription">先读经文，再看传文，慢慢理解变化的道理。</p>
+            <div class="study-start">
+              <button type="button" class="primary-button study-start-button" data-view="divination" aria-describedby="studyStartHint"><span data-i18n="flow.startReading">开始占卜</span><span aria-hidden="true">→</span></button>
+              <p id="studyStartHint" data-i18n="flow.startHint">不用先懂卦象，写下你的问题，跟着提示一步步开始。</p>
+            </div>
             <svg class="study-emblem" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
               <circle class="study-emblem-ring" cx="100" cy="100" r="93" />
               <circle class="study-emblem-ring" cx="100" cy="100" r="75" />
@@ -231,6 +235,6 @@
     <dialog class="confirm-dialog import-dialog" id="importDialog"><form method="dialog"><span class="panel-kicker" data-i18n="dialog.importKicker">导入记录</span><h2 data-i18n="dialog.importTitle">确认合并本地记录？</h2><p id="importSummary" data-i18n="dialog.importLoading">正在读取记录。</p><div><button class="secondary-button" value="cancel" id="cancelImport" data-i18n="dialog.cancel">取消</button><button class="primary-button" value="confirm" id="confirmImport" data-i18n="dialog.confirmImport">确认合并</button></div></form></dialog>
     <dialog class="confirm-dialog account-merge-dialog" id="accountMergeDialog"><form method="dialog"><span class="panel-kicker">合并此设备的记录？</span><h2>合并此设备的记录？</h2><p data-merge-body></p><div><button type="button" class="secondary-button" data-merge-choice="cloud">只保留云端记录</button><button type="button" class="primary-button" data-merge-choice="merge">合并记录</button></div></form></dialog>
     <script>window.GUANXIANG_AI_ENDPOINT=window.GUANXIANG_AI_ENDPOINT||((location.hostname==='guanxiang.wayella.com'||['.pages.dev','.netlify.app','.liara.run'].some(suffix=>location.hostname.endsWith(suffix)))?'/api/reading':'');</script>
-    <script type="module" src="app.js?v=20261102-i18n1"></script>
+    <script type="module" src="app.js?v=20261102-home1"></script>
   </body>
 </html>

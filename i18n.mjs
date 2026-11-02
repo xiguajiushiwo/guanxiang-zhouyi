@@ -249,6 +249,8 @@ const FLOW_COPY = {
   studyKicker: ['研读 · 周易', 'STUDY · ZHOUYI', 'مطالعه · ژوئی'],
   studyTitle: ['读《周易》，从一卦开始。', 'Begin with one hexagram.', 'با یک هگزاگرام آغاز کنید.'],
   studyDescription: ['先读经文，再看传文，慢慢理解变化的道理。', 'Read the classic, explore its commentaries, and understand change at your own pace.', 'متن را بخوانید، تفسیرها را بررسی کنید و به‌آرامی تغییر را بشناسید.'],
+  startReading: ['开始占卜', 'Start a reading', 'آغاز یک خوانش'],
+  startHint: ['不用先懂卦象，写下你的问题，跟着提示一步步开始。', 'No prior knowledge needed. Write your question and follow the steps.', 'نیازی به آشنایی قبلی نیست. پرسش خود را بنویسید و گام‌ها را دنبال کنید.'],
   hexDescription: ['从卦辞与爻辞入手，逐卦阅读。', 'Explore each hexagram and its changing lines.', 'هر هگزاگرام و خطوط آن را بخوانید.'],
   wingsDescription: ['循着传文，理解经文背后的思想。', 'Discover the ideas behind the classic.', 'اندیشه‌های پشت متن کلاسیک را بشناسید.'],
   principlesDescription: ['梳理阴阳、时位与变化的联系。', 'Connect yin and yang, timing, position, and change.', 'رابطه یین و یانگ، زمان، جایگاه و تغییر را بررسی کنید.'],

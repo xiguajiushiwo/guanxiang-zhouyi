@@ -10,7 +10,7 @@ import { buildLocalInterpretation, buildEnglishInterpretation } from './interpre
 import { AiReadingError, requestAiReading, splitAiReadingSections, splitAiReadingSectionsLocalized } from './ai-reading.mjs';
 import { attributeHtml, textHtml } from './html-safety.mjs';
 import { createServiceWorkerActivator } from './service-worker-update.mjs';
-import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20261102-i18n1';
+import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20261102-home1';
 import { displayHexagramName, HEXAGRAM_EN, TRIGRAM_EN } from './hexagram-i18n.mjs';
 import { selectTenWingSources } from './ai-sources.mjs';
 import { AccountApiError, createAccountClient } from './account-sync.mjs?v=20261027-sync1';

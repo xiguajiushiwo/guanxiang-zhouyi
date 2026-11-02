@@ -1,5 +1,5 @@
 import { AccountApiError, createAccountClient } from './account-sync.mjs?v=20261027-sync1';
-import { getLanguage, setLanguage, t, translateDom } from './i18n.mjs?v=20261102-i18n1';
+import { getLanguage, setLanguage, t, translateDom } from './i18n.mjs?v=20261102-home1';
 
 const $=selector=>document.querySelector(selector);
 const APP_ENTRY='./?entry=account#home';

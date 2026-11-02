@@ -47,10 +47,10 @@ try{
   await viewport(1366,900);
   await command('Page.navigate',{url:'http://127.0.0.1:4175/?entry=account#home'});
   await waitFor(`document.querySelector('#siteCover')?.hidden&&document.querySelector('#view-home.active')`);
-  assert.deepEqual(await evaluate(`[...document.querySelectorAll('#view-home [data-view]')].map(el=>el.dataset.view)`),['hexagrams','classics','principles']);
+  assert.deepEqual(await evaluate(`[...document.querySelectorAll('#view-home [data-view]')].map(el=>el.dataset.view)`),['divination','hexagrams','classics','principles']);
   await fits();await capture('study-desktop');
   await viewport(390);await fits();await capture('study-mobile');
-  await click('.nav-item[data-view="divination"]');
+  await click('.study-start-button');
   await waitFor(`document.querySelector('#view-divination').dataset.phase==='prepare'`);
   await fits();await capture('question-mobile');
   await evaluate(`document.querySelector('#questionInput').value='面对下周的合作讨论，我需要注意什么？';document.querySelector('#questionInput').dispatchEvent(new Event('input'))`);
