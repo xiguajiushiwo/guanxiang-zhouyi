@@ -1,3 +1,4 @@
+import { BRAND_COPY } from './brand-content.mjs';
 export const LANGUAGES = Object.freeze({ 'zh-CN': '中文', en: 'English', fa: 'فارسی' });
 export const LANGUAGE_STORAGE_KEY = 'guanxiang-language';
 export const LANGUAGE_META = Object.freeze({
@@ -290,6 +291,21 @@ for (const [key, values] of Object.entries(FLOW_COPY)) {
 DICTIONARY['zh-CN']['brand.promise']='用《周易》整理问题，用连续记录看见变化。';
 DICTIONARY.en['brand.promise']='Explore your questions with the Zhouyi. Follow change through your own journal.';
 DICTIONARY.fa['brand.promise']='با ژوئی پرسش‌هایتان را روشن کنید و با ثبت پیوسته، تغییر را ببینید.';
+for(const [key,values] of Object.entries(BRAND_COPY))['zh-CN','en','fa'].forEach((language,index)=>{DICTIONARY[language]['brand.'+key]=values[index]});
+Object.assign(DICTIONARY['zh-CN'], {
+  'flow.note':'记下我的理解与行动', 'flow.basis':'为什么这样解读？',
+  'flow.questionDescription':'写清发生了什么、你在犹豫什么，以及想怎样行动。',
+  'flow.completeDescription':'亲手分组，逐步完成起卦', 'flow.quickDescription':'点六次，逐步得到完整卦象',
+  'history.noteLabel':'我的理解与行动', 'history.notePlaceholder':'我怎样理解这次解读？下一步准备做什么？',
+  'reading.note':'我的理解与行动', 'reading.local':'卦象解读',
+  'dialog.divinationTitle':'留一点时间，把问题想清楚',
+  'dialog.divinationBodyOne':'专注于刚刚写下的这一件事。接下来，你会逐步得到卦象，再结合经典与自己的处境阅读。',
+  'dialog.confirmBegin':'准备好了，开始起卦',
+  'dialog.onboardingTwoTitle':'二、逐步得到六条爻线',
+  'dialog.onboardingTwoBody':'你会看到蓍草如何分组与计数，三次变化得到一条爻线，六条线组成一卦。',
+});
+DICTIONARY.en['dialog.onboardingTwoTitle']='2. Build six lines step by step';
+DICTIONARY.fa['dialog.onboardingTwoTitle']='۲. شش خط را گام‌به‌گام بسازید';
 const TEXT_MAP = Object.fromEntries(Object.keys(DICTIONARY['zh-CN']).map(key => [DICTIONARY['zh-CN'][key], DICTIONARY.en[key]]));
 const PERSIAN_TEXT_MAP = Object.fromEntries(Object.keys(DICTIONARY['zh-CN']).map(key => [DICTIONARY['zh-CN'][key], DICTIONARY.fa[key] ?? DICTIONARY.en[key]]));
 let currentLanguage = 'zh-CN';

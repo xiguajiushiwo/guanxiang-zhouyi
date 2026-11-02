@@ -1,4 +1,5 @@
 import hexagrams from './hexagram-catalog.mjs';
+import { initShareCards } from './share-card.mjs?v=20261102-brand1';
 import { drawYarrowChange, randomSplitCount } from './yarrow-core.mjs';
 import { readingRule } from './reading-rules.mjs';
 import { catalogLines, hexagramRelations } from './derived-hexagrams.mjs';
@@ -9,7 +10,7 @@ import { buildLocalInterpretation, buildEnglishInterpretation } from './interpre
 import { AiReadingError, requestAiReading, splitAiReadingSections, splitAiReadingSectionsLocalized } from './ai-reading.mjs';
 import { attributeHtml, textHtml } from './html-safety.mjs';
 import { createServiceWorkerActivator } from './service-worker-update.mjs';
-import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20261030-brand1';
+import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20261102-brand1';
 import { displayHexagramName, HEXAGRAM_EN, TRIGRAM_EN } from './hexagram-i18n.mjs';
 import { selectTenWingSources } from './ai-sources.mjs';
 import { AccountApiError, createAccountClient } from './account-sync.mjs?v=20261027-sync1';
@@ -59,10 +60,11 @@ function updateDailyCoverHexagram(date=new Date()){
   if(!hexagram||!lines)return;
   cover.dataset.name=hexagram[0];
   cover.dataset.summary=hexagram[2];
+  const name=$('[data-cover-name]');if(name)name.textContent=getLanguage()==='en'?(HEXAGRAM_EN[index]||hexagram[2]):hexagram[2];
   const disc=cover.querySelector('.cover-disc');
   if(disc){disc.dataset.upper=`${hexagram[6]}  ${TRIGRAM_GLYPHS[hexagram[6]]||''}`.trim();disc.dataset.lower=`${hexagram[7]}  ${TRIGRAM_GLYPHS[hexagram[7]]||''}`.trim()}
   cover.querySelectorAll('.cover-line').forEach((line,lineIndex)=>{
-    const solid=lines[lineIndex]===1;
+    const solid=lines[5-lineIndex]===1;
     line.classList.toggle('broken',!solid);
     line.replaceChildren(...Array.from({length:solid?1:2},()=>document.createElement('b')));
   });
@@ -80,32 +82,33 @@ function initDailyCoverHexagram(){
   scheduleDailyCoverHexagram();
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateDailyCoverHexagram()});
 }
-function initLandingCover(){
-  const cover=$('#siteCover'),app=$('.app-shell'),enter=$('#enterSite');
-  if(!cover||!app||!enter)return;
-  enter.addEventListener('click',event=>{
-    if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
-    event.preventDefault();
-    navigateToAuth(enter.href);
-  });
-  const revealApp=()=>{
-    if(cover.hidden)return;
-    cover.hidden=true;
-    app.removeAttribute('inert');
-    app.removeAttribute('aria-hidden');
-    document.body.classList.remove('cover-active');
+function syncLandingCover(){
+  const cover=$('#siteCover'),app=$('.app-shell');
+  if(!cover||!app)return;
+  const active=/^#(?:home|hexagrams|classics|principles|divination|history)(?:\/|$)/.test(location.hash);
+  const entering=active&&!cover.hidden,leaving=!active&&cover.hidden;
+  cover.hidden=active;
+  app.toggleAttribute('inert',!active);
+  if(active)app.removeAttribute('aria-hidden');else app.setAttribute('aria-hidden','true');
+  document.body.classList.toggle('cover-active',!active);
+  if(entering){
     $('.main-content')?.focus({preventScroll:true});
-    requestAnimationFrame(()=>document.dispatchEvent(new Event('guanxiang:entered')));
-  };
-  if(new URLSearchParams(location.search).get('entry')==='account'||/^#(?:home|hexagrams|classics|principles|divination|history)(?:\/|$)/.test(location.hash)){
-    revealApp();
-    history.replaceState(null,'',`${location.pathname}${location.hash||'#home'}`);
-    return;
+    requestAnimationFrame(()=>{if($('#siteCover').hidden)document.dispatchEvent(new Event('guanxiang:entered'))});
   }
-  app.setAttribute('inert','');
-  app.setAttribute('aria-hidden','true');
-  document.body.classList.add('cover-active');
-  requestAnimationFrame(()=>enter.focus({preventScroll:true}));
+  if(leaving){$('#onboardingDialog')?.close();window.scrollTo({top:0,behavior:'instant'})}
+}
+function initLandingCover(){
+  if(new URLSearchParams(location.search).get('entry')==='account')history.replaceState(null,'',location.pathname+(location.hash||'#home'));
+  syncLandingCover();
+  $('[data-show-example]')?.addEventListener('click',()=>{$('#brandExample').scrollIntoView({behavior:'instant'});$('#brandExample').focus({preventScroll:true})});
+  if(!$('#siteCover').hidden)requestAnimationFrame(()=>$('#enterSite').focus({preventScroll:true}));
+}
+function shareSource(button){
+  const kind=button.dataset.shareCard;
+  if(kind==='example')return {kind,originalIndex:52};
+  if(kind==='study')return {kind,originalIndex:selectedHex,quote:hexagramTexts?.hexagrams?.[selectedHex]?.text};
+  const record=loadHistory().find(item=>item.id===(kind==='result'?castState.sessionId:historySelectedId));
+  return record?{kind:'reading',originalIndex:record.originalIndex,changedIndex:record.changedIndex,question:record.question,note:record.note,quote:hexagramTexts?.hexagrams?.[record.originalIndex]?.text}:null;
 }
 const searchCharMap=Object.fromEntries([...`傳經數萬與為無後來見龍時國陰陽學觀義禮樂風澤貞變應聖體書辭問斷說損艱廣開閉東門雲氣順處進退長終實虛剛柔動靜險濟師謙豫隨蠱臨頤過離咸恆遯壯晉夷睽蹇解夬姤萃升困井革鼎震巽兌渙節孚過既未`].map((char,index)=>[char,[...`传经数万与为无后来见龙时国阴阳学观义礼乐风泽贞变应圣体书辞问断说损艰广开闭东门云气顺处进退长终实虚刚柔动静险济师谦豫随蛊临颐过离咸恒遁壮晋夷睽蹇解夬姤萃升困井革鼎震巽兑涣节孚过既未`][index]]));
 function normalizeSearchText(value){return [...String(value||'').toLowerCase()].map(char=>searchCharMap[char]||char).join('')}
@@ -161,6 +164,8 @@ function backToList(view){
   setMobileDetail(view,false);nav(view);
 }
 function applyRoute(){
+  syncLandingCover();
+  if(!$('#siteCover')?.hidden){displayedRoute='';return}
   const [view='home',value='',section='']=(location.hash.slice(1)||'home').split('/');
   if(view==='hexagrams'){selectedHex=Math.max(0,Math.min(63,(Number(value)||1)-1));setMobileDetail('hexagrams',Boolean(value));nav('hexagrams',false);return}
   if(view==='classics'){selectedWing=Math.max(0,Math.min(9,(Number(value)||1)-1));selectedClassicSection=section?Math.max(0,(Number(section)||1)-1):null;nav('classics',false);return}
@@ -178,7 +183,7 @@ function renderHexList(){if(currentView!=='hexagrams'||!needsRender('hex-list',[
 function relationCards(hexIndex,limit=12){const refs=relationsLibrary?.hexagrams?.[String(hexIndex+1)]?.references||[];return refs.slice(0,limit).map(ref=>`<button type="button" class="relation-link" data-classic-ref="${ref.wingIndex}/${ref.sectionIndex}"><b>${textHtml(ref.wingTitle)}</b><span>第 ${ref.sectionNumber} 段 · ${ref.kind==='direct'?'本卦专释':'文中引卦'}</span><small>${textHtml(ref.excerpt)}${ref.excerpt.length>=92?'…':''}</small></button>`).join('')}
 function openClassicReference(wingIndex,sectionIndex){selectedWing=Number(wingIndex);selectedClassicSection=Number(sectionIndex);location.hash=`#classics/${selectedWing+1}/${selectedClassicSection+1}`}
 function bindRelationLinks(root=document){root.querySelectorAll?.('[data-classic-ref]').forEach(button=>button.addEventListener('click',()=>{const [wing,section]=button.dataset.classicRef.split('/');openClassicReference(wing,section)}))}
-function renderHexDetail(){if(currentView!=='hexagrams'||!needsRender('hex-detail',selectedHex))return;const h=hexagrams[selectedHex],source=hexagramTexts?.hexagrams?.[selectedHex],wingSuffix=selectedHex<30?'shang':'xia',tuanWing=tenWings?.wings?.find(w=>w.id===`tuan-${wingSuffix}`),xiangWing=tenWings?.wings?.find(w=>w.id===`xiang-${wingSuffix}`),tuan=tuanWing?.sections?.find(s=>s.number===selectedHex+1),xiang=xiangWing?.sections?.find(s=>s.number===selectedHex+1),yao=source?.lines||yaoTexts.map(text=>{const [label,...rest]=text.split('：');return {label,text:rest.join('：')}}),relations=relationCards(selectedHex);$('#hexDetail').innerHTML=`<button type="button" class="mobile-back-button" data-mobile-back="hexagrams">‹ ${t('hex.back')}</button><div class="detail-top"><div><div class="detail-order">第 ${String(selectedHex+1).padStart(2,'0')} 卦 · ${selectedHex<30?'上经':'下经'}</div><div class="detail-glyph">${h[1]}</div><h2 class="detail-title">${h[2]}</h2><div class="detail-subtitle">${h[6]}上${h[7]}下 · ${h[0]}卦</div></div></div><div class="detail-meaning">${h[3]}</div><div class="detail-section"><h4>卦辞 · THE JUDGMENT</h4><p class="wing-original">${source?.text?textHtml(source.text):h[4]}</p></div><div class="detail-section"><h4>彖传 · 本卦总断</h4><p class="wing-original">${tuan?.text?textHtml(tuan.text):`${h[5]}。观其时，察其位，行其中道。`}</p></div><div class="detail-section"><h4>象传 · 大象与小象</h4><p class="wing-original">${xiang?.text?textHtml(xiang.text):'象传正在载入。'}</p></div><div class="detail-section"><h4>爻辞 · 六爻与用九/用六</h4><div class="yao-list">${yao.map(line=>`<div class="yao-item"><b>${textHtml(line.label)}</b><span>${textHtml(line.text)}</span></div>`).join('')}</div></div><div class="detail-section relation-section"><h4>十翼关联 · 经传互参</h4><div class="relation-list">${relations||'<p class="library-loading">关联索引正在载入。</p>'}</div></div>`;$('#hexDetail [data-mobile-back]')?.addEventListener('click',()=>backToList('hexagrams'));bindRelationLinks($('#hexDetail'));renderHexStudy()}
+function renderHexDetail(){if(currentView!=='hexagrams'||!needsRender('hex-detail',selectedHex))return;const h=hexagrams[selectedHex],source=hexagramTexts?.hexagrams?.[selectedHex],wingSuffix=selectedHex<30?'shang':'xia',tuanWing=tenWings?.wings?.find(w=>w.id===`tuan-${wingSuffix}`),xiangWing=tenWings?.wings?.find(w=>w.id===`xiang-${wingSuffix}`),tuan=tuanWing?.sections?.find(s=>s.number===selectedHex+1),xiang=xiangWing?.sections?.find(s=>s.number===selectedHex+1),yao=source?.lines||yaoTexts.map(text=>{const [label,...rest]=text.split('：');return {label,text:rest.join('：')}}),relations=relationCards(selectedHex);$('#hexDetail').innerHTML=`<button type="button" class="mobile-back-button" data-mobile-back="hexagrams">‹ ${t('hex.back')}</button><div class="detail-top"><div><div class="detail-order">第 ${String(selectedHex+1).padStart(2,'0')} 卦 · ${selectedHex<30?'上经':'下经'}</div><div class="detail-glyph">${h[1]}</div><h2 class="detail-title">${h[2]}</h2><div class="detail-subtitle">${h[6]}上${h[7]}下 · ${h[0]}卦</div></div></div><button type="button" class="secondary-button share-entry" data-share-card="study">${t('brand.share')}</button><div class="detail-meaning">${h[3]}</div><div class="detail-section"><h4>卦辞 · THE JUDGMENT</h4><p class="wing-original">${source?.text?textHtml(source.text):h[4]}</p></div><div class="detail-section"><h4>彖传 · 本卦总断</h4><p class="wing-original">${tuan?.text?textHtml(tuan.text):`${h[5]}。观其时，察其位，行其中道。`}</p></div><div class="detail-section"><h4>象传 · 大象与小象</h4><p class="wing-original">${xiang?.text?textHtml(xiang.text):'象传正在载入。'}</p></div><div class="detail-section"><h4>爻辞 · 六爻与用九/用六</h4><div class="yao-list">${yao.map(line=>`<div class="yao-item"><b>${textHtml(line.label)}</b><span>${textHtml(line.text)}</span></div>`).join('')}</div></div><div class="detail-section relation-section"><h4>十翼关联 · 经传互参</h4><div class="relation-list">${relations||'<p class="library-loading">关联索引正在载入。</p>'}</div></div>`;$('#hexDetail [data-mobile-back]')?.addEventListener('click',()=>backToList('hexagrams'));bindRelationLinks($('#hexDetail'));renderHexStudy()}
 function annotationFormHtml(target, records) {
   return `<section class="annotation-panel"><div class="annotation-head"><div><span class="panel-kicker">个人批注</span><h4>把这一处读法留下来</h4></div><span>${t('annotations.count',{count:records.length})}</span></div><form class="annotation-form" data-annotation-type="${attributeHtml(target.sourceType)}" data-annotation-id="${attributeHtml(target.sourceId)}"><textarea name="note" maxlength="2000" required placeholder="写下你的理解、疑问或可验证的行动。"></textarea><input name="tags" maxlength="180" placeholder="标签，用逗号分隔" /><button type="submit" class="secondary-button">保存批注</button></form>${records.map(record=>`<article class="annotation-item"><p>${textHtml(record.note)}</p><small>${textHtml(record.tags.join(' · ')||'无标签')} · ${textHtml(record.reviewState)}</small><div><select data-annotation-review="${attributeHtml(record.id)}" aria-label="批注复习状态"><option ${record.reviewState==='未开始'?'selected':''}>未开始</option><option ${record.reviewState==='研读中'?'selected':''}>研读中</option><option ${record.reviewState==='已复习'?'selected':''}>已复习</option></select><button type="button" class="text-button" data-delete-annotation="${attributeHtml(record.id)}">删除</button></div></article>`).join('')}</section>`;
 }
@@ -572,7 +577,7 @@ function renderHistoryDetail(record){
   const positions=english?['Line 1','Line 2','Line 3','Line 4','Line 5','Line 6']:['初','二','三','四','五','上'];
   const title=english?`${displayHexagramName(record.originalIndex,'en',original?.[0])} → ${displayHexagramName(record.changedIndex,'en',changed?.[0])}`:`${original?.[2]||'本卦'}之${changed?.[2]||'变卦'}`;
   const movingText=moving.length?t('reading.moving',{lines:moving.map(index=>english?index+1:positions[index]).join(english?', ':'、')}):t('reading.still');
-  detail.innerHTML=`<button type="button" class="history-back-button" data-history-back><span aria-hidden="true">←</span>${t('history.back')}</button><header><span class="panel-kicker">${t('history.stored')} · ${record.mode==='quick'?t('history.quick'):t('history.complete')}</span><time>${Number.isNaN(date.getTime())?'':date.toLocaleString(english?'en-US':'zh-CN')}</time></header><section class="history-detail-hero"><div><span class="history-question-label">${t('history.questionLabel')}</span><blockquote data-user-content>${textHtml(record.question)}</blockquote></div><div class="history-result-block"><div class="history-result"><span>${original?.[1]||'—'}</span><i>→</i><span>${changed?.[1]||'—'}</span></div><h1>${title}</h1><p>${movingText}</p></div></section><section class="history-line-section"><div class="history-section-heading"><span>${t('history.linesLabel')}</span><small>${t('history.linesHint')}</small></div><div class="history-lines">${record.lines.map((line,index)=>`<div><b>${positions[index]}</b><span>${line.value===6?'⚋ ×':line.value===9?'⚊ ○':line.value===8?'⚋':'⚊'}</span><small>${lineName(line.value)}</small></div>`).reverse().join('')}</div></section><div class="history-interpretation-anchor"></div><section class="case-review-panel"></section><section class="journal-panel"></section><section class="history-note"><label for="historyNote">${t('history.noteLabel')}</label><textarea id="historyNote" rows="5" maxlength="2000" placeholder="${t('history.notePlaceholder')}">${textHtml(record.note||'')}</textarea><small id="historyNoteStatus">${t('history.localOnly')}</small></section><div class="history-detail-actions"><button type="button" class="secondary-button" data-history-hex="${record.originalIndex}">${t('history.openHex')}</button><button type="button" class="primary-button" id="saveHistoryNote">${t('history.saveNote')}</button><button type="button" class="danger-button" id="deleteHistory">${t('history.delete')}</button></div>`;
+  detail.innerHTML=`<button type="button" class="history-back-button" data-history-back><span aria-hidden="true">←</span>${t('history.back')}</button><header><span class="panel-kicker">${t('history.stored')} · ${record.mode==='quick'?t('history.quick'):t('history.complete')}</span><time>${Number.isNaN(date.getTime())?'':date.toLocaleString(english?'en-US':'zh-CN')}</time></header><section class="history-detail-hero"><div><span class="history-question-label">${t('history.questionLabel')}</span><blockquote data-user-content>${textHtml(record.question)}</blockquote></div><div class="history-result-block"><div class="history-result"><span>${original?.[1]||'—'}</span><i>→</i><span>${changed?.[1]||'—'}</span></div><h1>${title}</h1><p>${movingText}</p></div></section><section class="history-line-section"><div class="history-section-heading"><span>${t('history.linesLabel')}</span><small>${t('history.linesHint')}</small></div><div class="history-lines">${record.lines.map((line,index)=>`<div><b>${positions[index]}</b><span>${line.value===6?'⚋ ×':line.value===9?'⚊ ○':line.value===8?'⚋':'⚊'}</span><small>${lineName(line.value)}</small></div>`).reverse().join('')}</div></section><div class="history-interpretation-anchor"></div><section class="case-review-panel"></section><section class="journal-panel"></section><section class="history-note"><label for="historyNote">${t('history.noteLabel')}</label><textarea id="historyNote" rows="5" maxlength="2000" placeholder="${t('history.notePlaceholder')}">${textHtml(record.note||'')}</textarea><small id="historyNoteStatus">${t('history.localOnly')}</small></section><div class="history-detail-actions"><button type="button" class="secondary-button" data-share-card="record">${t('brand.share')}</button><button type="button" class="secondary-button" data-history-hex="${record.originalIndex}">${t('history.openHex')}</button><button type="button" class="primary-button" id="saveHistoryNote">${t('history.saveNote')}</button><button type="button" class="danger-button" id="deleteHistory">${t('history.delete')}</button></div>`;
   detail.querySelector('[data-history-back]')?.addEventListener('click',()=>backToList('history'));
   detail.querySelector('[data-history-hex]')?.addEventListener('click',event=>{selectedHex=Number(event.currentTarget.dataset.historyHex)||0;setMobileDetail('hexagrams',true);nav('hexagrams');renderHexList();renderHexDetail()});
   $('#saveHistoryNote')?.addEventListener('click',()=>{if(updateHistoryNote(record.id,$('#historyNote').value))$('#historyNoteStatus').textContent=t('common.saved')});
@@ -884,6 +889,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   setLanguage(getLanguage());
   initDailyCoverHexagram();
   initLandingCover();
+  initShareCards({getSource:shareSource,getLanguage});
   initTheme();
   registerServiceWorker();
   renderCalendarMeta();

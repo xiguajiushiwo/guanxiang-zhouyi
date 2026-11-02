@@ -66,6 +66,10 @@ try{
   await waitFor(`document.querySelector('#view-divination').dataset.phase==='result'`);
   assert.equal(await evaluate(`document.querySelectorAll('#readingPanel > details[open]').length`),0);
   await fits();await capture('result-mobile');
+  await click('[data-share-card="result"]');
+  await waitFor(`document.querySelector('[data-share-preview]')?.naturalWidth===1080`);
+  assert.equal(await evaluate(`document.querySelector('#shareCardDialog input[name="question"]').checked`),false);
+  await click('[data-share-close]');
   await viewport(1366,900);await capture('result-desktop');
   await viewport(320,740);await fits();
   await click('#readingPanel > details:nth-of-type(2) > summary');

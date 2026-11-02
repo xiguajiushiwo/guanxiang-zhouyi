@@ -81,6 +81,7 @@ function coverMetricsExpression() {
       coverWidth:Math.round(coverRect.width),
       coverHeight:Math.round(coverRect.height),
       viewportWidth:innerWidth,
+      contentWidth:document.documentElement.clientWidth,
       viewportHeight:innerHeight,
       documentWidth:document.documentElement.scrollWidth,
       buttonInside:buttonRect.left>=0&&buttonRect.right<=innerWidth&&buttonRect.top>=0&&buttonRect.bottom<=innerHeight,
@@ -95,14 +96,25 @@ function coverMetricsExpression() {
 
 await command('Page.enable');
 await command('Runtime.enable');
-await command('Page.addScriptToEvaluateOnNewDocument', { source: "try{localStorage.removeItem('guanxiang-onboarding-v1')}catch{}" });
+await command('Network.enable');
+await command('Network.setBypassServiceWorker', { bypass: true });
+await command('Page.addScriptToEvaluateOnNewDocument', { source: `
+  try{localStorage.removeItem('guanxiang-onboarding-v1')}catch{}
+  const originalFetch=window.fetch.bind(window);
+  window.fetch=(url,options)=>{
+    const path=new URL(String(url),location.href).pathname;
+    if(path==='/api/account/me')return Promise.resolve(Response.json({error:'Unauthorized'},{status:401}));
+    if(path==='/api/account/logout')return Promise.resolve(Response.json({ok:true}));
+    return originalFetch(url,options);
+  };
+` });
 await mkdir('output/playwright', { recursive: true });
 
 await setViewport(1440, 900, false);
 await navigate();
 const desktop = await evaluate(coverMetricsExpression());
 assert.equal(desktop.coverVisible, true);
-assert.equal(desktop.coverWidth, desktop.viewportWidth);
+assert.equal(desktop.coverWidth, desktop.contentWidth);
 assert.ok(desktop.coverHeight >= desktop.viewportHeight);
 assert.ok(desktop.documentWidth <= desktop.viewportWidth);
 assert.equal(desktop.buttonInside, true);
@@ -112,8 +124,9 @@ assert.equal(desktop.onboardingOpen, false);
 assert.equal(desktop.activeId, 'enterSite');
 await capture('output/playwright/landing-desktop.png');
 
-await evaluate(`document.querySelector('#enterSite').click(); true`);
+await evaluate(`document.querySelector('#coverLogin').click(); true`);
 await waitFor(`location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html')`);
+await waitFor(`document.readyState==='complete'&&document.querySelector('#authForm')`);
 const authDesktop = await evaluate(`({form:Boolean(document.querySelector('#authForm')),guest:Boolean(document.querySelector('[data-guest]')),appVisible:Boolean(document.querySelector('.app-shell'))})`);
 assert.equal(authDesktop.form && authDesktop.guest, true);
 assert.equal(authDesktop.appVisible, false, 'inner application must not flash before authentication');
@@ -144,8 +157,9 @@ assert.ok(mobile.buttonHeight >= 44);
 assert.equal(mobile.appInert && mobile.appHidden, true);
 assert.equal(mobile.onboardingOpen, false);
 await capture('output/playwright/landing-mobile.png');
-await evaluate(`document.querySelector('#enterSite').click();true`);
+await evaluate(`document.querySelector('#coverLogin').click();true`);
 await waitFor(`document.querySelector('[data-guest]') && (location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html'))`);
+await waitFor(`document.readyState==='complete'`);
 await evaluate(`document.querySelector('[data-guest]').click();true`);
 await waitFor(`document.querySelector('#siteCover')?.hidden && document.querySelector('#profileButton')`);
 const mobileAccount = await evaluate(`(()=>{const button=document.querySelector('#profileButton'),rect=button.getBoundingClientRect();return {visible:getComputedStyle(button).display!=='none'&&rect.width>0&&rect.height>0,inside:rect.left>=0&&rect.right<=innerWidth,accessible:Boolean(button.getAttribute('aria-label'))}})()`);
@@ -153,7 +167,7 @@ assert.equal(mobileAccount.visible && mobileAccount.inside && mobileAccount.acce
 
 await command('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
 await navigate();
-await evaluate(`document.querySelector('#enterSite').click(); true`);
+await evaluate(`document.querySelector('#coverLogin').click(); true`);
 await waitFor(`location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html')`);
 const reduced = await evaluate(`({authVisible:Boolean(document.querySelector('#authForm')),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches})`);
 assert.equal(reduced.authVisible && reduced.reduced, true);
