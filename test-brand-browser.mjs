@@ -30,17 +30,37 @@ try{
   assert.equal(await evaluate(`document.querySelector('.app-shell').inert`),true);
   assert.equal(await evaluate(`document.querySelector('.brand-fictional').textContent.includes('虚构')`),true);
   await screenshot('home-desktop');
-  for(const width of [320,390,1366]){await viewport(width);assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);assert.equal(await evaluate(`document.querySelector('#startReading').getBoundingClientRect().height>=44`),true)}
+  for(const width of [320,390,1366]){await viewport(width);assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);assert.equal(await evaluate(`document.querySelector('#chooseWelcomeStart').getBoundingClientRect().height>=44`),true)}
   await viewport(390);await screenshot('home-mobile');
+  const beforeChoosing=await evaluate(`localStorage.getItem('guanxiang-history-guest-v1')`);
+  for(const selector of ['#chooseWelcomeStart','.brand-closing [data-show-paths]']){
+    await click(selector);
+    assert.equal(await evaluate('location.hash'),'#welcome','both primary buttons stay on the introduction');
+    assert.equal(await evaluate('document.activeElement.id'),'welcomePaths');
+    assert.equal(await evaluate(`document.querySelector('.app-shell').inert`),true,'choosing an entry must not start casting');
+    assert.equal(await evaluate(`localStorage.getItem('guanxiang-history-guest-v1')`),beforeChoosing);
+  }
+  await screenshot('paths-mobile');await viewport(1366);await evaluate(`document.querySelector('#welcomePaths').scrollIntoView({behavior:'instant'})`);await screenshot('paths-desktop');
+  await click('[data-show-example]');await screenshot('example-desktop');
+  for(const width of [1366,390]){await viewport(width);await evaluate(`document.querySelector('.brand-closing').scrollIntoView({behavior:'instant'})`);await screenshot(`closing-${width}`)}
+  await click('[data-welcome-path="study"]');await waitFor(`document.querySelector('#view-home.active')&&document.querySelector('#productIntro').hidden`);
+  await evaluate('history.back()');await waitFor(`!document.querySelector('#productIntro').hidden`);
+  await viewport(390);
   await click('[data-show-example]');assert.equal(await evaluate(`document.activeElement.id`),'brandExample');await screenshot('example-mobile');
   const before=await evaluate(`localStorage.getItem('guanxiang-history-guest-v1')`);
   await click('[data-share-card="example"]');await imageReady();
   assert.equal(await evaluate(`window.painted.join(' ').includes('虚构示例')`),true);
   assert.equal(await evaluate(`localStorage.getItem('guanxiang-history-guest-v1')`),before,'example must not create real records');
-  await click('[data-share-close]');await click('#startReading');await waitFor(`document.querySelector('#view-divination.active')&&document.querySelector('#siteCover').hidden`);
+  await click('[data-share-close]');await click('[data-welcome-path="question"]');await waitFor(`document.querySelector('#view-divination.active')&&document.querySelector('#siteCover').hidden`);
+  assert.equal(await evaluate(`document.querySelector('#view-divination').dataset.phase`),'prepare');
+  assert.equal(await evaluate(`document.querySelector('#questionInput').value`),'');
+  assert.equal(await evaluate(`document.querySelector('#castButton').disabled`),true,'the explicit question entry still requires preparation and confirmation');
   assert.equal(await evaluate('location.pathname'),'/','start must not force an auth page');
   await evaluate('history.back()');await waitFor(`!document.querySelector('#productIntro').hidden`);
   await evaluate('history.forward()');await waitFor(`document.querySelector('#view-divination.active')&&document.querySelector('#siteCover').hidden`);
+  await evaluate('history.back()');await waitFor(`!document.querySelector('#productIntro').hidden`);
+  await click('[data-welcome-path="journal"]');await waitFor(`document.querySelector('#view-history.active')&&document.querySelector('#productIntro').hidden`);
+  assert.equal(await evaluate('location.hash'),'#history');
   await command('Page.navigate',{url:'http://127.0.0.1:4175/#history/brand-private-record'});
   await waitFor(`document.querySelector('[data-share-card="record"]')`);
   await click('[data-share-card="record"]');await imageReady();
@@ -70,7 +90,9 @@ try{
   await command('Page.navigate',{url:'http://127.0.0.1:4175/#welcome'});await waitFor(`document.body.classList.contains('intro-active')`);
   for(const language of ['en','fa','zh-CN']){
     await viewport(390);await click('#introLanguageToggle [data-language-menu-trigger]');await click(`#introLanguageToggle [data-language="${language}"]`);
-    assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true,language);
+    for(const width of [320,390,1366]){await viewport(width);assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true,`${language} at ${width}px`)}
+    await viewport(390);
+    await click('[data-welcome-top]');await screenshot(`welcome-${language}`);
     await click('[data-share-card="example"]');await imageReady();assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);
     await screenshot(`example-card-${language}`);await click('[data-share-close]');
   }

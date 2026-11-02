@@ -36,7 +36,7 @@ assert.match(script, /\$\('#confirmDivination'\)\.addEventListener\('click'/);
 assert.match(script, /function toggleMobileMore\(\)/);
 assert.match(script, /setMobileDetail\('hexagrams',true\)/);
 assert.match(script, /function renderHistoryDetail\(record\)/);
-assert.match(worker, /CACHE_NAME='guanxiang-shell-v55'/);
+assert.match(worker, /CACHE_NAME='guanxiang-shell-v56'/);
 
 const endpointScript=html.match(/<script>window\.GUANXIANG_AI_ENDPOINT=.*?<\/script>/s)?.[0].replace(/^<script>|<\/script>$/g,'');
 assert.ok(endpointScript);

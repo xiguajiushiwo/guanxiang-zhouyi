@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="landing-v2.css?v=20261102-cover1">
     <link rel="stylesheet" href="landing-rich.css?v=20260914-1">
     <link rel="stylesheet" href="landing-details.css?v=20260917-labels1">
-    <link rel="stylesheet" href="brand-experience.css?v=20261102-cover1">
+    <link rel="stylesheet" href="brand-experience.css?v=20261102-welcome2">
 </head>
   <body>
     <section class="site-cover" id="siteCover" aria-labelledby="coverTitle">
@@ -73,37 +73,41 @@
           <div class="brand-header-links"><a id="coverLogin" href="./auth?v=20260922-auth7" data-i18n="brand.login">登录 / 同步记录</a><div class="language-menu cover-language-menu" id="introLanguageToggle" data-language-menu><button type="button" class="language-menu-trigger" data-language-menu-trigger aria-haspopup="menu" aria-expanded="false" aria-label="Language"><span data-language-menu-label>Language</span><span class="language-menu-chevron" aria-hidden="true">⌄</span></button><div class="language-menu-options" role="menu" hidden><button type="button" role="menuitemradio" aria-checked="true" data-language="zh-CN">中文</button><button type="button" role="menuitemradio" aria-checked="false" data-language="en">English</button><button type="button" role="menuitemradio" aria-checked="false" data-language="fa">فارسی</button></div></div></div>
         </header>
         <div class="brand-hero">
-          <div>
+          <div class="welcome-hero-copy">
             <p class="brand-eyebrow" data-i18n="brand.identity">周易研读与个人复盘</p>
-            <h1 id="productTitle" tabindex="-1"><span data-i18n="brand.headlineOne">看见变化，</span><span data-i18n="brand.headlineTwo">想清下一步。</span></h1>
+            <h1 id="productTitle" tabindex="-1"><span  data-i18n="brand.headlineOne">看见变化，</span><span  data-i18n="brand.headlineTwo">想清下一步。</span></h1>
             <p class="brand-description" data-i18n="brand.description">用《周易》整理一个具体问题，留下自己的理解与行动，过些天再回来看看变化。</p>
-            <div class="brand-actions"><a class="brand-primary" id="startReading" href="#divination/prepare" data-i18n="brand.start">开始一问</a><button type="button" class="brand-secondary" data-show-example data-i18n="brand.exampleLink">先看一个完整示例 ↓</button></div>
+            <div class="brand-actions"><button type="button" class="brand-primary" id="chooseWelcomeStart" data-show-paths><span  data-i18n="brand.chooseStart">选择我的起点</span><span aria-hidden="true">↓</span></button><button type="button" class="brand-secondary" data-show-example data-i18n="brand.exampleLink">先看一个完整示例 ↓</button></div>
             <p class="brand-guest" data-i18n="brand.guest">无需先注册 · 记录先保存在此设备</p>
           </div>
           <aside class="brand-daily">
-            <span class="brand-daily-kicker" data-i18n="brand.daily">今日研读</span>
-            <div class="brand-hex-lines" id="introDailyHexagram" data-daily-hexagram role="img" aria-label="今日研读卦象"><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i></div>
-            <strong class="brand-daily-name" data-cover-name></strong><p data-i18n="brand.dailyNote">读一卦，留一点思考的时间。</p>
+            <div class="welcome-art-heading"><span  data-i18n="brand.daily">今日研读</span><span data-cover-number></span></div>
+            <div class="welcome-orbit"><div class="brand-hex-lines" id="introDailyHexagram" data-daily-hexagram role="img" aria-label="今日研读卦象"><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i></div></div>
+            <div class="welcome-art-copy"><strong class="brand-daily-name" data-cover-name></strong><p  data-i18n="brand.dailyNote">读一卦，留一点思考的时间。</p><a class="welcome-daily-link" data-daily-link href="#hexagrams"><span  data-i18n="brand.dailyRead">读这一卦</span><span aria-hidden="true">↗</span></a></div>
           </aside>
         </div>
-        <p class="brand-rhythm" data-i18n="brand.rhythm">问清楚 · 读懂它 · 记下来 · 回头看</p>
+        <section class="welcome-paths" id="welcomePaths" aria-labelledby="welcomePathsTitle" tabindex="-1">
+          <header class="welcome-section-head"><div><p class="brand-eyebrow" data-i18n="brand.pathsKicker">从这里开始</p><h2 id="welcomePathsTitle" data-i18n="brand.pathsTitle">此刻，你想从哪里开始？</h2></div><p class="welcome-section-note" data-i18n="brand.pathsNote">读经典、理清一个问题，或回看自己的变化。</p></header>
+          <div class="welcome-path-grid"><article class="welcome-path"><div class="welcome-path-top"><span>01</span><svg viewBox="0 0 40 38" aria-hidden="true"><path d="M4 6h10c3 0 5 2 5 4v18c0-2-2-4-5-4H4zM19 10c0-2 2-4 5-4h10v18H24c-3 0-5 2-5 4M9 12h5M9 17h5M24 12h5M24 17h5"/></svg></div><h3  data-i18n="brand.studyTitle">先读一页经典</h3><p  data-i18n="brand.studyDescription">从六十四卦、十翼与易理入手，按自己的节奏理解变化。</p><a class="welcome-path-link" href="#home" data-welcome-path="study"><span  data-i18n="brand.studyAction">进入研读总览</span><span aria-hidden="true">↗</span></a></article><article class="welcome-path"><div class="welcome-path-top"><span>02</span><svg viewBox="0 0 40 38" aria-hidden="true"><path d="M8 8h12M8 14h8M8 20h5M6 4h18v8M6 4v28h26V22M18 25l2-7L31 7l5 5-11 11zM29 9l5 5"/></svg></div><h3  data-i18n="brand.questionTitle">整理一个问题</h3><p  data-i18n="brand.questionDescription">先写清情境与疑问，再选择节奏、确认起卦。不必急着开始。</p><a class="welcome-path-link" href="#divination/prepare" data-welcome-path="question"><span  data-i18n="brand.questionAction">先写下我的问题</span><span aria-hidden="true">↗</span></a></article><article class="welcome-path"><div class="welcome-path-top"><span>03</span><svg viewBox="0 0 40 38" aria-hidden="true"><circle cx="19" cy="18" r="13"/><path d="M19 10v9l6 4M7 29l-2 5M31 29l2 5"/></svg></div><h3  data-i18n="brand.journalTitle">回看我的记录</h3><p  data-i18n="brand.journalDescription">看看当时的理解与行动，补充新的进展，慢慢看清变化。</p><a class="welcome-path-link" href="#history" data-welcome-path="journal"><span  data-i18n="brand.journalAction">查看占问记录</span><span aria-hidden="true">↗</span></a></article></div>
+          <p class="welcome-recommended" data-i18n="brand.recommended">初次来访，可以先读一页经典。</p>
+        </section>
         <section class="brand-example" id="brandExample" aria-labelledby="brandExampleTitle" tabindex="-1">
-          <p class="brand-eyebrow" data-i18n="brand.exampleKicker">一个问题，七天的变化</p>
-          <h2 id="brandExampleTitle" data-i18n="brand.exampleTitle">面试前的困惑，
-七天后的复盘。</h2>
-          <p class="brand-fictional" data-i18n="brand.fictional">虚构使用示例 · 用于说明流程，不是用户案例或效果承诺</p>
+          <div class="welcome-example-intro"><p class="brand-eyebrow" data-i18n="brand.exampleKicker">一个问题，七天的变化</p><h2 id="brandExampleTitle" data-i18n="brand.exampleTitle">面试前的困惑，
+七天后的复盘。</h2><p class="brand-fictional" data-i18n="brand.fictional">虚构使用示例 · 用于说明流程，不是用户案例或效果承诺</p><div class="welcome-example-mark" aria-hidden="true">渐<span>䷴</span></div></div>
+          <div class="welcome-example-story">
           <ol class="brand-steps">
             <li><h3 data-i18n="brand.questionLabel">第 1 天 · 把问题问具体</h3><p data-i18n="brand.question">下周面试，我该怎样准备，才能更清楚地表达自己的能力？</p></li>
             <li><h3 data-i18n="brand.readingLabel">读卦 · 留下自己的理解</h3><p data-i18n="brand.reading">以「渐」卦为研读示例：循序而进。我的理解是，把准备拆成几步，先补足具体材料。</p><a href="#hexagrams/53" data-i18n="brand.source">查看「渐」卦原文 ↗</a></li>
             <li><h3 data-i18n="brand.actionLabel">行动 · 选一件今天能做的事</h3><p data-i18n="brand.action">整理三个项目案例，每个用两分钟说明：遇到了什么、做了什么、结果如何。</p></li>
             <li><h3 data-i18n="brand.reviewLabel">第 7 天 · 对照真实进展</h3><p data-i18n="brand.review">完成了面试，项目表达更有条理；被问到团队协作时仍不够具体。下一步：补一个协作案例，再练习一次。</p></li>
           </ol>
-          <div class="brand-example-footer"><p class="brand-fictional" data-i18n="brand.exampleNote">观象可以保存行动与进展，并用 AI 帮你对照相关记录。示例中的理解与复盘为人工编写。</p><button type="button" class="brand-secondary" data-share-card="example" data-i18n="brand.shareExample">制作这张示例卡片</button></div>
+            <div class="brand-example-footer"><p class="brand-fictional" data-i18n="brand.exampleNote">观象可以保存行动与进展，并用 AI 帮你对照相关记录。示例中的理解与复盘为人工编写。</p><button type="button" class="brand-secondary" data-share-card="example" data-i18n="brand.shareExample">制作这张示例卡片</button></div>
+          </div>
         </section>
-        <section class="brand-closing"><img src="app-icon.svg" width="44" height="44" alt=""><h2 data-i18n="brand.closing">把此刻的想法，留给之后的自己。</h2><p data-i18n="brand.closingNote">从一件在意的事开始。也可以先读经典，慢慢找到自己的问题。</p><a class="brand-primary" href="#divination/prepare" data-i18n="brand.start">开始一问</a></section>
-        <footer class="brand-bottom"><span data-i18n="brand.footer">观象 · 看见变化，想清下一步。</span><a href="#home" data-i18n="brand.study">进入研读</a></footer>
+        <section class="brand-closing"><img src="app-icon.svg" width="40" height="40" alt=""><h2  data-i18n="brand.closingTitle">从容一点，从你在意的地方开始。</h2><p  data-i18n="brand.closingDescription">先读一页，或整理一个问题。把今天的理解，留给之后的自己。</p><button type="button" class="brand-primary" data-show-paths><span  data-i18n="brand.chooseStart">选择我的起点</span><span aria-hidden="true">↑</span></button></section>
+        <footer class="brand-bottom"><span  data-i18n="brand.footer">观象 · 看见变化，想清下一步。</span><button type="button" class="brand-secondary" data-welcome-top data-i18n="brand.backTop">回到页首 ↑</button></footer>
       </div>
-      <noscript><p>请启用 JavaScript 后开始占问与研读。</p></noscript>
+      <noscript><p>请启用 JavaScript 后进入研读与占问。</p></noscript>
     </section>
     <div class="app-shell">
       <aside class="sidebar">
@@ -227,6 +231,6 @@
     <dialog class="confirm-dialog import-dialog" id="importDialog"><form method="dialog"><span class="panel-kicker" data-i18n="dialog.importKicker">导入记录</span><h2 data-i18n="dialog.importTitle">确认合并本地记录？</h2><p id="importSummary" data-i18n="dialog.importLoading">正在读取记录。</p><div><button class="secondary-button" value="cancel" id="cancelImport" data-i18n="dialog.cancel">取消</button><button class="primary-button" value="confirm" id="confirmImport" data-i18n="dialog.confirmImport">确认合并</button></div></form></dialog>
     <dialog class="confirm-dialog account-merge-dialog" id="accountMergeDialog"><form method="dialog"><span class="panel-kicker">合并此设备的记录？</span><h2>合并此设备的记录？</h2><p data-merge-body></p><div><button type="button" class="secondary-button" data-merge-choice="cloud">只保留云端记录</button><button type="button" class="primary-button" data-merge-choice="merge">合并记录</button></div></form></dialog>
     <script>window.GUANXIANG_AI_ENDPOINT=window.GUANXIANG_AI_ENDPOINT||(['.pages.dev','.netlify.app','.liara.run'].some(suffix=>location.hostname.endsWith(suffix))?'/api/reading':'');</script>
-    <script type="module" src="app.js?v=20261102-cover1"></script>
+    <script type="module" src="app.js?v=20261102-welcome2"></script>
   </body>
 </html>

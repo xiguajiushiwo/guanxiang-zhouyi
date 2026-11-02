@@ -56,6 +56,8 @@ function navigateToAuth(href=AUTH_ENTRY){
 function updateDailyCoverHexagram(date=new Date()){
   const index=dailyHexagramIndex(date),hexagram=hexagrams[index],lines=catalogLines(index);
   if(!hexagram||!lines)return;
+  const number=$('[data-cover-number]');if(number)number.textContent=String(index+1).padStart(2,'0')+' / 64';
+  const dailyLink=$('[data-daily-link]');if(dailyLink)dailyLink.href='#hexagrams/'+(index+1);
   const name=$('[data-cover-name]');if(name)name.textContent=getLanguage()==='en'?(HEXAGRAM_EN[index]||hexagram[2]):hexagram[2];
   $$('[data-daily-hexagram]').forEach(cover=>{
     cover.dataset.name=hexagram[0];cover.dataset.summary=hexagram[2];
@@ -122,6 +124,8 @@ function initLandingCover(){
   syncLandingCover();
   $('#enterSite')?.addEventListener('click',enterClassicCover);
   $('[data-show-example]')?.addEventListener('click',()=>{$('#brandExample').scrollIntoView({behavior:'instant'});$('#brandExample').focus({preventScroll:true})});
+  $$('[data-show-paths]').forEach(button=>button.addEventListener('click',()=>{$('#welcomePaths').scrollIntoView({behavior:'instant',block:'start'});$('#welcomePaths').focus({preventScroll:true})}));
+  $('[data-welcome-top]')?.addEventListener('click',()=>{window.scrollTo({top:0,behavior:'instant'});$('#productTitle').focus({preventScroll:true})});
   if(!$('#siteCover').hidden)requestAnimationFrame(()=>$('#enterSite').focus({preventScroll:true}));
 }
 function shareSource(button){

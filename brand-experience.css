@@ -1,54 +1,141 @@
-/* One visual language for the public introduction and locally generated cards. */
+/* The introduction shares the classic cover's paper, fine rules, and circular forms. */
 body.intro-active { overflow: auto; }
 .brand-introduction { min-height: 100svh; color: #2e302c; background: #f4f0e6; padding: 0 max(24px, env(safe-area-inset-right)) 0 max(24px, env(safe-area-inset-left)); }
-.brand-introduction[hidden], .brand-introduction:not([hidden]) ~ .app-shell,
-.site-cover:not([hidden]) ~ .app-shell { display: none; }
+.brand-introduction[hidden], .brand-introduction:not([hidden]) ~ .app-shell, .site-cover:not([hidden]) ~ .app-shell { display: none; }
 .brand-container { max-width: 1120px; margin-inline: auto; }
-.brand-header { display: flex; align-items: center; justify-content: space-between; min-height: 100px; gap: 24px; border-bottom: 1px solid #d8d1c2; }
+.brand-header { display: flex; align-items: center; justify-content: space-between; min-height: 88px; gap: 24px; border-bottom: 1px solid #d8d1c2; }
 .brand-wordmark { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
 .brand-wordmark strong { font: 700 25px var(--serif); letter-spacing: 4px; }
 .brand-header-links { display: flex; align-items: center; gap: 24px; }
-.brand-header a:not(.brand-wordmark), .brand-bottom a { color: #5f5b51; font-size: 13px; text-underline-offset: 5px; }
+.brand-header a:not(.brand-wordmark) { color: #5f5b51; font-size: 13px; text-underline-offset: 5px; }
 .brand-header-links > a { min-height: 44px; display: flex; align-items: center; }
-.brand-hero { min-height: min(680px, calc(100svh - 100px)); display: grid; grid-template-columns: 1.4fr 1fr; align-items: center; gap: 70px; padding-block: 72px; }
-.brand-eyebrow { color: #a24730; font-size: 12px; letter-spacing: .14em; margin-bottom: 24px; }
-.brand-hero h1 { font: 600 clamp(36px, 4.5vw, 60px)/1.35 var(--serif); letter-spacing: .03em; margin: 0 0 26px; }
+.brand-hero { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: center; gap: 80px; padding: 72px 0 68px; }
+.brand-eyebrow { display: flex; align-items: center; gap: 12px; color: #a24730; font-size: 11px; letter-spacing: .12em; margin: 0 0 22px; line-height: 1.7; }
+.brand-eyebrow::before { content: ''; width: 23px; height: 1px; background: #b55238; flex: none; }
+.brand-hero h1 { font: 600 clamp(36px, 4.5vw, 60px)/1.35 var(--serif); letter-spacing: .03em; margin: 0 0 24px; }
 .brand-hero h1 span { display: block; }
 .brand-hero h1 span:last-child { color: #a24730; }
-.brand-description { font-size: 15px; line-height: 2; color: #625e54; max-width: 470px; margin-bottom: 30px; }
+.brand-description { font-size: 14px; line-height: 2.1; color: #625e54; max-width: 430px; margin-bottom: 28px; }
 .brand-actions { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-.brand-primary { min-height: 50px; display: inline-flex; align-items: center; justify-content: center; padding: 13px 30px; background: #b55238; border: 1px solid #b55238; color: #fff; text-decoration: none; font: 500 15px var(--sans); cursor: pointer; border-radius: 3px; }
+.brand-primary { min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 24px; padding: 13px 25px; background: #b55238; border: 1px solid #b55238; color: #fff; text-decoration: none; font: 500 14px var(--sans); cursor: pointer; border-radius: 2px; }
 .brand-primary:hover { background: #8d3928; }
-.brand-secondary { min-height: 44px; padding: 8px 0; border: 0; border-bottom: 1px solid #b8ae9d; background: transparent; color: #514e45; font: 13px var(--sans); cursor: pointer; text-decoration: none; }
-.brand-guest { color: #716b60; font-size: 12px; margin: 16px 0 0; line-height: 1.8; }
-.brand-daily { position: relative; width: 100%; max-width: 370px; padding: 33px; border: 1px solid #cfc6b5; text-align: center; box-shadow: 10px 10px 0 #eae4d8; }
-.brand-daily::before { content: ''; position: absolute; inset: 9px; border: 1px solid #ded6c6; pointer-events: none; }
-.brand-daily-kicker { color: #716b60; font: 12px var(--sans); letter-spacing: .18em; }
-.brand-hex-lines { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 146px; margin: 38px auto 28px; }
-.brand-hex-lines .cover-line { display: flex; width: 100%; height: 9px; gap: 20px; }
+.brand-secondary { min-height: 44px; padding: 8px 0; border: 0; border-bottom: 1px solid #b8ae9d; background: transparent; color: #514e45; font: 12px/1.7 var(--sans); cursor: pointer; text-decoration: none; }
+.brand-guest { color: #716b60; font-size: 11px; margin: 16px 0 0; line-height: 1.8; }
+.brand-daily { position: relative; padding: 25px 28px 15px; border: 1px solid #d4cbbb; background: #efe9dc; text-align: center; }
+.brand-daily::before { content: ''; position: absolute; inset: 7px; border: 1px solid #ddd4c4; pointer-events: none; }
+.welcome-art-heading { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #7d786c; font-size: 10px; letter-spacing: .15em; }
+.welcome-art-heading [data-cover-number] { font-size: 11px; direction: ltr; }
+.welcome-orbit { position: relative; display: grid; place-items: center; width: 224px; height: 224px; margin: 22px auto 14px; border: 1px solid #cfc6b4; border-radius: 50%; }
+.welcome-orbit::before { content: ''; position: absolute; inset: 16px; border: 1px solid #dbd2c1; border-radius: 50%; }
+.welcome-orbit::after { content: ''; position: absolute; top: -3px; left: calc(50% - 3px); width: 5px; height: 5px; background: #b55238; border-radius: 50%; }
+.brand-hex-lines { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 142px; margin: 0; }
+.brand-hex-lines .cover-line { display: flex; width: 100%; height: 8px; gap: 18px; margin: 0; }
 .brand-hex-lines b { background: #2e302c; flex: 1; opacity: 1; transform: none; animation: none; box-shadow: none; }
-.brand-daily-name { display: block; font: 600 32px var(--serif); margin: 0 0 18px; letter-spacing: .15em; }
-.brand-daily p:last-child { color: #716b60; font-size: 12px; line-height: 1.8; margin: 0; }
-.brand-rhythm { padding: 24px 0; border-top: 1px solid #d8d1c2; border-bottom: 1px solid #d8d1c2; text-align: center; font-size: 13px; color: #716b60; letter-spacing: .13em; }
-.brand-example { padding: 82px 0; scroll-margin-top: 24px; }
-.brand-example h2, .brand-closing h2 { font: 600 clamp(28px, 3vw, 38px)/1.5 var(--serif); white-space: pre-line; }
-.brand-example h2 { margin: 0 0 14px; }
-.brand-example .brand-eyebrow { margin-bottom: 14px; }
-.brand-fictional { font-size: 12px; line-height: 1.8; color: #716b60; max-width: 720px; }
-.brand-steps { list-style: none; counter-reset: example; margin: 38px 0 26px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #d8d1c2; }
-.brand-steps li { counter-increment: example; position: relative; padding: 32px 30px 32px 64px; border-bottom: 1px solid #d8d1c2; }
-.brand-steps li:nth-child(odd) { border-inline-end: 1px solid #d8d1c2; }
-.brand-steps li::before { content: '0' counter(example); position: absolute; inset-inline-start: 16px; top: 33px; color: #a24730; font: 18px var(--serif); }
-.brand-steps h3 { font-size: 14px; font-weight: 600; line-height: 1.6; margin-bottom: 12px; }
-.brand-steps p { font-size: 14px; line-height: 2; margin: 0; color: #625e54; }
-.brand-steps a { display: inline-block; color: #a24730; font-size: 12px; margin-top: 15px; text-underline-offset: 4px; min-height: 30px; }
-.brand-example-footer { display: flex; align-items: start; justify-content: space-between; gap: 24px; }
-.brand-example-footer p { max-width: 650px; }
-.brand-example-footer button { flex-shrink: 0; }
-.brand-closing { text-align: center; padding: 50px 20px 64px; border-top: 1px solid #d8d1c2; }
-.brand-closing h2 { margin: 16px 0; }
-.brand-closing p { font-size: 14px; color: #625e54; line-height: 2; margin-bottom: 26px; }
-.brand-bottom { display: flex; justify-content: space-between; align-items: center; gap: 24px; border-top: 1px solid #d8d1c2; padding: 24px 0 max(24px, env(safe-area-inset-bottom)); color: #716b60; font-size: 12px; line-height: 1.8; }
+.brand-daily-name { display: block; font: 600 25px/1.5 var(--serif); margin: 0 0 7px; letter-spacing: .12em; }
+.brand-daily p { font-size: 11px; color: #716b60; line-height: 1.8; margin: 0; }
+.welcome-daily-link { position: relative; display: inline-flex; gap: 22px; align-items: center; min-height: 44px; color: #a24730; text-decoration: none; font-size: 11px; }
+.welcome-paths { border-top: 1px solid #d8d1c2; padding: 48px 0 58px; scroll-margin-top: 24px; }
+.welcome-section-head { display: flex; justify-content: space-between; align-items: end; gap: 35px; margin-bottom: 28px; }
+.welcome-section-head .brand-eyebrow { margin-bottom: 12px; }
+.welcome-section-head h2, .brand-example h2, .brand-closing h2 { font: 600 clamp(26px, 2.8vw, 34px)/1.5 var(--serif); margin: 0; }
+.welcome-section-note { max-width: 280px; color: #716b60; font-size: 12px; line-height: 1.9; margin: 0 0 5px; }
+.welcome-path-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid #d8d1c2; }
+.welcome-path { min-width: 0; display: flex; flex-direction: column; padding: 26px 26px 18px; }
+.welcome-path + .welcome-path { border-inline-start: 1px solid #d8d1c2; }
+.welcome-path:first-child { background: #eee7da; border-top: 2px solid #b55238; padding-top: 24px; }
+.welcome-path-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; color: #8a8274; font: 13px var(--serif); }
+.welcome-path-top svg { width: 31px; height: 31px; fill: none; stroke: #716b60; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.welcome-path h3 { font: 600 22px/1.5 var(--serif); margin: 0 0 12px; }
+.welcome-path p { color: #716b60; font-size: 12px; line-height: 2; margin: 0 0 24px; }
+.welcome-path-link { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; margin-top: auto; border-top: 1px solid #d8d1c2; color: #4e4b43; text-decoration: none; font-size: 12px; }
+.welcome-path:first-child .welcome-path-link { color: #a24730; }
+.welcome-path-link:hover, .welcome-daily-link:hover { color: #a24730; text-decoration: underline; text-underline-offset: 5px; }
+.welcome-recommended { color: #7d786c; font-size: 11px; margin: 13px 0 0; display: flex; align-items: center; gap: 7px; }
+.welcome-recommended::before { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: #b55238; }
+.brand-example { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.35fr); gap: 78px; padding: 60px 0; border-top: 1px solid #d8d1c2; scroll-margin-top: 24px; }
+.brand-example h2 { white-space: pre-line; margin-bottom: 18px; }
+.brand-fictional { font-size: 11px; line-height: 1.9; color: #7d786c; margin-bottom: 0; }
+.welcome-example-mark { width: 100px; height: 126px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; margin-top: 38px; color: #a24730; border: 1px solid #cbbca7; font: 38px var(--serif); }
+.welcome-example-mark span { font-size: 25px; line-height: 1; color: #8d816d; }
+.brand-steps { list-style: none; counter-reset: example; margin: 0; padding: 0; }
+.brand-steps li { counter-increment: example; position: relative; padding: 0 0 27px 44px; }
+.brand-steps li::before { content: '0' counter(example); position: absolute; inset-inline-start: 0; top: 2px; color: #a24730; font: 15px/1.6 var(--serif); }
+.brand-steps li:not(:last-child)::after { content: ''; position: absolute; inset-inline-start: 9px; top: 34px; bottom: 9px; width: 1px; background: #d8d1c2; }
+.brand-steps h3 { font-size: 12px; font-weight: 600; line-height: 1.8; margin: 0 0 10px; color: #514e45; }
+.brand-steps p { font-size: 13px; line-height: 2; margin: 0; color: #716b60; }
+.brand-steps li:first-child p { color: #2e302c; font: 500 18px/1.8 var(--serif); }
+.brand-steps a { display: inline-flex; align-items: center; color: #a24730; font-size: 11px; min-height: 44px; text-underline-offset: 4px; }
+.brand-example-footer { margin-inline-start: 44px; padding-top: 20px; border-top: 1px solid #d8d1c2; }
+.brand-example-footer p { margin-bottom: 12px; }
+.brand-closing { text-align: center; padding: 44px 25px; border: 1px solid #d8d1c2; background: #eee8dc; margin: 12px 0 48px; }
+.brand-closing h2 { margin: 18px 0 12px; font-size: clamp(24px, 2.5vw, 30px); }
+.brand-closing p { color: #716b60; font-size: 12px; line-height: 2; margin-bottom: 25px; }
+.brand-bottom { display: flex; justify-content: space-between; align-items: center; gap: 24px; border-top: 1px solid #d8d1c2; padding: 18px 0 max(22px, env(safe-area-inset-bottom)); color: #716b60; font-size: 11px; line-height: 1.8; }
+.brand-bottom .brand-secondary { border-bottom: 0; }
+[dir='rtl'] .brand-steps li { padding: 0 44px 27px 0; }
+#productTitle:focus, #welcomePaths:focus, #brandExample:focus { outline: none; }
+@media (max-width: 960px) {
+  .brand-hero { gap: 40px; }
+  .welcome-path { padding-inline: 19px; }
+  .brand-example { gap: 40px; }
+}
+@media (max-width: 760px) {
+  .brand-header { min-height: 76px; gap: 12px; }
+  .brand-header-links { gap: 10px; }
+  .brand-header-links > a { font-size: 11px; }
+  .brand-wordmark strong { font-size: 21px; letter-spacing: 2px; }
+  .brand-wordmark { gap: 8px; }
+  .brand-wordmark img { width: 30px; height: 30px; }
+  .brand-hero { grid-template-columns: 1fr; gap: 30px; padding: 40px 0; }
+  .brand-hero h1 { font-size: 40px; margin-bottom: 20px; }
+  .brand-eyebrow { margin-bottom: 16px; }
+  .brand-description { font-size: 13px; line-height: 2; margin-bottom: 22px; }
+  .brand-actions { gap: 12px 22px; }
+  .brand-daily { display: grid; grid-template-columns: 145px minmax(0,1fr); column-gap: 12px; padding: 20px 18px 10px; }
+  .welcome-art-heading { grid-column: 1 / -1; }
+  .welcome-orbit { width: 140px; height: 140px; margin-block: 20px 16px; }
+  .welcome-orbit::before { inset: 10px; }
+  .brand-hex-lines { width: 86px; gap: 7px; }
+  .brand-hex-lines .cover-line { height: 5px; gap: 12px; }
+  .welcome-art-copy { align-self: center; text-align: start; }
+  .brand-daily-name { font-size: 21px; letter-spacing: .06em; }
+  .brand-daily p { font-size: 10px; }
+  .welcome-daily-link { font-size: 11px; gap: 12px; }
+  .welcome-paths { padding: 34px 0 40px; }
+  .welcome-section-head { display: block; margin-bottom: 22px; }
+  .welcome-section-head h2 { font-size: 26px; }
+  .welcome-section-note { margin-top: 12px; max-width: none; }
+  .welcome-path-grid { grid-template-columns: 1fr; }
+  .welcome-path { padding: 20px 22px 12px; }
+  .welcome-path:first-child { padding-top: 18px; }
+  .welcome-path + .welcome-path { border-inline-start: 0; border-top: 1px solid #d8d1c2; }
+  .welcome-path-top { margin-bottom: 10px; }
+  .welcome-path-top svg { width: 26px; height: 26px; }
+  .welcome-path h3 { font-size: 22px; margin-bottom: 8px; }
+  .welcome-path p { margin-bottom: 16px; }
+  .brand-example { display: block; padding: 38px 0; }
+  .welcome-example-intro { position: relative; padding-inline-end: 75px; margin-bottom: 30px; }
+  .brand-example h2 { font-size: 26px; }
+  .welcome-example-mark { position: absolute; top: 5px; inset-inline-end: 0; margin-top: 0; width: 54px; height: 84px; font-size: 26px; }
+  .welcome-example-mark span { font-size: 20px; }
+  .brand-closing { padding: 28px 18px; margin-bottom: 30px; }
+  .brand-bottom { gap: 12px; flex-wrap: wrap; }
+}
+@media (max-width: 360px) {
+  .brand-introduction { padding-inline: 18px; }
+  .brand-header-links { gap: 6px; }
+  .brand-header-links > a { max-width: 70px; line-height: 1.5; }
+  .brand-header .language-menu-trigger { padding-inline: 4px; }
+  .brand-hero h1 { font-size: 35px; }
+  .brand-daily { grid-template-columns: 116px minmax(0,1fr); padding-inline: 14px; }
+  .welcome-orbit { width: 112px; height: 112px; }
+  .brand-hex-lines { width: 70px; gap: 5px; }
+  .brand-hex-lines .cover-line { height: 4px; gap: 10px; }
+  .brand-daily-name { font-size: 19px; }
+  .welcome-example-intro { padding-inline-end: 0; }
+  .welcome-example-mark { display: none; }
+}
+
 .brand { text-decoration: none; color: inherit; }
 .share-entry { margin-top: 18px; }
 .share-dialog { width: min(850px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; border: 1px solid var(--line); border-radius: 8px; padding: 28px; color: var(--ink); background: var(--paper); }
@@ -72,39 +159,9 @@ body.intro-active { overflow: auto; }
 .share-preview img { display: block; width: 100%; height: auto; }
 .share-preview img:not([src]) { visibility: hidden; }
 .brand-introduction :focus-visible, .share-dialog :focus-visible { outline: 2px solid #a24730; outline-offset: 4px; }
+
 @media (max-width: 760px) {
-  .brand-header { min-height: 80px; gap: 12px; }
-  .brand-header-links { gap: 10px; }
-  .brand-header-links > a { font-size: 12px; }
-  .brand-wordmark strong { font-size: 21px; letter-spacing: 2px; }
-  .brand-wordmark { gap: 8px; }
-  .brand-wordmark img { width: 30px; height: 30px; }
-  .brand-hero { min-height: auto; grid-template-columns: 1fr; gap: 38px; padding: 46px 0 40px; }
-  .brand-hero h1 { font-size: 40px; margin-bottom: 20px; }
-  .brand-eyebrow { margin-bottom: 18px; }
-  .brand-description { font-size: 14px; margin-bottom: 22px; }
-  .brand-actions { gap: 14px 22px; }
-  .brand-daily { display: none; }
-  .brand-rhythm { font-size: 11px; letter-spacing: .05em; line-height: 2; }
-  .brand-example { padding: 44px 0; }
-  .brand-steps { grid-template-columns: 1fr; margin-top: 24px; }
-  .brand-steps li { padding: 24px 0 24px 42px; }
-  [dir='rtl'] .brand-steps li { padding: 24px 42px 24px 0; }
-  .brand-steps li::before { inset-inline-start: 0; top: 24px; }
-  .brand-steps li:nth-child(odd) { border-inline-end: 0; }
-  .brand-example-footer { display: block; }
-  .brand-closing { padding: 35px 0 44px; }
-  .brand-bottom { display: block; }
-  .brand-bottom a { display: inline-block; padding-top: 12px; }
   .share-dialog { padding: 18px; }
   .share-dialog-grid { grid-template-columns: 1fr; gap: 18px; }
   .share-preview { order: -1; max-width: 230px; justify-self: center; }
 }
-@media (max-width: 360px) {
-  .brand-introduction { padding-inline: 18px; }
-  .brand-header-links { gap: 6px; }
-  .brand-header-links > a { max-width: 70px; line-height: 1.5; }
-  .brand-header .language-menu-trigger { padding-inline: 4px; }
-  .brand-hero h1 { font-size: 35px; }
-}
-@media print { .brand-introduction { color: #2e302c; } }
