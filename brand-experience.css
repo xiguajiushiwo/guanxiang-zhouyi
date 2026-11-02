@@ -17,6 +17,7 @@ body.intro-active { overflow: auto; }
 .brand-hero h1 span:last-child { color: #a24730; }
 .brand-description { font-size: 14px; line-height: 2.1; color: #625e54; max-width: 430px; margin-bottom: 28px; }
 .brand-actions { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.brand-closing-actions { justify-content: center; }
 .brand-primary { min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 24px; padding: 13px 25px; background: #b55238; border: 1px solid #b55238; color: #fff; text-decoration: none; font: 500 14px var(--sans); cursor: pointer; border-radius: 2px; }
 .brand-primary:hover { background: #8d3928; }
 .brand-secondary { min-height: 44px; padding: 8px 0; border: 0; border-bottom: 1px solid #b8ae9d; background: transparent; color: #514e45; font: 12px/1.7 var(--sans); cursor: pointer; text-decoration: none; }

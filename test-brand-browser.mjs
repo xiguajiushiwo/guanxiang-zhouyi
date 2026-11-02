@@ -33,9 +33,18 @@ try{
   for(const width of [320,390,1366]){await viewport(width);assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);assert.equal(await evaluate(`document.querySelector('#chooseWelcomeStart').getBoundingClientRect().height>=44`),true)}
   await viewport(390);await screenshot('home-mobile');
   const beforeChoosing=await evaluate(`localStorage.getItem('guanxiang-history-guest-v1')`);
+  await evaluate(`localStorage.removeItem('guanxiang-onboarding-v1')`);
+  for(const selector of ['.brand-hero [data-enter-direct]','.brand-closing [data-enter-direct]']){
+    await click(selector);await waitFor(`document.querySelector('#view-home.active')&&document.querySelector('#productIntro').hidden`);
+    await evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))');
+    assert.equal(await evaluate('location.hash'),'#home');
+    assert.equal(await evaluate(`document.querySelector('#onboardingDialog').open`),false,'direct entry skips onboarding');
+    assert.equal(await evaluate(`localStorage.getItem('guanxiang-history-guest-v1')`),beforeChoosing);
+    await evaluate('history.back()');await waitFor(`!document.querySelector('#productIntro').hidden`);
+  }
   for(const selector of ['#chooseWelcomeStart','.brand-closing [data-show-paths]']){
     await click(selector);
-    assert.equal(await evaluate('location.hash'),'#welcome','both primary buttons stay on the introduction');
+    assert.equal(await evaluate('location.hash'),'#welcome','path selectors stay on the introduction');
     assert.equal(await evaluate('document.activeElement.id'),'welcomePaths');
     assert.equal(await evaluate(`document.querySelector('.app-shell').inert`),true,'choosing an entry must not start casting');
     assert.equal(await evaluate(`localStorage.getItem('guanxiang-history-guest-v1')`),beforeChoosing);

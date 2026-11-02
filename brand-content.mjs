@@ -1,5 +1,6 @@
 // Public example copy is fictional and never inserted into the user's journal.
 export const BRAND_COPY = {
+  enterDirect: ['直接进入观象', 'Enter Guanxiang', 'ورود مستقیم به گوان‌شیانگ'],
   chooseStart: ['选择我的起点', 'Choose where to begin', 'انتخاب نقطه آغاز'],
   pathsKicker: ['从这里开始', 'A PLACE TO BEGIN', 'از اینجا آغاز کنید'],
   pathsTitle: ['此刻，你想从哪里开始？', 'What would you like to explore?', 'اکنون از کجا می‌خواهید آغاز کنید؟'],
