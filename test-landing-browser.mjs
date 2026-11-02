@@ -51,7 +51,8 @@ async function waitFor(expression, timeout = 10000) {
     if (await evaluate(expression)) return;
     await sleep(100);
   }
-  throw new Error(`Timed out: ${expression}`);
+  const state=await evaluate(`({url:location.href,ready:document.readyState,cover:document.querySelector('#siteCover')?.hidden,intro:document.querySelector('#productIntro')?.hidden,body:document.body.className,lines:[...document.querySelectorAll('#dailyCoverHexagram .cover-line b')].map(line=>({opacity:getComputedStyle(line).opacity,animations:line.getAnimations().map(a=>a.playState)}))})`);
+  throw new Error(`Timed out: ${expression}\n${JSON.stringify(state)}`);
 }
 
 async function setViewport(width, height, mobile) {
@@ -61,7 +62,14 @@ async function setViewport(width, height, mobile) {
 async function navigate() {
   await command('Page.navigate', { url: 'http://127.0.0.1:4175/' });
   await waitFor(`document.querySelector('#siteCover') && document.querySelector('#enterSite')`);
-  await sleep(900);
+  await waitFor(`document.readyState==='complete'&&[...document.querySelectorAll('#dailyCoverHexagram .cover-line b')].every(line=>getComputedStyle(line).opacity==='1')`);
+}
+
+async function enterIntro() {
+  const result=await evaluate(`(()=>{const link=document.querySelector('#enterSite');link.click();link.click();return {leaving:document.querySelector('#siteCover').classList.contains('is-leaving'),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches}})()`);
+  assert.equal(result.leaving,!result.reduced,'normal motion animates, reduced motion enters immediately');
+  await waitFor(`location.hash==='#welcome'&&document.querySelector('#siteCover').hidden&&!document.querySelector('#productIntro').hidden`);
+  assert.equal(await evaluate(`document.querySelector('.app-shell').inert&&!document.querySelector('#onboardingDialog').open`),true);
 }
 
 async function capture(filename) {
@@ -123,6 +131,14 @@ assert.equal(desktop.appInert && desktop.appHidden, true);
 assert.equal(desktop.onboardingOpen, false);
 assert.equal(desktop.activeId, 'enterSite');
 await capture('output/playwright/landing-desktop.png');
+assert.equal(await evaluate(`document.querySelector('.cover-title-wrap h1').textContent`),'观象');
+assert.equal(await evaluate(`getComputedStyle(document.querySelector('#dailyCoverHexagram .cover-line b')).animationName`),'cover-line-arrive');
+// The two layouts must show the same hexagram from top line to bottom line.
+assert.equal(await evaluate(`(()=>{const bits=selector=>[...document.querySelectorAll(selector+' .cover-line')].sort((a,b)=>a.getBoundingClientRect().top-b.getBoundingClientRect().top).map(line=>line.children.length===1?1:0).join('');return bits('#dailyCoverHexagram')===[...document.querySelectorAll('#introDailyHexagram .cover-line')].map(line=>line.children.length===1?1:0).join('')})()`),true);
+await enterIntro();
+await evaluate('history.back()');await waitFor(`!document.querySelector('#siteCover').hidden&&document.querySelector('#productIntro').hidden`);
+await evaluate('history.forward()');await waitFor(`document.querySelector('#siteCover').hidden&&!document.querySelector('#productIntro').hidden`);
+await command('Page.reload');await waitFor(`document.readyState==='complete'&&!document.querySelector('#productIntro').hidden`);
 
 await evaluate(`document.querySelector('#coverLogin').click(); true`);
 await waitFor(`location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html')`);
@@ -157,6 +173,14 @@ assert.ok(mobile.buttonHeight >= 44);
 assert.equal(mobile.appInert && mobile.appHidden, true);
 assert.equal(mobile.onboardingOpen, false);
 await capture('output/playwright/landing-mobile.png');
+for(const [width,height] of [[320,568],[844,390]]){
+  await setViewport(width,height,true);
+  const compact=await evaluate(coverMetricsExpression());
+  assert.equal(compact.buttonInside,true,`entry must remain visible at ${width}×${height}`);
+  assert.equal(compact.documentWidth<=compact.viewportWidth,true);
+}
+await setViewport(390,844,true);
+await enterIntro();
 await evaluate(`document.querySelector('#coverLogin').click();true`);
 await waitFor(`document.querySelector('[data-guest]') && (location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html'))`);
 await waitFor(`document.readyState==='complete'`);
@@ -167,9 +191,22 @@ assert.equal(mobileAccount.visible && mobileAccount.inside && mobileAccount.acce
 
 await command('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
 await navigate();
+await enterIntro();
 await evaluate(`document.querySelector('#coverLogin').click(); true`);
 await waitFor(`location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html')`);
 const reduced = await evaluate(`({authVisible:Boolean(document.querySelector('#authForm')),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches})`);
 assert.equal(reduced.authVisible && reduced.reduced, true);
+
+// A late animation callback must never pull users away from a newer route.
+await command('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] });
+await navigate();
+await evaluate(`document.querySelector('#enterSite').click();location.hash='#hexagrams/53'`);
+await waitFor(`document.querySelector('#view-hexagrams.active')`);await sleep(1000);
+assert.equal(await evaluate('location.hash'),'#hexagrams/53');
+assert.equal(await evaluate(`document.querySelector('#siteCover').hidden&&document.querySelector('#productIntro').hidden`),true);
+// If CSS animation completion is unavailable, the entry still has a bounded fallback.
+await navigate();
+await evaluate(`document.querySelector('#siteCover').style.animation='none';document.querySelector('#enterSite').click()`);
+await waitFor(`location.hash==='#welcome'&&!document.querySelector('#productIntro').hidden`);
 socket.close();
 console.log(JSON.stringify({ desktop, authDesktop, entered, mobile, mobileAccount }, null, 2));

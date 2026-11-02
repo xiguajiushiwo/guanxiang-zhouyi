@@ -61,6 +61,8 @@ await evaluate(`(async()=>{
   location.assign('/');return true;
 })()`);
 await waitFor(`document.body?.classList.contains('cover-active') && document.querySelector('#enterSite') && document.querySelector('#siteCover') && !document.querySelector('#siteCover').hidden`);
+await evaluate(`document.querySelector('#enterSite').click();true`);
+await waitFor(`!document.querySelector('#productIntro').hidden`);
 await evaluate(`document.querySelector('#coverLogin').click();true`);
 await waitFor(`location.pathname.endsWith('/auth')||location.pathname.endsWith('/auth.html')`);
 await waitFor(`document.querySelector('#authForm')`);

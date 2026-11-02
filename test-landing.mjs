@@ -16,15 +16,15 @@ assert.match(html, /id="mobileMoreMenu"/);
 assert.match(html, /<section class="[^"]*study-overview[^"]*" id="view-home">/);
 assert.match(html, /class="study-entry"[^>]*data-view="principles"/);
 assert.doesNotMatch(html, /class="quick-grid"/);
-assert.equal((html.match(/data-language-menu>/g) || []).length, 2);
-assert.equal((html.match(/data-language="fa"/g) || []).length, 2);
+assert.equal((html.match(/data-language-menu>/g) || []).length, 3);
+assert.equal((html.match(/data-language="fa"/g) || []).length, 3);
 assert.match(script, /function initLandingCover\(\)/);
 assert.match(script, /const AUTH_ENTRY='\.\/auth\?v=20260922-auth7'/);
 assert.doesNotMatch(script, /clearLegacyAuthNavigationState/);
 assert.match(script, /function updateDailyCoverHexagram\(/);
 assert.match(script, /function initDailyCoverHexagram\(/);
 assert.match(script, /setAttribute\(['"]aria-hidden['"],\s*['"]true['"]\)/);
-assert.doesNotMatch(script, /classList\.add\(['"]is-leaving['"]\)/);
+
 assert.match(html, /id="historyIndexPage"/);
 assert.match(html, /id="historyRecordPage"[^>]*hidden/);
 assert.match(html, /id="divinationConfirmDialog"/);
@@ -36,7 +36,7 @@ assert.match(script, /\$\('#confirmDivination'\)\.addEventListener\('click'/);
 assert.match(script, /function toggleMobileMore\(\)/);
 assert.match(script, /setMobileDetail\('hexagrams',true\)/);
 assert.match(script, /function renderHistoryDetail\(record\)/);
-assert.match(worker, /CACHE_NAME='guanxiang-shell-v54'/);
+assert.match(worker, /CACHE_NAME='guanxiang-shell-v55'/);
 
 const endpointScript=html.match(/<script>window\.GUANXIANG_AI_ENDPOINT=.*?<\/script>/s)?.[0].replace(/^<script>|<\/script>$/g,'');
 assert.ok(endpointScript);

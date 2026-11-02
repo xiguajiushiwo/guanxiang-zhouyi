@@ -25,21 +25,21 @@ try{
     Object.defineProperty(navigator,'share',{value:async value=>{window.shared={names:value.files.map(file=>file.name),types:value.files.map(file=>file.type),title:value.title,url:value.url};if(window.shareCancelled)throw new DOMException('cancelled','AbortError');if(window.shareDenied)throw new DOMException('denied','NotAllowedError')},configurable:true});
     Object.defineProperty(navigator,'clipboard',{value:{writeText:async value=>window.copied=value},configurable:true});
   `});
-  await viewport(1366);await command('Page.navigate',{url:'http://127.0.0.1:4175/'});
-  await waitFor(`document.body.classList.contains('cover-active')&&document.querySelector('[data-i18n="brand.question"]').textContent.length>10`);
+  await viewport(1366);await command('Page.navigate',{url:'http://127.0.0.1:4175/#welcome'});
+  await waitFor(`document.body.classList.contains('intro-active')&&document.querySelector('[data-i18n="brand.question"]').textContent.length>10`);
   assert.equal(await evaluate(`document.querySelector('.app-shell').inert`),true);
   assert.equal(await evaluate(`document.querySelector('.brand-fictional').textContent.includes('虚构')`),true);
   await screenshot('home-desktop');
-  for(const width of [320,390,1366]){await viewport(width);assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);assert.equal(await evaluate(`document.querySelector('#enterSite').getBoundingClientRect().height>=44`),true)}
+  for(const width of [320,390,1366]){await viewport(width);assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);assert.equal(await evaluate(`document.querySelector('#startReading').getBoundingClientRect().height>=44`),true)}
   await viewport(390);await screenshot('home-mobile');
   await click('[data-show-example]');assert.equal(await evaluate(`document.activeElement.id`),'brandExample');await screenshot('example-mobile');
   const before=await evaluate(`localStorage.getItem('guanxiang-history-guest-v1')`);
   await click('[data-share-card="example"]');await imageReady();
   assert.equal(await evaluate(`window.painted.join(' ').includes('虚构示例')`),true);
   assert.equal(await evaluate(`localStorage.getItem('guanxiang-history-guest-v1')`),before,'example must not create real records');
-  await click('[data-share-close]');await click('#enterSite');await waitFor(`document.querySelector('#view-divination.active')&&document.querySelector('#siteCover').hidden`);
+  await click('[data-share-close]');await click('#startReading');await waitFor(`document.querySelector('#view-divination.active')&&document.querySelector('#siteCover').hidden`);
   assert.equal(await evaluate('location.pathname'),'/','start must not force an auth page');
-  await evaluate('history.back()');await waitFor(`!document.querySelector('#siteCover').hidden`);
+  await evaluate('history.back()');await waitFor(`!document.querySelector('#productIntro').hidden`);
   await evaluate('history.forward()');await waitFor(`document.querySelector('#view-divination.active')&&document.querySelector('#siteCover').hidden`);
   await command('Page.navigate',{url:'http://127.0.0.1:4175/#history/brand-private-record'});
   await waitFor(`document.querySelector('[data-share-card="record"]')`);
@@ -67,9 +67,9 @@ try{
   await evaluate('HTMLCanvasElement.prototype.toBlob=window.originalToBlob');await click('[data-share-close]');
   await command('Page.navigate',{url:'http://127.0.0.1:4175/#hexagrams/53'});await waitFor(`document.querySelector('[data-share-card="study"]')`);
   await click('[data-share-card="study"]');await imageReady();assert.equal(await evaluate(`document.querySelector('input[name="question"]')===null`),true);await click('[data-share-close]');
-  await command('Page.navigate',{url:'http://127.0.0.1:4175/'});await waitFor(`document.body.classList.contains('cover-active')`);
+  await command('Page.navigate',{url:'http://127.0.0.1:4175/#welcome'});await waitFor(`document.body.classList.contains('intro-active')`);
   for(const language of ['en','fa','zh-CN']){
-    await viewport(390);await click('#coverLanguageToggle [data-language-menu-trigger]');await click(`#coverLanguageToggle [data-language="${language}"]`);
+    await viewport(390);await click('#introLanguageToggle [data-language-menu-trigger]');await click(`#introLanguageToggle [data-language="${language}"]`);
     assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true,language);
     await click('[data-share-card="example"]');await imageReady();assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);
     await screenshot(`example-card-${language}`);await click('[data-share-close]');

@@ -54,24 +54,21 @@ function navigateToAuth(href=AUTH_ENTRY){
 }
 
 function updateDailyCoverHexagram(date=new Date()){
-  const cover=$('#dailyCoverHexagram');
-  if(!cover)return;
   const index=dailyHexagramIndex(date),hexagram=hexagrams[index],lines=catalogLines(index);
   if(!hexagram||!lines)return;
-  cover.dataset.name=hexagram[0];
-  cover.dataset.summary=hexagram[2];
   const name=$('[data-cover-name]');if(name)name.textContent=getLanguage()==='en'?(HEXAGRAM_EN[index]||hexagram[2]):hexagram[2];
-  const disc=cover.querySelector('.cover-disc');
-  if(disc){disc.dataset.upper=`${hexagram[6]}  ${TRIGRAM_GLYPHS[hexagram[6]]||''}`.trim();disc.dataset.lower=`${hexagram[7]}  ${TRIGRAM_GLYPHS[hexagram[7]]||''}`.trim()}
-  cover.querySelectorAll('.cover-line').forEach((line,lineIndex)=>{
-    const solid=lines[5-lineIndex]===1;
-    line.classList.toggle('broken',!solid);
-    line.replaceChildren(...Array.from({length:solid?1:2},()=>document.createElement('b')));
+  $$('[data-daily-hexagram]').forEach(cover=>{
+    cover.dataset.name=hexagram[0];cover.dataset.summary=hexagram[2];
+    const disc=cover.querySelector('.cover-disc');
+    if(disc){disc.dataset.upper=hexagram[6]+'  '+(TRIGRAM_GLYPHS[hexagram[6]]||'');disc.dataset.lower=hexagram[7]+'  '+(TRIGRAM_GLYPHS[hexagram[7]]||'')}
+    const bottomUp=cover.classList.contains('cover-hexagram');
+    cover.querySelectorAll('.cover-line').forEach((line,lineIndex)=>{
+      const solid=lines[bottomUp?lineIndex:5-lineIndex]===1;
+      line.classList.toggle('broken',!solid);
+      line.replaceChildren(...Array.from({length:solid?1:2},()=>document.createElement('b')));
+    });
+    cover.setAttribute('aria-label',getLanguage()==='en'?'Daily hexagram: '+(HEXAGRAM_EN[index]||hexagram[2]):'今日一卦：第'+(index+1)+'卦'+hexagram[2]);
   });
-  const label=getLanguage()==='en'
-    ?`Daily hexagram: ${HEXAGRAM_EN[index]||hexagram[2]}, ${TRIGRAM_EN[hexagram[6]]||hexagram[6]} over ${TRIGRAM_EN[hexagram[7]]||hexagram[7]}`
-    :`今日一卦：第${index+1}卦${hexagram[2]}`;
-  cover.setAttribute('aria-label',label);
 }
 function scheduleDailyCoverHexagram(){
   clearTimeout(dailyCoverTimer);
@@ -82,24 +79,48 @@ function initDailyCoverHexagram(){
   scheduleDailyCoverHexagram();
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateDailyCoverHexagram()});
 }
+let cancelCoverEntry=null;
 function syncLandingCover(){
-  const cover=$('#siteCover'),app=$('.app-shell');
-  if(!cover||!app)return;
+  cancelCoverEntry?.();
+  const cover=$('#siteCover'),intro=$('#productIntro'),app=$('.app-shell');
+  if(!cover||!intro||!app)return;
   const active=/^#(?:home|hexagrams|classics|principles|divination|history)(?:\/|$)/.test(location.hash);
-  const entering=active&&!cover.hidden,leaving=!active&&cover.hidden;
-  cover.hidden=active;
+  const welcome=location.hash==='#welcome',wasPublic=!cover.hidden||!intro.hidden;
+  const previous=cover.hidden?(intro.hidden?'app':'intro'):'cover';
+  cover.hidden=active||welcome;intro.hidden=!welcome;
   app.toggleAttribute('inert',!active);
   if(active)app.removeAttribute('aria-hidden');else app.setAttribute('aria-hidden','true');
-  document.body.classList.toggle('cover-active',!active);
-  if(entering){
+  document.body.classList.toggle('cover-active',!active&&!welcome);
+  document.body.classList.toggle('intro-active',welcome);
+  if(!active)$('#onboardingDialog')?.close();
+  if(active&&wasPublic){
     $('.main-content')?.focus({preventScroll:true});
-    requestAnimationFrame(()=>{if($('#siteCover').hidden)document.dispatchEvent(new Event('guanxiang:entered'))});
+    requestAnimationFrame(()=>{if($('#siteCover').hidden&&$('#productIntro').hidden)document.dispatchEvent(new Event('guanxiang:entered'))});
   }
-  if(leaving){$('#onboardingDialog')?.close();window.scrollTo({top:0,behavior:'instant'})}
+  if(welcome&&previous!=='intro'){window.scrollTo({top:0,behavior:'instant'});$('#productTitle')?.focus({preventScroll:true})}
+  if(!active&&!welcome&&previous!=='cover'){window.scrollTo({top:0,behavior:'instant'});$('#enterSite')?.focus({preventScroll:true})}
+}
+function enterClassicCover(event){
+  if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+  event.preventDefault();
+  const cover=$('#siteCover'),enter=$('#enterSite');
+  if(cover.hidden||cancelCoverEntry)return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){location.hash='#welcome';return}
+  const fromHash=location.hash;
+  let timer;
+  const cancel=()=>{clearTimeout(timer);cover.removeEventListener('animationend',onEnd);cover.classList.remove('is-leaving');enter.removeAttribute('aria-disabled');cancelCoverEntry=null};
+  const finish=()=>{const stillHere=location.hash===fromHash&&!cover.hidden;cancel();if(stillHere)location.hash='#welcome'};
+  const onEnd=event=>{if(event.target===cover&&event.animationName==='cover-depart')finish()};
+  cancelCoverEntry=cancel;
+  enter.setAttribute('aria-disabled','true');
+  cover.addEventListener('animationend',onEnd);
+  cover.classList.add('is-leaving');
+  timer=setTimeout(finish,850);
 }
 function initLandingCover(){
   if(new URLSearchParams(location.search).get('entry')==='account')history.replaceState(null,'',location.pathname+(location.hash||'#home'));
   syncLandingCover();
+  $('#enterSite')?.addEventListener('click',enterClassicCover);
   $('[data-show-example]')?.addEventListener('click',()=>{$('#brandExample').scrollIntoView({behavior:'instant'});$('#brandExample').focus({preventScroll:true})});
   if(!$('#siteCover').hidden)requestAnimationFrame(()=>$('#enterSite').focus({preventScroll:true}));
 }
@@ -165,7 +186,7 @@ function backToList(view){
 }
 function applyRoute(){
   syncLandingCover();
-  if(!$('#siteCover')?.hidden){displayedRoute='';return}
+  if(!$('#siteCover')?.hidden||!$('#productIntro')?.hidden){displayedRoute='';return}
   const [view='home',value='',section='']=(location.hash.slice(1)||'home').split('/');
   if(view==='hexagrams'){selectedHex=Math.max(0,Math.min(63,(Number(value)||1)-1));setMobileDetail('hexagrams',Boolean(value));nav('hexagrams',false);return}
   if(view==='classics'){selectedWing=Math.max(0,Math.min(9,(Number(value)||1)-1));selectedClassicSection=section?Math.max(0,(Number(section)||1)-1):null;nav('classics',false);return}
@@ -224,7 +245,7 @@ function renderStudyPath() {
 function renderStudyPanels(){renderHexStudy();renderClassics();renderPrinciples();renderStudyPath();}
 function wingBookmarks(){try{return JSON.parse(localStorage.getItem('guanxiang-wing-bookmarks')||'[]')}catch{return []}}
 function renderEditionStatus(){const target=$('#editionStatus');if(!target||!tenWings)return;const language=getLanguage(),retrieved=tenWings.retrievedAt?new Date(tenWings.retrievedAt).toLocaleDateString(language==='en'?'en-US':'zh-CN'):t('edition.dateMissing');target.innerHTML=`<b>${t('edition.status')}</b><span class="source-metadata">${textHtml(tenWings.edition||t('edition.unspecified'))}</span><span>${t('edition.source')}<span class="source-metadata">${textHtml(tenWings.source||t('edition.unspecified'))}</span></span><span>${t('edition.dataDate')}${textHtml(retrieved)}</span><span>${t('edition.variants')}</span>`}
-function showOnboardingIfNeeded(){if(document.body.classList.contains('cover-active')){document.addEventListener('guanxiang:entered',showOnboardingIfNeeded,{once:true});return}const dialog=$('#onboardingDialog');if(!dialog)return;let dismissed=false;try{dismissed=localStorage.getItem('guanxiang-onboarding-v1')==='dismissed'}catch{}if(dismissed)return;if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');requestAnimationFrame(()=>$('#onboardingStart')?.focus())}
+function showOnboardingIfNeeded(){if(!$('#siteCover').hidden||!$('#productIntro').hidden){document.addEventListener('guanxiang:entered',showOnboardingIfNeeded,{once:true});return}const dialog=$('#onboardingDialog');if(!dialog)return;let dismissed=false;try{dismissed=localStorage.getItem('guanxiang-onboarding-v1')==='dismissed'}catch{}if(dismissed)return;if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');requestAnimationFrame(()=>$('#onboardingStart')?.focus())}
 function dismissOnboarding(){try{localStorage.setItem('guanxiang-onboarding-v1','dismissed')}catch{}const dialog=$('#onboardingDialog');if(dialog?.open)dialog.close();else dialog?.removeAttribute('open')}
 function renderClassics(){if(currentView!=='classics'||!needsRender('classics',[selectedWing,selectedClassicSection,readingMode,$('#wingSearch')?.value,wingBookmarks()]))return;const grid=$('#classicsGrid'),order=$('#wingOrder');if(!tenWings){order.innerHTML='';grid.innerHTML=`<div class="library-loading">${t('classics.loading')}</div>`;return}const wings=tenWings.wings,names=wings.map(wing=>wing.title),query=($('#wingSearch')?.value||'').trim(),normalizedQuery=normalizeSearchText(query),bookmarks=wingBookmarks(),visible=wings.map((wing,index)=>({wing,index,sections:wing.sections.map((section,sectionIndex)=>({section,sectionIndex})).filter(({section})=>!query||normalizeSearchText(`${section.hexagram||''}${section.text}`).includes(normalizedQuery))})).filter(item=>(!query||item.sections.length)&&(readingMode==='ancient'||query||item.index===selectedWing));order.innerHTML=names.map((name,index)=>`<button type="button" class="wing-order-item ${index===selectedWing?'active':''}" data-wing="${index}"><span>${String(index+1).padStart(2,'0')}</span>${bookmarks.includes(wings[index].id)?'◆ ':''}${name}</button>`).join('');grid.className=`classics-grid ${readingMode}`;grid.innerHTML=visible.map(({wing,index,sections})=>`<article class="classic-card" id="wing-${index}"><div class="classic-card-head"><div><h3>${names[index]}</h3><span class="classic-subtitle">${canonicalClassicSummaries[index]||t('classics.fallbackSummary')}</span></div><span>${t('classics.wing',{n:String(index+1).padStart(2,'0')})}</span></div><p class="classic-quote">${canonicalClassicQuotes[index]||t('classics.fallbackQuote')}</p><div class="classic-readings">${sections.map(({section,sectionIndex})=>`<div class="classic-reading" id="wing-${index}-section-${sectionIndex}"><span>${String(section.number||sectionIndex+1).padStart(2,'0')}</span><p>${section.hexagram?`<button class="reading-ref" data-hex-name="${section.hexagram}">${section.hexagram}</button> `:''}${textHtml(section.text||'')}</p><button type="button" class="section-link" data-section-ref="${index}/${sectionIndex}" aria-label="${t('classics.copySection',{title:names[index],n:section.number||sectionIndex+1})}" title="复制本段链接">§</button></div>`).join('')}</div></article>`).join('')||'<div class="library-loading">十翼原文中没有找到这个词。</div>';$$('.wing-order-item').forEach(button=>button.addEventListener('click',()=>{selectedWing=+button.dataset.wing;selectedClassicSection=null;nav('classics');renderClassics();if(readingMode==='ancient')scrollToClassic(`#wing-${selectedWing}`,{block:'nearest',inline:'center'})}));$$('.reading-ref').forEach(button=>button.addEventListener('click',()=>{const index=hexagrams.findIndex(hexagram=>hexagram[0]===button.dataset.hexName);if(index<0)return;selectedHex=index;setMobileDetail('hexagrams',true);nav('hexagrams');renderHexList();renderHexDetail()}));$$('.section-link').forEach(button=>button.addEventListener('click',async()=>{const [wing,section]=button.dataset.sectionRef.split('/').map(Number),url=new URL(`#classics/${wing+1}/${section+1}`,location.href).href;try{await navigator.clipboard.writeText(url);showNotice(t('classics.linkCopied'))}catch{location.hash=`#classics/${wing+1}/${section+1}`;showNotice(t('classics.linkLocated'))}}));$$('[data-reading-mode]').forEach(button=>button.classList.toggle('active',button.dataset.readingMode===readingMode));$('#bookmarkWing').textContent=bookmarks.includes(wings[selectedWing].id)?t('classics.bookmarked'):t('classics.bookmark');$('#wingProgress').textContent=query?`${t('classics.found',{count:visible.reduce((sum,item)=>sum+item.sections.length,0)})}`:`${t('classics.progress',{current:selectedWing+1,count:wings[selectedWing].sections.length})}`;if(tenWings.edition)$('#editionNote').textContent=` · ${t('classics.edition',{edition:tenWings.edition,source:tenWings.source||'来源见数据说明'})}`;if(selectedClassicSection!==null)scrollToClassic(`#wing-${selectedWing}-section-${selectedClassicSection}`,{block:'center',inline:'center'})}
 function showNotice(message,action){const notice=$('#appNotice');if(!notice)return;notice.replaceChildren();const text=document.createElement('span');text.textContent=message;notice.appendChild(text);if(action?.label&&typeof action.onClick==='function'){const button=document.createElement('button');button.type='button';button.className='text-button';button.textContent=action.label;button.addEventListener('click',()=>{button.disabled=true;action.onClick()},{once:true});notice.appendChild(button)}notice.classList.remove('hidden')}

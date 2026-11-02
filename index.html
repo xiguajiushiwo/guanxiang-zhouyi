@@ -25,26 +25,64 @@
     <link rel="stylesheet" href="./journal.css?v=20261028-journal1">
     <link rel="stylesheet" href="./case-review.css?v=20261028-case1">
     <link rel="stylesheet" href="./mobile-experience.css?v=20261030-nav1">
-    <link rel="stylesheet" href="brand-experience.css?v=20261102-brand1">
+    <link rel="stylesheet" href="landing-v2.css?v=20261102-cover1">
+    <link rel="stylesheet" href="landing-rich.css?v=20260914-1">
+    <link rel="stylesheet" href="landing-details.css?v=20260917-labels1">
+    <link rel="stylesheet" href="brand-experience.css?v=20261102-cover1">
 </head>
   <body>
     <section class="site-cover" id="siteCover" aria-labelledby="coverTitle">
+      <div class="cover-orbit" aria-hidden="true">
+        <span>乾</span><span>坎</span><span>艮</span><span>震</span>
+        <span>巽</span><span>离</span><span>坤</span><span>兑</span>
+      </div>
+      <div class="cover-frame">
+        <header class="cover-masthead">
+          <span class="cover-seal">易</span>
+          <p>周易研读与大衍筮法</p>
+          <div class="language-menu cover-language-menu" id="coverLanguageToggle" data-language-menu><button type="button" class="language-menu-trigger" data-language-menu-trigger aria-haspopup="menu" aria-expanded="false" aria-label="Language"><span data-language-menu-label>Language</span><span class="language-menu-chevron" aria-hidden="true">⌄</span></button><div class="language-menu-options" role="menu" hidden><button type="button" role="menuitemradio" aria-checked="true" data-language="zh-CN">中文</button><button type="button" role="menuitemradio" aria-checked="false" data-language="en">English</button><button type="button" role="menuitemradio" aria-checked="false" data-language="fa">فارسی</button></div></div>
+        </header>
+        <div class="cover-center">
+          <div class="cover-title-wrap">
+            <p class="cover-overline">观其象 · 玩其辞</p>
+            <h1 id="coverTitle">观象</h1>
+            <p class="cover-quote">观乎天文，以察时变</p>
+          </div>
+          <div class="cover-hexagram" id="dailyCoverHexagram" data-daily-hexagram role="img" aria-label="今日一卦：第六十三卦水火既济" data-name="既济" data-summary="水火既济">
+            <span class="cover-disc" data-upper="坎  ☵" data-lower="离  ☲"></span>
+            <i class="cover-line"><b></b></i>
+            <i class="cover-line broken"><b></b><b></b></i>
+            <i class="cover-line"><b></b></i>
+            <i class="cover-line broken"><b></b><b></b></i>
+            <i class="cover-line broken"><b></b><b></b></i>
+            <i class="cover-line"><b></b></i>
+          </div>
+        </div>
+        <footer class="cover-footer">
+          <p>六十四卦 · 十翼 · 易理 · 筮法</p>
+          <a class="cover-enter" id="enterSite" href="#welcome" data-i18n="cover.enter">进入观象</a>
+          <small class="cover-product-note" data-i18n="brand.promise">用《周易》整理问题，用连续记录看见变化。</small>
+        </footer>
+      </div>
+      <noscript><p class="cover-noscript">请启用 JavaScript 后进入观象。</p></noscript>
+    </section>
+    <section class="brand-introduction" id="productIntro" aria-labelledby="productTitle" hidden>
       <div class="brand-container">
         <header class="brand-header">
           <a class="brand-wordmark" href="./" aria-label="观象"><img src="app-icon.svg" width="38" height="38" alt=""><strong>观象</strong></a>
-          <div class="brand-header-links"><a id="coverLogin" href="./auth?v=20260922-auth7" data-i18n="brand.login">登录 / 同步记录</a><div class="language-menu cover-language-menu" id="coverLanguageToggle" data-language-menu><button type="button" class="language-menu-trigger" data-language-menu-trigger aria-haspopup="menu" aria-expanded="false" aria-label="Language"><span data-language-menu-label>Language</span><span class="language-menu-chevron" aria-hidden="true">⌄</span></button><div class="language-menu-options" role="menu" hidden><button type="button" role="menuitemradio" aria-checked="true" data-language="zh-CN">中文</button><button type="button" role="menuitemradio" aria-checked="false" data-language="en">English</button><button type="button" role="menuitemradio" aria-checked="false" data-language="fa">فارسی</button></div></div></div>
+          <div class="brand-header-links"><a id="coverLogin" href="./auth?v=20260922-auth7" data-i18n="brand.login">登录 / 同步记录</a><div class="language-menu cover-language-menu" id="introLanguageToggle" data-language-menu><button type="button" class="language-menu-trigger" data-language-menu-trigger aria-haspopup="menu" aria-expanded="false" aria-label="Language"><span data-language-menu-label>Language</span><span class="language-menu-chevron" aria-hidden="true">⌄</span></button><div class="language-menu-options" role="menu" hidden><button type="button" role="menuitemradio" aria-checked="true" data-language="zh-CN">中文</button><button type="button" role="menuitemradio" aria-checked="false" data-language="en">English</button><button type="button" role="menuitemradio" aria-checked="false" data-language="fa">فارسی</button></div></div></div>
         </header>
         <div class="brand-hero">
           <div>
             <p class="brand-eyebrow" data-i18n="brand.identity">周易研读与个人复盘</p>
-            <h1 id="coverTitle"><span data-i18n="brand.headlineOne">看见变化，</span><span data-i18n="brand.headlineTwo">想清下一步。</span></h1>
+            <h1 id="productTitle" tabindex="-1"><span data-i18n="brand.headlineOne">看见变化，</span><span data-i18n="brand.headlineTwo">想清下一步。</span></h1>
             <p class="brand-description" data-i18n="brand.description">用《周易》整理一个具体问题，留下自己的理解与行动，过些天再回来看看变化。</p>
-            <div class="brand-actions"><a class="brand-primary" id="enterSite" href="#divination/prepare" data-i18n="brand.start">开始一问</a><button type="button" class="brand-secondary" data-show-example data-i18n="brand.exampleLink">先看一个完整示例 ↓</button></div>
+            <div class="brand-actions"><a class="brand-primary" id="startReading" href="#divination/prepare" data-i18n="brand.start">开始一问</a><button type="button" class="brand-secondary" data-show-example data-i18n="brand.exampleLink">先看一个完整示例 ↓</button></div>
             <p class="brand-guest" data-i18n="brand.guest">无需先注册 · 记录先保存在此设备</p>
           </div>
           <aside class="brand-daily">
             <span class="brand-daily-kicker" data-i18n="brand.daily">今日研读</span>
-            <div class="brand-hex-lines" id="dailyCoverHexagram" role="img" aria-label="今日研读卦象"><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i></div>
+            <div class="brand-hex-lines" id="introDailyHexagram" data-daily-hexagram role="img" aria-label="今日研读卦象"><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i><i class="cover-line"><b></b></i></div>
             <strong class="brand-daily-name" data-cover-name></strong><p data-i18n="brand.dailyNote">读一卦，留一点思考的时间。</p>
           </aside>
         </div>
@@ -189,6 +227,6 @@
     <dialog class="confirm-dialog import-dialog" id="importDialog"><form method="dialog"><span class="panel-kicker" data-i18n="dialog.importKicker">导入记录</span><h2 data-i18n="dialog.importTitle">确认合并本地记录？</h2><p id="importSummary" data-i18n="dialog.importLoading">正在读取记录。</p><div><button class="secondary-button" value="cancel" id="cancelImport" data-i18n="dialog.cancel">取消</button><button class="primary-button" value="confirm" id="confirmImport" data-i18n="dialog.confirmImport">确认合并</button></div></form></dialog>
     <dialog class="confirm-dialog account-merge-dialog" id="accountMergeDialog"><form method="dialog"><span class="panel-kicker">合并此设备的记录？</span><h2>合并此设备的记录？</h2><p data-merge-body></p><div><button type="button" class="secondary-button" data-merge-choice="cloud">只保留云端记录</button><button type="button" class="primary-button" data-merge-choice="merge">合并记录</button></div></form></dialog>
     <script>window.GUANXIANG_AI_ENDPOINT=window.GUANXIANG_AI_ENDPOINT||(['.pages.dev','.netlify.app','.liara.run'].some(suffix=>location.hostname.endsWith(suffix))?'/api/reading':'');</script>
-    <script type="module" src="app.js?v=20261102-brand1"></script>
+    <script type="module" src="app.js?v=20261102-cover1"></script>
   </body>
 </html>
