@@ -36,7 +36,7 @@ assert.match(script, /\$\('#confirmDivination'\)\.addEventListener\('click'/);
 assert.match(script, /function toggleMobileMore\(\)/);
 assert.match(script, /setMobileDetail\('hexagrams',true\)/);
 assert.match(script, /function renderHistoryDetail\(record\)/);
-assert.match(worker, /CACHE_NAME='guanxiang-shell-v56'/);
+assert.match(worker, /CACHE_NAME='guanxiang-shell-v57'/);
 
 const endpointScript=html.match(/<script>window\.GUANXIANG_AI_ENDPOINT=.*?<\/script>/s)?.[0].replace(/^<script>|<\/script>$/g,'');
 assert.ok(endpointScript);
@@ -48,6 +48,9 @@ const endpointFor=hostname=>{
 assert.equal(endpointFor('guanxiang-zhouyi-evf.pages.dev'),'/api/reading');
 assert.equal(endpointFor('guanxiang-zhouyi-global.netlify.app'),'/api/reading');
 assert.equal(endpointFor('guanxiang-zhouyi.liara.run'),'/api/reading');
+assert.equal(endpointFor('guanxiang.wayella.com'),'/api/reading');
+assert.equal(endpointFor('unrelated.wayella.com'),'');
+assert.equal(endpointFor('guanxiang.wayella.com.example.org'),'');
 assert.equal(endpointFor('127.0.0.1'),'');
 
 console.log('首页封面结构校验通过。');

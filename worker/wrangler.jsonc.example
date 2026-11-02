@@ -13,7 +13,7 @@
     { "tag": "v1", "new_sqlite_classes": ["ReadingRateLimiter"] }
   ],
   "vars": {
-    "ALLOWED_ORIGINS": "https://guanxiang-zhouyi-evf.pages.dev,https://guanxiang-zhouyi-global.netlify.app,https://guanxiang-zhouyi.liara.run,http://127.0.0.1:4175,http://localhost:4175",
+    "ALLOWED_ORIGINS": "https://guanxiang.wayella.com,https://guanxiang-zhouyi-evf.pages.dev,https://guanxiang-zhouyi-global.netlify.app,https://guanxiang-zhouyi.liara.run,http://127.0.0.1:4175,http://localhost:4175",
     "AI_MODEL": "@cf/openai/gpt-oss-120b",
     "PER_IP_HOURLY_LIMIT": "5",
     "DAILY_LIMIT": "50",

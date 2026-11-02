@@ -13,7 +13,7 @@ for (const language of ['zh-CN','en','fa']) {
   const plain = createShareModel(record, {}, language);
   absent(plain, [...secrets, record.question, record.note]);
   assert.equal(plain.privateIncluded, false);
-  assert.equal(plain.url, 'https://guanxiang-zhouyi-evf.pages.dev/#hexagrams/53');
+  assert.equal(plain.url, 'https://guanxiang.wayella.com/#hexagrams/53');
   const question = createShareModel(record, { question: true }, language);
   assert.equal(question.blocks.some(block=>block.text===record.question), true);
   absent(question, [...secrets, record.note]);

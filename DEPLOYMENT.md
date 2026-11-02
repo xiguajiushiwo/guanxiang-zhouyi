@@ -1,6 +1,14 @@
 # 公网部署
 
-Cloudflare Pages 生产网站：
+观象正式域名：
+
+```text
+https://guanxiang.wayella.com
+```
+
+通过 `guanxiang-domain` Worker 的 Custom Domain 绑定，Cloudflare 自动创建 DNS 并管理 HTTPS。配置在 `domain-worker/wrangler.jsonc`。域名 Worker 将请求转发至现有 Pages 项目，后续 Pages 发布立即用于新域名，不复制数据库，也不需要同步两套静态文件。该主机名不要同时绑定 Pages 自定义域名。
+
+原 Cloudflare Pages 地址继续保留：
 
 ```text
 https://guanxiang-zhouyi-evf.pages.dev
@@ -13,6 +21,14 @@ https://github.com/xiguajiushiwo/guanxiang-zhouyi
 ```
 
 浏览器只请求同源的 `/api/reading` 和 `/api/account/*`。Pages Function 再通过仅保存在 Cloudflare 中的 `PROXY_SECRET`、`ACCOUNT_PROXY_SECRET` 转发给对应 Worker，因此前端不保存密钥，也不直接依赖本地网络能否访问 `workers.dev`。
+
+前端只对准确的 `guanxiang.wayella.com` 主机名启用生产 AI 接口。分享卡片、网页 canonical/OG 和宣传素材使用该自定义域名。账号与 AI Worker 的允许来源保留旧站并加入新域名。发布后验证域名绑定、HTTPS、首页、账号页及两个同源 API。
+
+`guanxiang-domain` Worker 与 Pages 项目需设置同一 `DOMAIN_PROXY_SECRET`。入口对 API 请求的客户端 IP、时间、方法和路径生成 HMAC；Pages 验证后才将客户端 IP 用于现有限流，防止跨区域 Worker 回源让所有访问共用一个 IP。无签名、伪造或超过 60 秒的签名都不能覆盖 Cloudflare 直接提供的 IP。密钥仅保存在 Cloudflare，不提交源码或静态产物。
+
+更新域名入口：`node output/deploy-tools/node_modules/wrangler/bin/wrangler.js deploy --config domain-worker/wrangler.jsonc`。正常页面更新仍按下文发布 Pages 即可。迁移到直接 Pages 域名绑定时，先计划域名切换，不能直接删除入口或其 DNS。
+
+浏览器的登录状态和本地存储按域名隔离。新域名需重新登录，同一账号继续使用原有 D1 云端记录；未同步的游客记录留在旧域名对应的浏览器存储中，应先在旧站登录同步或导出后导入。保留旧站，不强制跳转，避免用户失去访问这些本地记录的入口。
 
 ## Cloudflare D1 账号服务
 

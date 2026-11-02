@@ -67,7 +67,7 @@ try{
   assert.equal(await evaluate(`document.querySelectorAll('#shareCardDialog input[name="question"]:checked,#shareCardDialog input[name="note"]:checked').length`),0);
   assert.equal(await evaluate(`window.painted.join(' ').includes('PRIVATE_')`),false);
   assert.equal(await evaluate(`Boolean(window.shared||window.copied)`),false,'opening never sends or copies');
-  await click('[data-copy-public]');assert.equal(await evaluate('window.copied'),'https://guanxiang-zhouyi-evf.pages.dev/#hexagrams/1');
+  await click('[data-copy-public]');assert.equal(await evaluate('window.copied'),'https://guanxiang.wayella.com/#hexagrams/1');
   await click('[data-send-image]');assert.deepEqual(await evaluate('window.shared'),{names:['guanxiang-card.png'],types:['image/png'],title:'观象 · Guanxiang'});
   await evaluate('window.painted=[]');await click('input[name="question"]');await imageReady();
   assert.equal(await evaluate(`window.painted.join(' ').includes('PRIVATE_QUESTION')`),true);assert.equal(await evaluate(`window.painted.join(' ').includes('PRIVATE_NOTE')`),false);

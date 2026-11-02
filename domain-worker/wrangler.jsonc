@@ -1,0 +1,10 @@
+{
+  "name": "guanxiang-domain",
+  "main": "index.mjs",
+  "compatibility_date": "2026-11-02",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    { "pattern": "guanxiang.wayella.com", "custom_domain": true }
+  ]
+}

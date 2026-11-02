@@ -12,6 +12,6 @@
     }
   ],
   "vars": {
-    "ALLOWED_ORIGINS": "https://guanxiang-zhouyi-evf.pages.dev,https://guanxiang-zhouyi.liara.run,http://127.0.0.1:4175,http://localhost:4175"
+    "ALLOWED_ORIGINS": "https://guanxiang.wayella.com,https://guanxiang-zhouyi-evf.pages.dev,https://guanxiang-zhouyi.liara.run,http://127.0.0.1:4175,http://localhost:4175"
   }
 }

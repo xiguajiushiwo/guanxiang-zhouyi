@@ -4,7 +4,7 @@ import { displayHexagramName } from './hexagram-i18n.mjs';
 import { BRAND_COPY } from './brand-content.mjs';
 import { attributeHtml, textHtml } from './html-safety.mjs';
 
-const PUBLIC_SITE = 'https://guanxiang-zhouyi-evf.pages.dev/';
+const PUBLIC_SITE = 'https://guanxiang.wayella.com/';
 const copy = (key, language) => BRAND_COPY[key][language === 'fa' ? 2 : language === 'en' ? 1 : 0];
 const shorten = (value, limit) => {
   const characters = [...String(value || '').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '').trim()];
@@ -106,7 +106,7 @@ export async function renderShareImage(model) {
   context.fillStyle = '#2e302c'; context.font = `28px ${serif}`;
   context.fillText(copy('footer', model.language), x, canvas.height - 121, 888);
   context.direction = 'ltr'; context.textAlign = 'left'; context.font = `23px ${sans}`; context.fillStyle = '#7d786c';
-  context.fillText('guanxiang-zhouyi-evf.pages.dev', 96, canvas.height - 72);
+  context.fillText('guanxiang.wayella.com', 96, canvas.height - 72);
   return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Image encoding failed')), 'image/png'));
 }
 
