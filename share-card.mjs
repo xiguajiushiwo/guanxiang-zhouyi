@@ -1,7 +1,7 @@
 import hexagrams from './hexagram-catalog.mjs';
 import { catalogLines } from './derived-hexagrams.mjs';
 import { displayHexagramName } from './hexagram-i18n.mjs';
-import { BRAND_COPY } from './brand-content.mjs';
+import { BRAND_COPY } from './brand-content.mjs?v=20261102-i18n1';
 import { attributeHtml, textHtml } from './html-safety.mjs';
 
 const PUBLIC_SITE = 'https://guanxiang.wayella.com/';

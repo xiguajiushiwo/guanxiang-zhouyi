@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { LANGUAGES, dictionaryForTests, getLanguage, setLanguage, t, translateUiTextForTests } from './i18n.mjs';
+import { LANGUAGES, dictionaryForTests, getLanguage, setLanguage, t, translateDom, translateUiTextForTests } from './i18n.mjs';
 import { displayHexagramName, HEXAGRAM_FA } from './hexagram-i18n.mjs';
 import { isCompleteAiReading, splitAiReadingSectionsLocalized } from './ai-reading.mjs';
 
@@ -36,6 +36,12 @@ assert.equal(translateUiTextForTests('第 2 爻 · 第 3 变 / 共十八变'), '
 assert.equal(translateUiTextForTests('第 03 卦 · 上经'), 'Hexagram 03 · Upper Canon');
 assert.equal(translateUiTextForTests('对于下周的面试，我最需要注意什么？'), 'What should I pay attention to in next week’s interview?');
 assert.equal(t('missing.key'), 'missing.key');
+const fallbackNode={dataset:{i18n:'brand.futureEntry',i18nPlaceholder:'brand.futureHint',i18nTitle:'brand.futureTitle',i18nAriaLabel:'brand.futureLabel'},textContent:'直接进入观象',attributes:{placeholder:'填写问题',title:'进入研读', 'aria-label':'直接进入观象'},setAttribute(name,value){this.attributes[name]=value}};
+const knownNode={dataset:{i18n:'brand.enterDirect'},textContent:'直接进入观象'};
+translateDom({querySelectorAll:()=>[fallbackNode,knownNode]});
+assert.equal(fallbackNode.textContent,'直接进入观象','missing copy must preserve the readable HTML fallback');
+assert.deepEqual(fallbackNode.attributes,{placeholder:'填写问题',title:'进入研读','aria-label':'直接进入观象'});
+assert.equal(knownNode.textContent,'Enter Guanxiang');
 setLanguage('fr');
 assert.equal(getLanguage(), 'zh-CN');
 assert.ok(dictionaryForTests().en['nav.home']);

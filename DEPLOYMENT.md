@@ -28,6 +28,8 @@ https://github.com/xiguajiushiwo/guanxiang-zhouyi
 
 更新域名入口：`node output/deploy-tools/node_modules/wrangler/bin/wrangler.js deploy --config domain-worker/wrangler.jsonc`。正常页面更新仍按下文发布 Pages 即可。迁移到直接 Pages 域名绑定时，先计划域名切换，不能直接删除入口或其 DNS。
 
+新增翻译词条时，同时更新页面入口、`i18n.mjs`、`brand-content.mjs` 的引用版本及 Service Worker 缓存版本，避免新版 HTML 读取旧词库。`translateDom` 在缺少词条时保留原始可读文案；用 `node run-browser-test.mjs test-i18n-cache-browser.mjs` 验证真实 Service Worker 下旧词库缓存和新按钮共存的升级场景。
+
 浏览器的登录状态和本地存储按域名隔离。新域名需重新登录，同一账号继续使用原有 D1 云端记录；未同步的游客记录留在旧域名对应的浏览器存储中，应先在旧站登录同步或导出后导入。保留旧站，不强制跳转，避免用户失去访问这些本地记录的入口。
 
 ## Cloudflare D1 账号服务

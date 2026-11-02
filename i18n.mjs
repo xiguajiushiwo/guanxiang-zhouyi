@@ -1,4 +1,4 @@
-import { BRAND_COPY } from './brand-content.mjs';
+import { BRAND_COPY } from './brand-content.mjs?v=20261102-i18n1';
 export const LANGUAGES = Object.freeze({ 'zh-CN': '中文', en: 'English', fa: 'فارسی' });
 export const LANGUAGE_STORAGE_KEY = 'guanxiang-language';
 export const LANGUAGE_META = Object.freeze({
@@ -340,12 +340,17 @@ export function languageLabel(language = currentLanguage) { return LANGUAGE_META
 
 export function translateDom(root = document) {
   if (!root?.querySelectorAll) return;
+  const apply = (key, write) => {
+    if (!key) return;
+    const value = t(key);
+    if (value !== key) write(value);
+  };
   const nodes = root.querySelectorAll('[data-i18n], [data-i18n-placeholder], [data-i18n-title], [data-i18n-aria-label]');
   nodes.forEach(node => {
-    if (node.dataset.i18n) node.textContent = t(node.dataset.i18n);
-    if (node.dataset.i18nPlaceholder) node.setAttribute('placeholder', t(node.dataset.i18nPlaceholder));
-    if (node.dataset.i18nTitle) node.setAttribute('title', t(node.dataset.i18nTitle));
-    if (node.dataset.i18nAriaLabel) node.setAttribute('aria-label', t(node.dataset.i18nAriaLabel));
+    apply(node.dataset.i18n, value => { node.textContent = value; });
+    apply(node.dataset.i18nPlaceholder, value => node.setAttribute('placeholder', value));
+    apply(node.dataset.i18nTitle, value => node.setAttribute('title', value));
+    apply(node.dataset.i18nAriaLabel, value => node.setAttribute('aria-label', value));
   });
 }
 
