@@ -10,7 +10,7 @@ import { buildLocalInterpretation, buildEnglishInterpretation } from './interpre
 import { AiReadingError, requestAiReading, splitAiReadingSections, splitAiReadingSectionsLocalized } from './ai-reading.mjs';
 import { attributeHtml, textHtml } from './html-safety.mjs';
 import { createServiceWorkerActivator } from './service-worker-update.mjs';
-import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20261102-home1';
+import { getLanguage, setLanguage, t, translateDom, translateKnownText } from './i18n.mjs?v=20261102-log1';
 import { displayHexagramName, HEXAGRAM_EN, TRIGRAM_EN } from './hexagram-i18n.mjs';
 import { selectTenWingSources } from './ai-sources.mjs';
 import { AccountApiError, createAccountClient } from './account-sync.mjs?v=20261027-sync1';
@@ -151,6 +151,18 @@ function toggleMobileMore(){
   closeMobileMore();
   if(open){document.body.classList.add('mobile-more-open');$('#mobileMoreToggle')?.setAttribute('aria-expanded','true');$('#mobileMoreMenu .nav-item')?.focus()}
 }
+function initUpdates(){
+  const dialog=$('#updatesDialog');
+  let returnFocus;
+  $$('[data-open-updates]').forEach(button=>button.addEventListener('click',()=>{
+    returnFocus=innerWidth<=680&&button.closest('#mobileMoreMenu')?$('#mobileMoreToggle'):button;
+    closeMobileMore();
+    dialog.querySelector('details').open=false;
+    dialog.showModal();
+    dialog.scrollTop=0;
+  }));
+  dialog.addEventListener('close',()=>{if(returnFocus?.getClientRects().length)returnFocus.focus({preventScroll:true})});
+}
 function routeForView(view){
   if(view==='hexagrams')return $('#view-hexagrams').classList.contains('mobile-detail-open')?`#hexagrams/${selectedHex+1}`:'#hexagrams';
   if(view==='classics')return `#classics/${selectedWing+1}${selectedClassicSection===null?'':'/'+(selectedClassicSection+1)}`;
@@ -191,6 +203,7 @@ function backToList(view){
   setMobileDetail(view,false);nav(view);
 }
 function applyRoute(){
+  if($('#updatesDialog')?.open)$('#updatesDialog').close();
   syncLandingCover();
   if(!$('#siteCover')?.hidden||!$('#productIntro')?.hidden){displayedRoute='';return}
   const [view='home',value='',section='']=(location.hash.slice(1)||'home').split('/');
@@ -954,6 +967,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('#mobileMoreToggle')?.addEventListener('click',toggleMobileMore);
   $('#mobileMoreClose')?.addEventListener('click',()=>closeMobileMore(true));
   $('#mobileMoreBackdrop')?.addEventListener('click',()=>closeMobileMore(true));
+  initUpdates();
   $$('[data-cast-phase]').forEach(button=>button.addEventListener('click',()=>setDivinationPhase(button.dataset.castPhase)));
   $('#hexSearch')?.addEventListener('input',renderHexList);
   $('#wingSearch')?.addEventListener('input',renderClassics);

@@ -245,6 +245,25 @@ Object.assign(DICTIONARY.fa, {
   'auth.footerLeft': '۶۴ هگزاگرام · ده بال · اشتقاق بزرگ', 'auth.footerRight': 'رمز حساب به‌شکل امن ذخیره می‌شود',
 });
 
+const UPDATES_COPY = {
+  title: ['更新日志', 'What’s new', 'تازه‌ها'],
+  kicker: ['观象 · 一点一滴', 'GUANXIANG · SMALL STEPS', 'گوان‌شیانگ · گام‌به‌گام'],
+  description: ['每次一点改进，让使用更顺手。', 'Small improvements for a smoother experience.', 'بهبودهای کوچک برای تجربه‌ای روان‌تر.'],
+  latest: ['最近更新', 'Latest update', 'آخرین به‌روزرسانی'],
+  earlier: ['此前更新', 'Earlier updates', 'به‌روزرسانی‌های پیشین'],
+  nov02Title: ['更容易开始，也更清楚', 'A clearer place to begin', 'آغازی ساده‌تر و روشن‌تر'],
+  nov02Start: ['研读总览新增「开始占卜」，写下问题就能开始。', 'Start a reading from the study overview by writing your question.', 'خوانش را از نمای کلی مطالعه با نوشتن پرسش خود آغاز کنید.'],
+  nov02Welcome: ['欢迎页可以直接进入，修复了部分按钮的文字显示。', 'Enter directly from the welcome page; button labels now display correctly.', 'از صفحه خوشامد مستقیماً وارد شوید؛ نوشته دکمه‌ها اکنون درست نمایش داده می‌شود.'],
+  nov02Log: ['新增简洁的更新日志，随时看看最近的变化。', 'A short update log lets you see what has changed.', 'با فهرست کوتاه تازه‌ها، تغییرات اخیر را ببینید.'],
+  oct30Title: ['手机浏览更顺手', 'Smoother mobile browsing', 'مرور روان‌تر در تلفن'],
+  oct30Navigation: ['优化页面切换、刷新与返回，减少意外跳回。', 'Improved page switching, refresh, and Back to reduce unexpected jumps.', 'جابه‌جایی صفحه، بازخوانی و بازگشت بهبود یافته تا پرش‌های ناخواسته کمتر شود.'],
+  oct30Reading: ['减少重复加载，让阅读和查看记录更流畅。', 'Reduced repeated loading when reading and browsing your journal.', 'بارگذاری تکراری هنگام مطالعه و مرور دفترچه کمتر شده است.'],
+  oct28Title: ['提问与解读更清楚', 'Clearer questions and readings', 'پرسش و خوانش روشن‌تر'],
+  oct28Steps: ['整理提问、起卦、解读三个步骤，跟着提示完成。', 'Follow three clear steps: ask, cast, and reflect.', 'سه گام روشن را دنبال کنید: پرسش، ساخت هگزاگرام و تأمل.'],
+  oct28Journal: ['记录自己的行动和后续进展，方便回来复盘。', 'Record your actions and progress to revisit later.', 'اقدامات و پیشرفت خود را برای بازنگری بعدی ثبت کنید.'],
+};
+for(const [key,values] of Object.entries(UPDATES_COPY))['zh-CN','en','fa'].forEach((language,index)=>{DICTIONARY[language]['updates.'+key]=values[index]});
+
 const FLOW_COPY = {
   studyKicker: ['研读 · 周易', 'STUDY · ZHOUYI', 'مطالعه · ژوئی'],
   studyTitle: ['读《周易》，从一卦开始。', 'Begin with one hexagram.', 'با یک هگزاگرام آغاز کنید.'],

@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="landing-rich.css?v=20260914-1">
     <link rel="stylesheet" href="landing-details.css?v=20260917-labels1">
     <link rel="stylesheet" href="brand-experience.css?v=20261102-direct1">
+    <link rel="stylesheet" href="updates.css?v=20261102-log1">
 </head>
   <body>
     <section class="site-cover" id="siteCover" aria-labelledby="coverTitle">
@@ -131,6 +132,7 @@
           <div class="mobile-more-heading"><strong data-i18n="nav.classicsIndex">典籍索引</strong><button type="button" id="mobileMoreClose" aria-label="关闭更多菜单" title="关闭" data-i18n-aria-label="nav.closeMore" data-i18n-title="common.close">×</button></div>
           <button class="nav-item muted-link" data-view="classics"><span class="nav-icon">▤</span><span>十翼与易传</span></button>
           <button class="nav-item muted-link" data-view="principles"><span class="nav-icon">◈</span><span>易理体系</span></button>
+          <button type="button" class="nav-item muted-link updates-menu-entry" data-open-updates aria-haspopup="dialog" aria-controls="updatesDialog"><span class="nav-icon" aria-hidden="true">↻</span><span data-i18n="updates.title">更新日志</span></button>
         </nav>
         <button type="button" class="mobile-more-backdrop" id="mobileMoreBackdrop" aria-label="关闭更多菜单" data-i18n-aria-label="nav.closeMore" tabindex="-1"></button>
         <div class="sidebar-bottom">
@@ -188,7 +190,7 @@
               <span class="study-entry-end"><span data-i18n="flow.read">开始研读</span><b aria-hidden="true">→</b></span>
             </button>
           </nav>
-          <footer class="study-footnote"><span data-i18n="flow.studyQuote">居则观其象而玩其辞。</span><cite>《系辞上》</cite></footer>
+          <footer class="study-footnote"><span data-i18n="flow.studyQuote">居则观其象而玩其辞。</span><cite>《系辞上》</cite><button type="button" class="updates-link" data-open-updates aria-haspopup="dialog" aria-controls="updatesDialog" data-i18n="updates.title">更新日志</button></footer>
         </section>
 
         <section class="view" id="view-hexagrams">
@@ -235,6 +237,19 @@
     <dialog class="confirm-dialog import-dialog" id="importDialog"><form method="dialog"><span class="panel-kicker" data-i18n="dialog.importKicker">导入记录</span><h2 data-i18n="dialog.importTitle">确认合并本地记录？</h2><p id="importSummary" data-i18n="dialog.importLoading">正在读取记录。</p><div><button class="secondary-button" value="cancel" id="cancelImport" data-i18n="dialog.cancel">取消</button><button class="primary-button" value="confirm" id="confirmImport" data-i18n="dialog.confirmImport">确认合并</button></div></form></dialog>
     <dialog class="confirm-dialog account-merge-dialog" id="accountMergeDialog"><form method="dialog"><span class="panel-kicker">合并此设备的记录？</span><h2>合并此设备的记录？</h2><p data-merge-body></p><div><button type="button" class="secondary-button" data-merge-choice="cloud">只保留云端记录</button><button type="button" class="primary-button" data-merge-choice="merge">合并记录</button></div></form></dialog>
     <script>window.GUANXIANG_AI_ENDPOINT=window.GUANXIANG_AI_ENDPOINT||((location.hostname==='guanxiang.wayella.com'||['.pages.dev','.netlify.app','.liara.run'].some(suffix=>location.hostname.endsWith(suffix)))?'/api/reading':'');</script>
-    <script type="module" src="app.js?v=20261102-home1"></script>
+    <dialog class="updates-dialog" id="updatesDialog" aria-labelledby="updatesTitle" aria-describedby="updatesDescription">
+      <header class="updates-heading"><div><span class="panel-kicker" data-i18n="updates.kicker">观象 · 一点一滴</span><h2 id="updatesTitle" data-i18n="updates.title">更新日志</h2></div><form method="dialog"><button type="submit" class="updates-close" autofocus aria-label="关闭" data-i18n-aria-label="common.close">×</button></form></header>
+      <p class="updates-description" id="updatesDescription" data-i18n="updates.description">每次一点改进，让使用更顺手。</p>
+      <article class="updates-release">
+        <div class="updates-date"><time datetime="2026-11-02">2026.11.02</time><span data-i18n="updates.latest">最近更新</span></div>
+        <h3 data-i18n="updates.nov02Title">更容易开始，也更清楚</h3>
+        <ul><li data-i18n="updates.nov02Start">研读总览新增「开始占卜」，写下问题就能开始。</li><li data-i18n="updates.nov02Welcome">欢迎页可以直接进入，修复了部分按钮的文字显示。</li><li data-i18n="updates.nov02Log">新增简洁的更新日志，随时看看最近的变化。</li></ul>
+      </article>
+      <details class="updates-older"><summary data-i18n="updates.earlier">此前更新</summary>
+        <article class="updates-release"><div class="updates-date"><time datetime="2026-10-30">2026.10.30</time></div><h3 data-i18n="updates.oct30Title">手机浏览更顺手</h3><ul><li data-i18n="updates.oct30Navigation">优化页面切换、刷新与返回，减少意外跳回。</li><li data-i18n="updates.oct30Reading">减少重复加载，让阅读和查看记录更流畅。</li></ul></article>
+        <article class="updates-release"><div class="updates-date"><time datetime="2026-10-28">2026.10.28</time></div><h3 data-i18n="updates.oct28Title">提问与解读更清楚</h3><ul><li data-i18n="updates.oct28Steps">整理提问、起卦、解读三个步骤，跟着提示完成。</li><li data-i18n="updates.oct28Journal">记录自己的行动和后续进展，方便回来复盘。</li></ul></article>
+      </details>
+    </dialog>
+    <script type="module" src="app.js?v=20261102-log1"></script>
   </body>
 </html>
