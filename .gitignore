@@ -1,16 +1,27 @@
+# Dependencies and generated output
 node_modules/
+dist/
+output/
+coverage/
+*.log
 npm-debug.log*
-.DS_Store
-Thumbs.db
-.playwright-cli/
+
+# Local deployment state and configuration
+.wrangler/
 .netlify/
 .netlify-npx-cache/
-.wrangler/
-worker/.wrangler/
 worker/wrangler.jsonc
-dist/
+account-worker/wrangler.jsonc
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
 
-
+# Local browser previews and OS files
+.playwright-cli/
 .smoke-edge-*/
-output/
 lan-test.txt
+.DS_Store
+Thumbs.db

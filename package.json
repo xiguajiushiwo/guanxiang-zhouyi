@@ -2,6 +2,8 @@
   "name": "guanxiang-zhouyi",
   "private": true,
   "type": "module",
+  "description": "观象：周易研读、蓍草占问与个人行动复盘工具",
+  "engines": { "node": ">=22" },
   "scripts": {
     "prestart": "npm run build:pages",
     "start": "node serve.mjs --production",

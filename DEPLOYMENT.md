@@ -26,7 +26,7 @@ https://github.com/xiguajiushiwo/guanxiang-zhouyi
 
 `guanxiang-domain` Worker 与 Pages 项目需设置同一 `DOMAIN_PROXY_SECRET`。入口对 API 请求的客户端 IP、时间、方法和路径生成 HMAC；Pages 验证后才将客户端 IP 用于现有限流，防止跨区域 Worker 回源让所有访问共用一个 IP。无签名、伪造或超过 60 秒的签名都不能覆盖 Cloudflare 直接提供的 IP。密钥仅保存在 Cloudflare，不提交源码或静态产物。
 
-更新域名入口：`node output/deploy-tools/node_modules/wrangler/bin/wrangler.js deploy --config domain-worker/wrangler.jsonc`。正常页面更新仍按下文发布 Pages 即可。迁移到直接 Pages 域名绑定时，先计划域名切换，不能直接删除入口或其 DNS。
+更新域名入口：`npx wrangler@latest deploy --config domain-worker/wrangler.jsonc`。正常页面更新仍按下文发布 Pages 即可。迁移到直接 Pages 域名绑定时，先计划域名切换，不能直接删除入口或其 DNS。
 
 新增翻译词条时，同时更新页面入口、`i18n.mjs`、`brand-content.mjs` 的引用版本及 Service Worker 缓存版本，避免新版 HTML 读取旧词库。`translateDom` 在缺少词条时保留原始可读文案；用 `node run-browser-test.mjs test-i18n-cache-browser.mjs` 验证真实 Service Worker 下旧词库缓存和新按钮共存的升级场景。
 
@@ -40,7 +40,7 @@ https://github.com/xiguajiushiwo/guanxiang-zhouyi
 https://guanxiang-account.1510351214.workers.dev
 ```
 
-D1 数据库为 `guanxiang-accounts`，绑定配置在 `account-worker/wrangler.jsonc`，迁移文件在 `account-worker/migrations/`。注册用户的邮箱、密码哈希、会话和占问记录保存在 D1；密码原文和会话原文不会写入数据库。游客和登录前的旧记录仍只保存在当前浏览器的 `guanxiang-history-v1`。
+D1 数据库为 `guanxiang-accounts`，本机绑定配置在被 Git 忽略的 `account-worker/wrangler.jsonc`，迁移文件在 `account-worker/migrations/`。新部署从 `wrangler.jsonc.example` 复制配置并填入自己的 D1 ID，步骤见 [账号服务说明](account-worker/README.md)。注册用户的邮箱、密码哈希、会话和占问记录保存在 D1；密码原文和会话原文不会写入数据库。游客记录使用 `guanxiang-history-guest-v1`，登录账号按账号隔离；旧记录从 `guanxiang-history-v1` 迁移。
 
 部署或更新账号服务：
 

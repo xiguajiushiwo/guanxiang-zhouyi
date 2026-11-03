@@ -15,7 +15,7 @@
 - `npm run test:unit`：包含数据迁移、版本留存、日期判断、超过 100 条记录、多设备合并、账户 API 和加载超时。
 - `npm run test:journal`：浏览器验证加载失败及重试、详情刷新、320/390px 手机与桌面布局、计划/进展/复盘保存、筛选、AI 失败及重新生成、延迟账户加载与云端同步。
 - `npm run test:browser`、`npm run test:flow`：原有主流程回归。
-- `npm run build:pages`：打包新增模块与样式，离线缓存同步升级到 v51。
+- `npm run build:pages`：按白名单打包生产页面、模块、样式与经典资料。
 
 ## 发布
 

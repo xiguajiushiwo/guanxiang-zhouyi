@@ -4,7 +4,7 @@
 
 ## 准备
 
-需要 Cloudflare 账户和 Node.js。进入 Worker 目录并登录：
+需要 Cloudflare 账户和 Node.js 22 或更新版本。进入 Worker 目录并登录：
 
 ```powershell
 cd worker
@@ -20,6 +20,7 @@ Copy-Item wrangler.jsonc.example wrangler.jsonc
 在 `wrangler.jsonc` 中把 `ALLOWED_ORIGINS` 设为网站的准确 Origin。Origin 只包含协议和主机名，不包含路径，例如：
 
 ```text
+https://guanxiang.wayella.com
 https://guanxiang-zhouyi-evf.pages.dev
 https://guanxiang-zhouyi-global.netlify.app
 https://guanxiang-zhouyi.liara.run
@@ -71,7 +72,7 @@ npx wrangler@latest deploy
 
 - 每个匿名 IP 哈希每小时 5 次；
 - 全站每个 UTC 日 50 次；
-- 单次最多约 900 个输出 token。
+- 单次 `MAX_TOKENS` 为 6000；实际输出长度受模型与服务端处理约束。
 
 可在 `wrangler.jsonc` 的 `vars` 中调整。Durable Object 以事务方式更新计数；还应在 Cloudflare 账户中设置可接受的 Workers AI 使用边界。
 

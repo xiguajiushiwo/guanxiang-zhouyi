@@ -80,9 +80,9 @@ await evaluate(`document.querySelector('.nav-item[data-view="home"]').click(); t
 await waitFor(`document.querySelector('#view-home').classList.contains('active')`);
 await sleep(300);
 const homeLayout=await evaluate(`({entries:[...document.querySelectorAll('#view-home [data-view]')].map(el=>el.dataset.view),horizontalOverflow:document.documentElement.scrollWidth>innerWidth})`);
-assert.deepEqual(homeLayout.entries,['hexagrams','classics','principles']);
+assert.deepEqual(homeLayout.entries,['divination','hexagrams','classics','principles']);
 assert.equal(homeLayout.horizontalOverflow,false);
-await evaluate(`document.querySelector('.nav-item[data-view="divination"]').click(); true`);
+await evaluate(`document.querySelector('.study-start-button').click(); true`);
 await waitFor(`document.querySelector('#view-divination').classList.contains('active')`);
 await sleep(1200);
 await evaluate(`document.querySelector('[data-cast-mode="quick"]').click();
